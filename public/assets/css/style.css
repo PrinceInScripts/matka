@@ -1,0 +1,261 @@
+ html,
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: "Poppins", sans-serif;
+            background: #f5f6fa;
+            overflow: hidden;
+        }
+
+        .app-layout {
+            display: flex;
+            min-height: 100vh;
+            flex-direction: row;
+        }
+
+        /* LEFT AREA */
+        .left-area {
+            background: #fff;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 100;
+            height: 100vh;
+            overflow: hidden;
+        }
+ /* ✅ FIXED TOP BAR */
+        .top-bar {
+            position: fixed;
+            top: 0;
+            /* left: 50%;
+    transform: translateX(-50%); */
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 25px;
+            border-bottom: 1px solid #eee;
+            background: #fff;
+            z-index: 10;
+        }
+
+        .menu-toggle {
+            font-size: 22px;
+            color: #007bff;
+            cursor: pointer;
+        }
+
+        .wallet {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: #007bff;
+            cursor: pointer;
+        }
+
+        .wallet i {
+            font-size: 20px;
+        }
+
+
+         /* SIDEBAR */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -320px;
+            width: 280px;
+            height: 100%;
+            background: #fff;
+            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+            transition: 0.3s;
+            z-index: 200;
+            overflow-y: auto;
+        }
+
+        .sidebar .section{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* background: rgba(0, 0, 0, 0.4); */
+            display: none;
+            z-index: 150;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        .profile-section {
+            text-align: center;
+            border-bottom: 1px solid #eee;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .profile-section .profile-details{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+         .profile-section .profile-details p{
+             margin-bottom: 0px;
+                font-size: 12px;
+         }
+
+          .profile-section .profile-details h6{
+                     font-size: 16px;
+                     font-weight: 600;
+          }
+      
+
+        .profile-section img {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 8px;
+        }
+
+        .section .close{
+            padding: 10px 20px;
+            cursor: pointer;
+            
+        }
+
+        .section .close i {
+            font-size: 28px;
+            color: #565656;
+            cursor: pointer;
+
+        }
+
+        .menu-list {
+            padding: 15px 25px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: 10px;
+            color: #333;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .menu-item .btn-menu-item{
+            background: none;
+            border: none;
+            padding: 0;
+            margin: 0;
+            font: inherit;
+            color: inherit;
+            cursor: pointer;
+        }
+
+        .menu-item i {
+            font-size: 20px;
+            color: #fff;
+            background-color: #007bff;
+            padding: 12px 12px;
+            border-radius: 50%;
+        }
+
+        .menu-item:hover {
+            background: #007bff;
+            color: #fff;
+        }
+
+        .menu-item:hover i {
+            color: #fff;
+        }
+
+        /* ✅ FIXED BOTTOM BAR */
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            /* left: 50%;
+    transform: translateX(-50%); */
+            width: 100%;
+            max-width: 500px;
+            background: #fff;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 10px 0;
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+            z-index: 20;
+        }
+
+        .bottom-item {
+            text-align: center;
+            color: #007bff;
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+        .bottom-item span {
+            display: block;
+            font-size: 13px;
+            color: #333;
+        }
+
+
+          /* RIGHT AREA */
+        .right-area {
+            flex: 1;
+            background: linear-gradient(135deg, #007bff, #0048ff);
+            color: #fff;
+            padding: 50px 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .right-area h2 {
+            font-size: 40px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .right-area p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 991px) {
+            .right-area {
+                display: none;
+            }
+
+            .left-area {
+                width: 100%;
+                max-width: none;
+            }
+        }
