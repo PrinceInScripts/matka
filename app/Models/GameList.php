@@ -91,4 +91,10 @@ public function gameTypes()
         return $this->hasMany(Bid::class);
     }
 
+    public function todaySchedule()
+{
+    return $this->hasOne(MarketSchedule::class, 'market_id')
+        ->where('weekday', now()->format('D'));
+}
+
 }

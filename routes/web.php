@@ -183,8 +183,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         Route::prefix('result')->name('result.')->group(function () {
             Route::post('/context', [ResultController::class, 'getContext']);
+            Route::post('/save-draft', [ResultController::class, 'saveDraft'])->name('save_draft');
 
             Route::get('/winners/{result_id}', [ResultController::class, 'winners'])->name('winners');
+            Route::post('/declare', [ResultController::class, 'declareWinners'])->name('declare_winners');
+
+            Route::get('/winning-predictions/search', [ResultController::class, 'searchWinningPredictions'])->name('winning_predictions.search');
 
         });
 

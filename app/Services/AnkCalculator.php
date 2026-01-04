@@ -7,15 +7,16 @@ use Exception;
 
 class AnkCalculator
 {
-    public static function calculate(int $gameType, string $number, string $session): int
+    public static function calculate(string $gameTypeSlug, string $number, string $session): int
     {
+        
         // 1️⃣ Single Digit
-        if ($gameType === GameTypes::SINGLE_DIGIT) {
+        if ($gameTypeSlug === 'single_digit' || $gameTypeSlug === 'single_digit_bulk') {
             return (int) $number;
         }
 
         // 2️⃣ Jodi Digit
-        if ($gameType === GameTypes::JODI_DIGIT) {
+        if ($gameTypeSlug === 'jodi' || $gameTypeSlug === 'jodi_bulk') {
             if (strlen($number) !== 2 || !ctype_digit($number)) {
                 throw new Exception("Invalid jodi number: $number");
             }
@@ -26,7 +27,7 @@ class AnkCalculator
         }
 
         // 3️⃣ Panna (single / double / triple)
-        if (in_array($gameType, GameTypes::PANNA_TYPES, true)) {
+        if (in_array($gameTypeSlug, ['single_panna', 'double_panna', 'triple_panna', 'single_panna_bulk', 'double_panna_bulk', 'triple_panna_bulk'], true)) {
             if (!ctype_digit($number)) {
                 throw new Exception("Invalid panna number: $number");
             }
@@ -35,7 +36,7 @@ class AnkCalculator
         }
 
         // 4️⃣ Half Sangam (panna-digit OR digit-panna)
-        if ($gameType === GameTypes::HALF_SANGAM) {
+        if ($gameTypeSlug === 'half_sangam') {
             if (!str_contains($number, '-')) {
                 throw new Exception("Invalid half sangam: $number");
             }
@@ -50,7 +51,7 @@ class AnkCalculator
         }
 
         // 5️⃣ Full Sangam (panna-panna)
-        if ($gameType === GameTypes::FULL_SANGAM) {
+        if ($gameTypeSlug === 'full_sangam') {
             if (!str_contains($number, '-')) {
                 throw new Exception("Invalid full sangam: $number");
             }
@@ -66,6 +67,6 @@ class AnkCalculator
             return array_sum(str_split($target)) % 10;
         }
 
-        throw new Exception("Unsupported game type ID: $gameType");
+        throw new Exception("Unsupported game type ID: $gameTypeSlug");
     }
 }

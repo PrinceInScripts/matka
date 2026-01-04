@@ -18,8 +18,10 @@ class Bid extends Model
         'wallet_transaction_id',
         'market_type',
         'number',
+        'bet_data',
         'ank',
         'amount',
+
         'session',
         'status',
         'draw_date',

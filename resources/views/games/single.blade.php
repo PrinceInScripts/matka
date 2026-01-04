@@ -226,12 +226,15 @@
                     <div class="game-header">
                         <h5>Game Entry</h5>
                     </div>
+                   @php
+                        $today_date = date('Y-m-d');
+                    @endphp
 
                     <form class="bid-form">
                         <div class="row">
                             <div class="col-6 form-group">
                                 <label>Date</label>
-                                <input id="date" name="date" type="date" value="2025-10-24">
+                                <input id="date" name="date" type="date" value="{{ $today_date }}">
                             </div>
                             <div class="col-6 form-group">
                                 <label>Session</label>

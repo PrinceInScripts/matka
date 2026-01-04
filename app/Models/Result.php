@@ -17,6 +17,8 @@ class Result extends Model
         'open_digit',
         'close_panna',
         'close_digit',
+        'status',
+        'session',
         'result_date'
     ];
 

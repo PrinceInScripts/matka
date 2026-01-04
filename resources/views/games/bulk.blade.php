@@ -179,12 +179,16 @@
                 <h5 class="m-0 fw-bold text-primary">{{ $game->name }}</h5>
                 @include('components.walletinfo')
             </div>
+              @php
+                        $today_date = date('Y-m-d');
+                    @endphp
+
 
             <div class="home-content">
                 <div class="game-section">
                     <div class="row mb-3">
                         <div class="col-6">
-                            <input type="date" class="form-control" value="2025-10-24">
+                            <input type="date" class="form-control" value="{{ $today_date }}">
                         </div>
                         <div class="col-6">
                             <select class="form-select">
