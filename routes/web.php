@@ -20,7 +20,8 @@ use App\Http\Controllers\Admin\WalletController;
 use App\Http\Controllers\BidController;
 use App\Http\Controllers\FundController;
 use App\Http\Controllers\GameLayoutController;
-
+use App\Http\Controllers\ResultController;
+use LDAP\Result;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -179,6 +180,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Sub Admin Management
         Route::get('sub-admins', [SubAdminController::class, 'index'])->name('sub_admin.index');
+
+        Route::prefix('result')->name('result.')->group(function () {
+            Route::post('/context', [ResultController::class, 'getContext']);
+
+            Route::get('/winners/{result_id}', [ResultController::class, 'winners'])->name('winners');
+
+        });
+
 
 
          });

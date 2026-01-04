@@ -9,6 +9,7 @@ use App\Models\GameList;
 use App\Models\WalletTransactions;
 use Illuminate\Support\Facades\Auth;
 use App\Constants\GameTypes;
+use App\Models\Result;
 use Exception;
 use Illuminate\Support\Facades\DB;
 
@@ -91,9 +92,9 @@ class DashboardController extends Controller
         ->where('created_at', '>=', now()->subDay())
         ->sum('amount');
 
-        $today = strtolower(now()->format('l')); // e.g., 'monday', 'tuesday', etc.
+        $today = strtolower(now()->format('D')); // e.g., 'Mon', 'Tue   ', etc.
 
-        // return $today;
+        // return $today;   
 
          $games = GameList::where('game_status', 1)
         ->where('market_status', 1)
@@ -107,12 +108,12 @@ class DashboardController extends Controller
                 ->where('weekday', $today)
                 ->first();
 
-            if (!$schedule || !$schedule->is_open) {
-                $game->today_open_time  = null;
-                $game->today_close_time = null;
-                $game->today_bid_amount = 0;
-                return $game;
-            }
+            if (!$schedule || !$schedule->is_open || !$schedule->open_time || !$schedule->close_time) {
+    $game->today_open_time  = null;
+    $game->today_close_time = null;
+    $game->today_bid_amount = 0;
+    return $game;
+}
 
             $open  = now()->setTimeFromTimeString($schedule->open_time);
             $close = now()->setTimeFromTimeString($schedule->close_time);
@@ -122,12 +123,14 @@ class DashboardController extends Controller
                 $close->addDay();
             }
 
-            // Sum bids ONLY for this market in this window
-            $bidAmount = WalletTransactions::where('type', 'debit')
-                ->where('source', 'bid')
-                ->where('market_id', $game->id)
-                ->whereBetween('created_at', [$open, $close])
-                ->sum('amount');
+            $bidAmount = DB::table('wallet_transactions as wt')
+    ->join('bids as b', 'b.id', '=', 'wt.reference_id')
+    ->where('wt.type', 'debit')
+    ->where('wt.source', 'bid')
+    ->where('b.market_id', $game->id)
+    ->whereBetween('wt.created_at', [$open, $close])
+    ->sum('wt.amount');
+
 
             $game->today_open_time  = $schedule->open_time;
             $game->today_close_time = $schedule->close_time;
@@ -157,18 +160,18 @@ class DashboardController extends Controller
 
     // return $totalUsers.$approvedUsers.''.$pendingUsers.''.$loggedInAdmin.''.$totalGames.''.$last24HourBidAmount.''.$games.''.$defaultMarket.''.$defaultSession.''.$ankData it on array
 
-    return response()->json([
-        'totalUsers' => $totalUsers,
-        'approvedUsers' => $approvedUsers,
-        'pendingUsers' => $pendingUsers,
-        'loggedInAdmin' => $loggedInAdmin,
-        'totalGames' => $totalGames,
-        'last24HourBidAmount' => $last24HourBidAmount,
-        'games' => $games,
-        'defaultMarket' => $defaultMarket,
-        'defaultSession' => $defaultSession,
-        'ankData' => $ankData,
-    ]);
+    // return response()->json([
+    //     'totalUsers' => $totalUsers,
+    //     'approvedUsers' => $approvedUsers,
+    //     'pendingUsers' => $pendingUsers,
+    //     'loggedInAdmin' => $loggedInAdmin,
+    //     'totalGames' => $totalGames,
+    //     'last24HourBidAmount' => $last24HourBidAmount,
+    //     'games' => $games,
+    //     'defaultMarket' => $defaultMarket,
+    //     'defaultSession' => $defaultSession,
+    //     'ankData' => $ankData,
+    // ]);
 
         return view('admin.dashboard', compact('totalUsers', 'approvedUsers', 'pendingUsers', 'loggedInAdmin', 'totalGames', 'last24HourBidAmount', 'games', 'defaultMarket', 'defaultSession', 'ankData'));
     }
@@ -181,7 +184,16 @@ class DashboardController extends Controller
 
     public function declareResult()
     {
-        return view('admin.declare_result');
+        $games = GameList::where('game_status', 1)->get();
+         $pannas = [];
+
+        for ($i = 0; $i <= 9; $i++) {
+            $pannas[] = "{$i}{$i}{$i}";
+        }
+
+        $results=Result::all();
+
+        return view('admin.declare_result', compact('games', 'pannas', 'results'));
     }
 
     public function winningPredictions()

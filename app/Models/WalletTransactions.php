@@ -42,4 +42,14 @@ class WalletTransactions extends Model
     {
         return $this->belongsTo(Wallet::class, 'wallet_id');
     }
+
+    // App\Models\WalletTransactions.php
+
+// WalletTransactions.php
+public function bid()
+{
+    return $this->belongsTo(Bid::class, 'reference_id');
+}
+
+
 }
