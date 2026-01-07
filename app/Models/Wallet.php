@@ -14,7 +14,8 @@ class Wallet extends Model
     protected $fillable = [
         'user_id',
         'balance',
-        'bonus_balance','freeze_balance'
+        'bonus_balance',
+        'frozen_balance'
     ];
 
     protected $casts = [

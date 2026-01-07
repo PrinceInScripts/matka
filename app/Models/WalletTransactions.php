@@ -15,8 +15,10 @@ class WalletTransactions extends Model
     protected $fillable = [
         'wallet_id',
         'type',               // credit or debit
+        'source',             // e.g., 'bid', 'fund_request', etc.
         'amount',
         'reason',
+        
         'reference_id',
         'reference_type',     // 'bid', 'fund_request', etc.
         'balance_after',

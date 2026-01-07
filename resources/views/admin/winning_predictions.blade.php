@@ -18,6 +18,37 @@
   {{-- font aswesome cdn --}}
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/Z1srTF+W+o8+T2Vq+0+z7N0zJwQXG6nTpGO5c5XbYl5fX5Yx5D5V5y5d5D5D5D5D5D5A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+       <style>
+            .select2-container--bootstrap4 .select2-selection--single {
+    height: calc(2.25rem + 2px);
+    line-height: 1.5;
+    padding: .375rem .75rem;
+    border: 1px solid #000;
+}
+
+.select2-container--bootstrap4 .select2-selection--single .select2-selection__arrow {
+    height: 100%;
+    position: absolute;
+    top: 0;
+    right: 0.75rem;
+    width: 20px;
+}
+
+.select2-container--bootstrap4 .select2-selection__arrow b {
+    border-color: #495057 transparent transparent transparent;
+    border-style: solid;
+    border-width: 5px 4px 0 4px;
+    height: 0;
+    left: 50%;
+    margin-left: -4px;
+    margin-top: -2px;
+    position: absolute;
+    top: 50%;
+    width: 0;
+}
+        </style>
 
 
 
@@ -73,12 +104,16 @@
 
                                         <div class="col-md-2">
                                             <label>Game Name</label>
-                                            <select id="game_id" class="form-control">
+                                            <select id="game_id" class="form-control select2">
                                                 <option value="">Select Game Name</option>
                                                 @foreach ($games as $game)
                                                     <option value="{{ $game->id }}">
-                                                        {{ $game->name }} ({{ $game->open_time }} -
-                                                        {{ $game->close_time }})
+                                                        {{ $game->name }}
+                                                        @if ($game->todaySchedule && $game->todaySchedule->open_time && $game->todaySchedule->close_time)
+                                                            ({{ \Carbon\Carbon::parse($game->todaySchedule->open_time)->format('h:i A') }}
+                                                            -
+                                                            {{ \Carbon\Carbon::parse($game->todaySchedule->close_time)->format('h:i A') }})
+                                                        @endif
                                                     </option>
                                                 @endforeach
                                             </select>
@@ -86,7 +121,7 @@
 
                                         <div class="col-md-2">
                                             <label>Session Time</label>
-                                            <select id="session" class="form-control">
+                                            <select id="session" class="form-control select2">
                                                 <option value="">Select Session</option>
                                                 <option value="open">Open</option>
                                                 <option value="close">Close</option>
@@ -95,7 +130,7 @@
 
                                          <div class="col-md-2">
                                             <label>Select Open Panna</label>
-                                            <select id="open_panna" class="form-control">
+                                            <select id="open_panna" class="form-control select2">
                                                 <option value="">Select Panna</option>
                                                 @foreach ($pannas as $p)
                                                     <option value="{{ $p }}">{{ $p }}</option>
@@ -105,7 +140,7 @@
 
                                          <div class="col-md-2">
                                             <label>Select Close Panna</label>
-                                            <select id="open_panna" class="form-control">
+                                            <select id="close_panna" class="form-control select2">
                                                 <option value="">Select Panna</option>
                                                 @foreach ($pannas as $p)
                                                     <option value="{{ $p }}">{{ $p }}</option>
@@ -157,6 +192,7 @@
                                         </thead>
                                         <tbody>
                                             
+                                          
                                         </tbody>
                                     </table>
                                 </div>
@@ -215,6 +251,32 @@
 {{-- sweetalert2 --}}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+ <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+ <script>
+$(document).ready(function () {
+
+    $('.select2').select2({
+    theme: 'bootstrap4',
+    width: '100%',
+    placeholder: 'Select option',
+    allowClear: false,
+    minimumResultsForSearch: 0
+});
+
+
+});
+
+$(document).on('shown.bs.modal', function () {
+    $('.select2').select2({
+        theme: 'bootstrap4',
+        width: '100%',
+        dropdownParent: $('.modal:visible')
+    });
+});
+
+</script>
+
 
 
 <script>
@@ -243,7 +305,7 @@ $('#goBtn').on('click', function () {
     return;
   }
 
-  Swal.fire({
+  Swal.fire({ 
     title: 'Fetching predictions...',
     allowOutsideClick: false,
     didOpen: () => Swal.showLoading()
@@ -295,6 +357,7 @@ $('#session').on('change', function () {
 </script>
 <script>
 function renderPredictionTable(rows) {
+  console.log(rows);
 
   let tbody = '';
   let i = 1;
@@ -307,11 +370,11 @@ function renderPredictionTable(rows) {
     tbody += `
       <tr>
         <td>${i++}</td>
-        <td>${row.username}</td>
-        <td>${row.bid_points}</td>
-        <td>${row.winning_points}</td>
-        <td>${row.type}</td>
-        <td>${row.transaction_id}</td>
+        <td>${row.user.name}</td>
+        <td>${row.amount}</td>
+        <td>${row.winning_amount}</td>
+        <td>${row.game_type.name}</td>
+        <td>${row.txn_id}</td>
         <td>
           <span class="badge badge-${row.session === 'open' ? 'info' : 'warning'}">
             ${row.session.toUpperCase()}

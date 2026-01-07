@@ -19,10 +19,43 @@
     <link rel="stylesheet" href="../../dist/css/adminlte.min.css">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+
     {{-- font awesome  --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         integrity="sha512-iecdLmaskl7CVkqkXNQ/Z1srTF+W+o8+T2Vq+0+z7N0zJwQXG6nTpGO5c5XbYl5fX5Yx5D5V5y5d5D5D5D5D5D5A=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+        <style>
+            .select2-container--bootstrap4 .select2-selection--single {
+    height: calc(2.25rem + 2px);
+    line-height: 1.5;
+    padding: .375rem .75rem;
+    border: 1px solid #000;
+}
+
+.select2-container--bootstrap4 .select2-selection--single .select2-selection__arrow {
+    height: 100%;
+    position: absolute;
+    top: 0;
+    right: 0.75rem;
+    width: 20px;
+}
+
+.select2-container--bootstrap4 .select2-selection__arrow b {
+    border-color: #495057 transparent transparent transparent;
+    border-style: solid;
+    border-width: 5px 4px 0 4px;
+    height: 0;
+    left: 50%;
+    margin-left: -4px;
+    margin-top: -2px;
+    position: absolute;
+    top: 50%;
+    width: 0;
+}
+        </style>
 </head>
 
 <body class="hold-transition sidebar-mini">
@@ -74,7 +107,7 @@
 
                                         <div class="col-md-4">
                                             <label>Game Name</label>
-                                            <select id="game_id" class="form-control">
+                                            <select id="game_id" class="form-control select2">
                                                 <option value="">Select Game</option>
                                                 @foreach ($games as $game)
                                                     <option value="{{ $game->id }}">
@@ -91,7 +124,7 @@
 
                                         <div class="col-md-3">
                                             <label>Session</label>
-                                            <select id="session" class="form-control">
+                                            <select id="session" class="form-control select2">
                                                 <option value="">Select Session</option>
                                                 <option value="open">Open</option>
                                                 <option value="close">Close</option>
@@ -117,7 +150,7 @@
                                     <div class="row mb-3" id="openBlock">
                                         <div class="col-md-4">
                                             <label>Open Panna</label>
-                                            <select id="open_panna" class="form-control">
+                                            <select id="open_panna" class="form-control select2">
                                                 <option value="">Select Panna</option>
                                                 @foreach ($pannas as $p)
                                                     <option value="{{ $p }}">{{ $p }}</option>
@@ -134,7 +167,7 @@
                                     <div class="row mb-3" id="closeBlock">
                                         <div class="col-md-4">
                                             <label>Close Panna</label>
-                                            <select id="close_panna" class="form-control">
+                                            <select id="close_panna" class="form-control select2">
                                                 <option value="">Select Panna</option>
                                                 @foreach ($pannas as $p)
                                                     <option value="{{ $p }}">{{ $p }}</option>
@@ -172,27 +205,51 @@
                                         </div>
 
                                         <div class="modal-body">
-                                            <p>
-                                                <b>Total Bid:</b> <span id="totalBid">0</span> |
-                                                <b>Total Win:</b> <span id="totalWin">0</span>
-                                            </p>
+                                            <ul class="nav nav-tabs mb-3">
+                                                <li class="nav-item">
+                                                    <a class="nav-link active" data-toggle="tab"
+                                                        href="#winnerTab">Winners</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a class="nav-link" data-toggle="tab" href="#loserTab">Losers</a>
+                                                </li>
+                                            </ul>
 
-                                            <table class="table table-bordered">
-                                                <thead>
-                                                    <tr>
-                                                        <th>#</th>
-                                                        <th>User</th>
-                                                        <th>Amount</th>
-                                                        <th>Winning</th>
-                                                        <th>Type</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="winnerTable">
-                                                    <tr>
-                                                        <td colspan="5" class="text-center">No Data</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
+                                            <div class="tab-content">
+
+                                                <!-- WINNERS -->
+                                                <div class="tab-pane fade show active" id="winnerTab">
+                                                    <table class="table table-bordered">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>#</th>
+                                                                <th>User</th>
+                                                                <th>Amount</th>
+                                                                <th>Winning</th>
+                                                                <th>Type</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="winnerTable"></tbody>
+                                                    </table>
+                                                </div>
+
+                                                <!-- LOSERS -->
+                                                <div class="tab-pane fade" id="loserTab">
+                                                    <table class="table table-bordered">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>#</th>
+                                                                <th>User</th>
+                                                                <th>Amount Lost</th>
+                                                                <th>Type</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="loserTable"></tbody>
+                                                    </table>
+                                                </div>
+
+                                            </div>
+
                                         </div>
 
                                     </div>
@@ -271,6 +328,7 @@
     <script src="../../plugins/jquery/jquery.min.js"></script>
     <!-- Bootstrap 4 -->
     <script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+
     <!-- DataTables  & Plugins -->
     <script src="../../plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
@@ -293,10 +351,37 @@
 
 
     {{-- ajax --}}
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 
 
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+$(document).ready(function () {
+
+    $('.select2').select2({
+    theme: 'bootstrap4',
+    width: '100%',
+    placeholder: 'Select option',
+    allowClear: false,
+    minimumResultsForSearch: 0
+});
+
+
+});
+
+$(document).on('shown.bs.modal', function () {
+    $('.select2').select2({
+        theme: 'bootstrap4',
+        width: '100%',
+        dropdownParent: $('.modal:visible')
+    });
+});
+
+</script>
+
 
 
     <script>
@@ -476,47 +561,56 @@
     </script>
 
     <script>
-function renderWinners(res) {
+        function renderResult(res) {
 
-    // Update totals
-    $('#totalBid').text(res.total_bid ?? 0);
-    $('#totalWin').text(res.total_win ?? 0);
+            $('#totalBid').text(res.total_bid ?? 0);
+            $('#totalWin').text(res.total_win ?? 0);
 
-    const tbody = $('#winnerTable');
-    tbody.empty();
+            // ----- WINNERS -----
+            const wTable = $('#winnerTable');
+            wTable.empty();
 
-    // No winners case
-    if (!res.winners || res.winners.length === 0) {
-        tbody.append(`
-            <tr>
-                <td colspan="5" class="text-center text-muted">No Winners Found</td>
-            </tr>
-        `);
-        return;
-    }
+            if (!res.winners || res.winners.length === 0) {
+                wTable.append(`<tr><td colspan="5" class="text-center text-muted">No Winners</td></tr>`);
+            } else {
+                res.winners.forEach((w, i) => {
+                    wTable.append(`
+                <tr>
+                    <td>${i + 1}</td>
+                    <td>${w.name}</td>
+                    <td>₹${w.amount}</td>
+                    <td class="text-success fw-bold">₹${w.winning_amount}</td>
+                    <td>${w.game_type} (${w.session})</td>
+                </tr>
+            `);
+                });
+            }
 
-    // Render rows
-    res.winners.forEach((winner, index) => {
-        tbody.append(`
-            <tr>
-                <td>${index + 1}</td>
-                <td>${winner.name ?? 'N/A'}</td>
-                <td>₹ ${parseFloat(winner.amount).toFixed(2)}</td>
-                <td class="text-success fw-bold">₹ ${parseFloat(winner.winning_amount).toFixed(2)}</td>
-                <td>
-                    ${winner.game_type}
-                    <span class="badge badge-info ml-1">${winner.session.toUpperCase()}</span>
-                </td>
-            </tr>
-        `);
-    });
-}
-</script>
+            // ----- LOSERS -----
+            const lTable = $('#loserTable');
+            lTable.empty();
+
+            if (!res.losers || res.losers.length === 0) {
+                lTable.append(`<tr><td colspan="4" class="text-center text-muted">No Losers</td></tr>`);
+            } else {
+                res.losers.forEach((l, i) => {
+                    lTable.append(`
+                <tr>
+                    <td>${i + 1}</td>
+                    <td>${l.name}</td>
+                    <td class="text-danger">₹${l.amount}</td>
+                    <td>${l.game_type} (${l.session})</td>
+                </tr>
+            `);
+                });
+            }
+        }
+    </script>
 
     <script>
         $('#showWinner').on('click', function() {
             console.log(resultId);
-        // check if openpanna is empty and 
+            // check if openpanna is empty and 
             if (!resultId) {
                 Swal.fire('No Result', 'Please save result first', 'warning');
                 return;
@@ -533,7 +627,7 @@ function renderWinners(res) {
                 type: 'GET',
                 success: function(res) {
                     Swal.close();
-                    renderWinners(res);
+                    renderResult(res);
                     $('#winnerModal').modal('show');
                 },
                 error: function() {

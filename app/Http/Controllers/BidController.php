@@ -9,6 +9,7 @@ use App\Services\AnkCalculator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class BidController extends Controller
 {
@@ -169,6 +170,9 @@ class BidController extends Controller
                     throw new \Exception('Unsupported game type');
                 }
 
+                // crate bid txn id 
+                $bidTxnId = Str::uuid()->toString();
+
                 $newBid = Bid::create([
                     'user_id' => $user->id,
                     'market_id' => $request->market_id,
@@ -181,6 +185,7 @@ class BidController extends Controller
                     'session' => $bid['session'],
                     'draw_date' => $request->date,
                     'status' => 'pending',
+                    'txn_id' => $bidTxnId,
                 ]);
 
                 $walletTx = WalletTransactions::create([
@@ -198,6 +203,9 @@ class BidController extends Controller
 
                 // ✅ Decrease wallet balance step-by-step
                 $user->wallet->decrement('balance', $bid['points']);
+                // Freeze the amount
+                $user->wallet->increment('frozen_balance', $bid['points']);
+                
             }
 
         });

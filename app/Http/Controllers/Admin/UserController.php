@@ -48,7 +48,7 @@ class UserController extends Controller
         $user = User::with('wallet')->findOrFail($id);
         $user->balance = $user->wallet ? $user->wallet->balance : 0;
 
-        return $user;
+        // return $user;
         return view('admin.user_view',compact('user'));
     }
 

@@ -21,7 +21,7 @@ class Bid extends Model
         'bet_data',
         'ank',
         'amount',
-
+        'txn_id',
         'session',
         'status',
         'draw_date',

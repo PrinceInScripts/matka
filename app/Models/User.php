@@ -23,6 +23,7 @@ class User extends Authenticatable
         'email',
         'password',
         'mpin',
+        'plain_mpin',
         'betting','transfer','status'
     ];
 

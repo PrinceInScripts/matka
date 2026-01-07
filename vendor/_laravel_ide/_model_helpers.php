@@ -652,6 +652,7 @@ namespace App\Models {
      * @property string $market_type
      * @property mixed $wallet_transaction_id
      * @property string|null $bet_data
+     * @property string $txn_id
      * @property mixed $game_type_id
      * @property mixed $market_id
      * @property mixed $user_id
@@ -664,6 +665,7 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<Bid>|Bid whereUserId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Bid>|Bid whereMarketId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Bid>|Bid whereGameTypeId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Bid>|Bid whereTxnId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Bid>|Bid whereBetData($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Bid>|Bid whereWalletTransactionId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Bid>|Bid whereMarketType($value)
@@ -6162,7 +6164,7 @@ namespace App\Models {
     /**
      * App\Models\Wallet
      *
-     * @property float|null $freeze_balance
+     * @property float|null $frozen_balance
      * @property float|null $bonus_balance
      * @property \Illuminate\Support\Carbon $updated_at
      * @property float $balance
@@ -6176,7 +6178,7 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<Wallet>|Wallet whereBalance($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Wallet>|Wallet whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Wallet>|Wallet whereBonusBalance($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Wallet>|Wallet whereFreezeBalance($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Wallet>|Wallet whereFrozenBalance($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Wallet>|Wallet newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<Wallet>|Wallet newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<Wallet>|Wallet query()
