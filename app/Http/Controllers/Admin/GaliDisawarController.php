@@ -3,31 +3,32 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\GameList;
+use App\Models\GaliDisawarBid;
+use App\Models\GaliDisawarGame;
+use App\Models\GaliDisawarGameRate;
+use App\Models\GaliDisawarSchedule;
 use App\Models\GameType;
-use App\Models\StarlineBidHistory;
-use App\Models\StarlineName;
-use App\Models\StarlineRate;
-use App\Models\StarlineSchedule;
+use Illuminate\Auth\Access\Gate;
 use Illuminate\Http\Request;
+
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 use function PHPSTORM_META\map;
 
-class StarlineController extends Controller
+class GaliDisawarController extends Controller
 {
     public function game_name()
     {
           $today = strtolower(now()->format('D')); // mon, tue, wed...
 
        
-        $schedules = DB::table('starline_schedule')
+        $schedules = DB::table('gali_disawar_schedule')
         ->where('weekday', $today)
         ->get()
-        ->keyBy('starline_id');
+        ->keyBy('gali_id');
 
-    $markets = StarlineName::where('game_status', 1)->get()->map(function ($market) use ($schedules) {
+    $markets = GaliDisawarGame::where('game_status', 1)->get()->map(function ($market) use ($schedules) {
 
         $schedule = $schedules->get($market->id);
 
@@ -81,7 +82,7 @@ class StarlineController extends Controller
 
 
     // return $markets;    
-        return view('admin.starline.game_name', compact('markets'));
+        return view('admin.gali_disawar.game_name', compact('markets'));
     }
 
      public function store(Request $request)
@@ -94,26 +95,16 @@ class StarlineController extends Controller
         'market_status' => 'required|boolean',
     ]);
 
-    $game = StarlineName::create([
+    $game = GaliDisawarGame::create([
         'name'          => $request->name,
         'slug'          => Str::slug($request->name),
         'game_status'   => $request->game_status,
         'market_status' => $request->market_status,
     ]);
 
-    foreach ([1,5,7,9] as $gameTypeId) {
-        DB::table('starline_gametypes')->insert([
-            'starline_id'   => $game->id,
-            'game_type_id'  => $gameTypeId,
-            'is_active'     => 1,
-            'created_at'    => now(),
-            'updated_at'    => now(),
-        ]);
-    }
-
     foreach (['mon','tue','wed','thu','fri','sat','sun'] as $day) {
-        DB::table('starline_schedule')->insert([
-            'starline_id' => $game->id,
+        DB::table('gali_disawar_schedule')->insert([
+            'gali_id' => $game->id,
             'weekday'     => $day,
             'is_open'     => 1,
             'open_time'   => $request->open_time,
@@ -125,13 +116,13 @@ class StarlineController extends Controller
 
     return response()->json([
         'status' => 'success',
-        'message' => 'Starline game added successfully',
+        'message' => 'Gali Disawar game added successfully',
     ]);
     }
 
     public function update(Request $request, $id)
     {
-         $market = StarlineName::findOrFail($id);
+         $market = GaliDisawarGame::findOrFail($id);
 
     $request->validate([
         'name'          => 'required|string|max:255',
@@ -150,8 +141,8 @@ class StarlineController extends Controller
     ]);
 
     // 2️⃣ Update timing for ALL weekdays
-    DB::table('starline_schedule')
-        ->where('starline_id', $market->id)
+    DB::table('gali_disawar_schedule')
+        ->where('gali_id', $market->id)
         ->update([
             'open_time'  => $request->open_time,
             'close_time' => $request->close_time,
@@ -160,7 +151,7 @@ class StarlineController extends Controller
 
     return response()->json([
         'status'  => 'success',
-        'message' => 'Starline game updated successfully',
+        'message' => 'Gali Disawar game updated successfully',
     ]);
     }
 
@@ -168,15 +159,15 @@ class StarlineController extends Controller
 {
     $days = ['mon','tue','wed','thu','fri','sat','sun'];
 
-    $schedule = StarlineSchedule::where('starline_id', $id)
+    $schedule = GaliDisawarSchedule::where('gali_id', $id)
         ->orderByRaw("FIELD(weekday, 'mon','tue','wed','thu','fri','sat','sun')")
         ->get();
 
     // safety: ensure all 7 days exist
     if ($schedule->count() < 7) {
         foreach ($days as $day) {
-            StarlineSchedule::firstOrCreate([
-                'starline_id' => $id,
+            GaliDisawarSchedule::firstOrCreate([
+                'gali_id' => $id,
                 'weekday'     => $day,
             ], [
                 'is_open'    => 1,
@@ -185,7 +176,7 @@ class StarlineController extends Controller
             ]);
         }
 
-        $schedule = StarlineSchedule::where('starline_id', $id)->get();
+        $schedule = GaliDisawarSchedule::where('gali_id', $id)->get();
     }
 
     return response()->json($schedule);
@@ -197,7 +188,7 @@ public function updateSchedule(Request $request, $id)
 {
     foreach ($request->weekday as $index => $day) {
 
-        StarlineSchedule::where('starline_id', $id)
+        GaliDisawarSchedule::where('gali_id', $id)
             ->where('weekday', $day)
             ->update([
                 'is_open'    => isset($request->is_open[$index]) ? 1 : 0,
@@ -216,9 +207,9 @@ public function updateSchedule(Request $request, $id)
 
     public function rates()
     {
-    $rates = StarlineRate::all()->keyBy('game_type');
+    $rates = GaliDisawarGameRate::all()->keyBy('game_type');
         // return $rates;
-        return view('admin.starline.rates', compact('rates'));
+        return view('admin.gali_disawar.rates', compact('rates'));
     }
 
    
@@ -230,7 +221,7 @@ public function updateSchedule(Request $request, $id)
     ]);
 
     foreach ($request->rates as $gameType => $payout) {
-        StarlineRate::where('game_type', $gameType)
+        GaliDisawarGameRate::where('game_type', $gameType)
             ->update([
                 'payout_rate' => $payout,
                 'status' => true,
@@ -239,16 +230,16 @@ public function updateSchedule(Request $request, $id)
 
     return response()->json([
         'status'  => 'success',
-        'message' => 'Starline Rates updated successfully',
+        'message' => 'Gali Disawar Rates updated successfully',
     ]);
 }
 
 
     public function bid_history()
     {
-         $userBids=StarlineBidHistory::with('user','starline')->orderBy('created_at','desc')->get();
+         $userBids=GaliDisawarBid::with('user','galiDisawar')->orderBy('created_at','desc')->get();
 
-        $games = StarlineName::where('game_status', 1)
+        $games = GaliDisawarGame::where('game_status', 1)
     ->with(['todaySchedule'])
     ->whereHas('todaySchedule')
     ->get();
@@ -256,19 +247,19 @@ public function updateSchedule(Request $request, $id)
 
        $gameType=GameType::all();
 
-        return view('admin.starline.bid_history', compact('userBids', 'games', 'gameType'));
+        return view('admin.gali_disawar.bid_history', compact('userBids', 'games', 'gameType'));
     }
 
     public function filter_bid_history(Request $request)
 {
-    $query = StarlineBidHistory::with(['user', 'starline', 'gameType']);
+    $query = GaliDisawarBid::with(['user', 'galiDisawar', 'gameType']);
 
     if ($request->date) {
         $query->whereDate('created_at', $request->date);
     }
 
     if ($request->game_id) {
-        $query->where('starline_id', $request->game_id);
+        $query->where('gali_id', $request->game_id);
     }
 
     if ($request->game_type_id) {
@@ -286,27 +277,27 @@ public function updateSchedule(Request $request, $id)
 
     public function declare_result()
     {
-        return view('admin.starline.declare_result');
+        return view('admin.gali_disawar.declare_result');
     }
 
     public function result_history()
     {
-        return view('admin.starline.result_history');
+        return view('admin.gali_disawar.result_history');
     }
 
 
     public function sell_report()
     {
-        return view('admin.starline.sell_report');
+        return view('admin.gali_disawar.sell_report');
     }
 
     public function winning_report()
     {
-        return view('admin.starline.winning_report');
+        return view('admin.gali_disawar.winning_report');
     }
 
     public function winning_prediction()
     {
-        return view('admin.starline.winning_prediction');
+        return view('admin.gali_disawar.winning_prediction');
     }
 }

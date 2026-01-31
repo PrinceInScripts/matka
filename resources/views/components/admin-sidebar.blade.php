@@ -400,6 +400,78 @@
                         </li>
                     </ul>
                 </li>
+                @php
+                    $galiDisawarRoutes = [
+                        'admin.gali-disawar.game_name',
+                        'admin.gali-disawar.rates',
+                        'admin.gali-disawar.bid_history',
+                        'admin.gali-disawar.declare_result',
+                        'admin.gali-disawar.result_history',
+                        'admin.gali-disawar.sell_report',
+                        'admin.gali-disawar.winning_report',
+                        'admin.gali-disawar.winning_prediction',
+                    ];
+                @endphp
+
+                <li class="nav-item" {{ request()->routeIs($galiDisawarRoutes) ? 'menu-is-opening menu-open' : '' }}>
+                    <a href="{{ route('admin.gali_disawar.game_name') }}" class="nav-link {{ request()->routeIs('admin.gali-disawar.game_name') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-star"></i>
+                        <p>
+                            Gali Disawar Management
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('admin.gali_disawar.game_name') }}" class="nav-link {{ request()->routeIs('admin.gali-disawar.game_name') ? 'active' : '' }}">
+                                <i class="fas fa-list nav-icon"></i>
+                                <p>Game Name</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.gali_disawar.rates') }}" class="nav-link {{ request()->routeIs('admin.gali-disawar.rates') ? 'active' : '' }}">
+                                <i class="fas fa-rupee-sign nav-icon"></i>
+                                <p>Game Rates</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.gali_disawar.bid_history') }}" class="nav-link {{ request()->routeIs('admin.gali-disawar.bid_history') ? 'active' : '' }}">
+                                <i class="fas fa-history nav-icon"></i>
+                                <p>Bid History</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.gali_disawar.declare_result') }}" class="nav-link {{ request()->routeIs('admin.gali-disawar.declare_result') ? 'active' : '' }}">
+                                <i class="fas fa-check nav-icon"></i>
+                                <p>Declare Result</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.gali_disawar.result_history') }}" class="nav-link {{ request()->routeIs('admin.gali-disawar.result_history') ? 'active' : '' }}">
+                                <i class="fas fa-clock nav-icon"></i>
+                                <p>Result History</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.gali_disawar.sell_report') }}" class="nav-link {{ request()->routeIs('admin.gali-disawar.sell_report') ? 'active' : '' }}">
+                                <i class="fas fa-chart-bar nav-icon"></i>
+                                <p>Gali Disawar Sell Report</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.gali_disawar.winning_report') }}" class="nav-link {{ request()->routeIs('admin.gali-disawar.winning_report') ? 'active' : '' }}">
+                                <i class="fas fa-trophy nav-icon"></i>
+                                <p>Gali Disawar Winning Report</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.gali_disawar.winning_prediction') }}" class="nav-link {{ request()->routeIs('admin.gali-disawar.winning_prediction') ? 'active' : '' }}">
+                                <i class="fas fa-lightbulb nav-icon"></i>
+                                <p>Gali Disawar Winning Prediction</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
 
 
                 <li class="nav-header">Others</li>

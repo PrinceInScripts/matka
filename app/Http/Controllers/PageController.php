@@ -245,7 +245,7 @@ class PageController extends Controller
     public function test1() {
 
         $gameTypeIds=[1,5,7,9];
-        for($i=1; $i<=15; $i++){
+        for($i=1; $i<=12; $i++){
             foreach($gameTypeIds as $gtid){
                 StarlineGameType::updateOrCreate(
                     [

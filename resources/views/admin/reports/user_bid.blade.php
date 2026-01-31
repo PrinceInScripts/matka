@@ -17,6 +17,8 @@
     <link rel="stylesheet" href="../../plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="../../dist/css/adminlte.min.css">
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
     {{-- font awesome  --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         integrity="sha512-iecdLmaskl7CVkqkXNQ/Z1srTF+W+o8+T2Vq+0+z7N0zJwQXG6nTpGO5c5XbYl5fX5Yx5D5V5y5d5D5D5D5D5D5A=="
@@ -44,6 +46,34 @@
         .bid-history-card .btn {
             height: 44px;
         }
+
+           .select2-container--bootstrap4 .select2-selection--single {
+    height: calc(2.25rem + 2px);
+    line-height: 1.5;
+    padding: .375rem .75rem;
+    border: 1px solid #000;
+}
+
+.select2-container--bootstrap4 .select2-selection--single .select2-selection__arrow {
+    height: 100%;
+    position: absolute;
+    top: 0;
+    right: 0.75rem;
+    width: 20px;
+}
+
+.select2-container--bootstrap4 .select2-selection__arrow b {
+    border-color: #495057 transparent transparent transparent;
+    border-style: solid;
+    border-width: 5px 4px 0 4px;
+    height: 0;
+    left: 50%;
+    margin-left: -4px;
+    margin-top: -2px;
+    position: absolute;
+    top: 50%;
+    width: 0;
+}
     </style>
 </head>
 
@@ -89,31 +119,46 @@
 
                                     <div class="row align-items-end g-3">
 
+
                                         <!-- Date -->
                                         <div class="col-lg-3 col-md-6 col-12">
                                             <label class="form-label">Date</label>
-                                            <input type="date" class="form-control" value="2025-12-25">
+                                            <input type="date" id="filter_date" class="form-control"
+                                                value="{{ date('Y-m-d') }}">
                                         </div>
 
                                         <!-- Game Name -->
                                         <div class="col-lg-4 col-md-6 col-12">
                                             <label class="form-label">Game Name</label>
-                                            <select class="form-select">
-                                                <option selected disabled>- Select Game Name -</option>
+                                            <select id="filter_game" class="form-control select2">
+                                                <option value="">Select Game</option>
+                                                @foreach ($games as $game)
+                                                    <option value="{{ $game->id }}">
+                                                        {{ $game->name }}
+                                                        @if ($game->todaySchedule && $game->todaySchedule->open_time && $game->todaySchedule->close_time)
+                                                            ({{ \Carbon\Carbon::parse($game->todaySchedule->open_time)->format('h:i A') }}
+                                                            -
+                                                            {{ \Carbon\Carbon::parse($game->todaySchedule->close_time)->format('h:i A') }})
+                                                        @endif
+                                                    </option>
+                                                @endforeach
                                             </select>
                                         </div>
 
                                         <!-- Game Type -->
                                         <div class="col-lg-3 col-md-6 col-12">
                                             <label class="form-label">Game Type</label>
-                                            <select class="form-select">
-                                                <option selected disabled>- Select Game Type -</option>
+                                            <select id="filter_game_type" class="form-control select2">
+                                                <option value="">Select Game</option>
+                                                @foreach ($gameType as $type)
+                                                    <option value="{{ $type->id }}">{{ $type->name }}</option>
+                                                @endforeach
                                             </select>
                                         </div>
 
                                         <!-- Submit Button -->
                                         <div class="col-lg-2 col-md-6 col-12">
-                                            <button class="btn btn-primary w-100">
+                                            <button id="filterBtn" class="btn btn-primary w-100">
                                                 Submit
                                             </button>
                                         </div>
@@ -136,29 +181,24 @@
                                 </div>
                                 <!-- /.card-header -->
                                 <div class="card-body">
-                                    <table id="example1" class="table table-bordered table-striped">
+                                    <table id="bidTable" class="table table-bordered table-striped">
                                         <thead>
                                             <tr>
                                                 <th>#</th>
-                                                <th>Name</th>
-                                                <th>Phone</th>
-                                                <th>Email</th>
+                                                <th>User</th>
+                                                <th>Game</th>
+                                                <th>Type</th>
+                                                <th>Session</th>
+                                                <th>Digits</th>
+                                                <th>Points</th>
                                                 <th>Date</th>
-                                                <th>Balance</th>
-                                                <th>Betting</th>
-                                                <th>Transfer</th>
-                                                <th>Active</th>
-                                                <th>View</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
-                                            <tr>
-
-                                            </tr>
-
+                                        <tbody id="bidTableBody">
+                                            <!-- rows injected here -->
                                         </tbody>
-
                                     </table>
+
                                 </div>
                                 <!-- /.card-body -->
                             </div>
@@ -213,16 +253,49 @@
     <!-- Page specific script -->
     {{-- font awesome script --}}
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    {{-- ajax --}}
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+$(document).ready(function () {
+
+    $('.select2').select2({
+    theme: 'bootstrap4',
+    width: '100%',
+    placeholder: 'Select option',
+    allowClear: false,
+    minimumResultsForSearch: 0
+});
+
+
+});
+
+$(document).on('shown.bs.modal', function () {
+    $('.select2').select2({
+        theme: 'bootstrap4',
+        width: '100%',
+        dropdownParent: $('.modal:visible')
+    });
+});
+
+</script>
+
+
 
 
     <script>
         $(function() {
-            $("#example1").DataTable({
+            $("#bidTable").DataTable({
                 "responsive": true,
                 "lengthChange": false,
                 "autoWidth": false,
                 "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+            }).buttons().container().appendTo('#bidTable_wrapper .col-md-6:eq(0)');
             $('#example2').DataTable({
                 "paging": true,
                 "lengthChange": false,
@@ -234,6 +307,91 @@
             });
         });
     </script>
+
+   <script>
+$(document).ready(function () {
+
+    $('#filterBtn').on('click', function () {
+
+        let date = $('#filter_date').val();
+        let game = $('#filter_game').val();
+        let type = $('#filter_game_type').val();
+
+        $.ajax({
+            url: "{{ route('admin.reports.user_bid_history.filter') }}",
+            type: "POST",
+            data: {
+                _token: "{{ csrf_token() }}",
+                date: date,
+                game_id: game,
+                game_type_id: type
+            },
+            beforeSend: function () {
+                Swal.fire({
+                    title: 'Loading...',
+                    text: 'Fetching bid history',
+                    allowOutsideClick: false,
+                    didOpen: () => Swal.showLoading()
+                });
+            },
+            success: function (res) {
+                Swal.close();
+
+                const tbody = $('#bidTableBody');
+                tbody.empty();
+
+                if (!res.status || res.data.length === 0) {
+                    tbody.append(`
+                        <tr>
+                            <td colspan="8" class="text-center text-muted">
+                                No data found
+                            </td>
+                        </tr>
+                    `);
+
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'No Records',
+                        text: 'No bid history found'
+                    });
+                    return;
+                }
+
+                res.data.forEach((item, index) => {
+                    tbody.append(`
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${item.user?.name ?? 'N/A'}</td>
+                            <td>${item.market?.name ?? 'N/A'}</td>
+                            <td>${item.game_type?.name ?? 'N/A'}</td>
+                            <td>${item.session ?? '-'}</td>
+                            <td>${item.number ?? '-'}</td>
+                            <td>₹ ${parseFloat(item.amount).toFixed(2)}</td>
+                            <td>${new Date(item.created_at).toLocaleString()}</td>
+                        </tr>
+                    `);
+                });
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Done',
+                    text: res.data.length + ' records found'
+                });
+            },
+            error: function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Something went wrong'
+                });
+            }
+        });
+    });
+
+});
+</script>
+
+
 </body>
 
 </html>

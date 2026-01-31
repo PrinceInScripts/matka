@@ -11,14 +11,25 @@ class StarlineBidHistory extends Model
     protected $fillable = [
         'user_id',
         'starline_id',
-        'game_type',
+        'game_type_id',
+        'txn_id',
+         'bet_data',
+         'wallet_transaction_id',
         'bet_value',
         'amount',
+        'session',
+        'status',
+        'draw_date',
         'bid_date',
+        'winning_amount',
+        'result_id',
+
     ];
 
     protected $casts = [
-        'amount'   => 'decimal:2',
+        'amount' => 'decimal:2',
+        'winning_amount' => 'decimal:2',
+        'draw_date' => 'date',
         'bid_date' => 'date',
     ];
 
@@ -32,4 +43,16 @@ class StarlineBidHistory extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function gameType()
+    {
+        return $this->belongsTo(GameType::class, 'game_type_id');
+    }
+
+    public function walletTransaction()
+    {
+        return $this->belongsTo(WalletTransactions::class, 'wallet_transaction_id');
+    }
+
+    
 }

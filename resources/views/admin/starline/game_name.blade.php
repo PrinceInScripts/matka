@@ -148,12 +148,18 @@
                                                         </span>
                                                     </td>
 
-                                                    <td>
+                                                    {{-- <td>
                                                         <span
                                                             class="badge badge-{{ $isLive ? 'success' : 'secondary' }}">
                                                             {{ $isLive ? 'Live Now' : 'Closed Now' }}
                                                         </span>
-                                                    </td>
+                                                    </td> --}}
+                                                    <td>
+    <span class="badge badge-{{ $market->status_color }}">
+        {{ $market->status_text }}
+    </span>
+</td>
+
 
                                                     <td>
                                                         <button

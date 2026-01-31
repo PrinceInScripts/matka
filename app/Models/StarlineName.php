@@ -82,5 +82,11 @@ public function gameTypes()
                     ->withTimestamps();
     }
 
+       public function todaySchedule()
+{
+    return $this->hasOne(StarlineSchedule::class, 'starline_id')
+        ->where('weekday', now()->format('D'));
+}
+
     
 }

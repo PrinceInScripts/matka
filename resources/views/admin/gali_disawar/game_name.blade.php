@@ -17,12 +17,11 @@
     <link rel="stylesheet" href="../../plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="../../dist/css/adminlte.min.css">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-
     {{-- font awesome  --}}
-    {{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         integrity="sha512-iecdLmaskl7CVkqkXNQ/Z1srTF+W+o8+T2Vq+0+z7N0zJwQXG6nTpGO5c5XbYl5fX5Yx5D5V5y5d5D5D5D5D5D5A=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" /> --}}
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
     <style>
         .right-panel {
             position: fixed;
@@ -48,13 +47,13 @@
             font-size: 24px;
         }
     </style>
-
 </head>
 
 <body class="hold-transition sidebar-mini">
     <div class="wrapper">
         <!-- Navbar -->
         <x-admin-navbar />
+        <!-- /.navbar -->
 
         <x-admin-sidebar />
 
@@ -65,12 +64,12 @@
                 <div class="container-fluid">
                     <div class="row mb-2">
                         <div class="col-sm-6">
-                            <h1>Gamelists</h1>
+                            <h1>Gali Disawar game name </h1>
                         </div>
                         <div class="col-sm-6">
                             <ol class="breadcrumb float-sm-right">
                                 <li class="breadcrumb-item"><a href="#">Home</a></li>
-                                <li class="breadcrumb-item active">Gamelists</li>
+                                <li class="breadcrumb-item active">Gali Disawar game name</li>
                             </ol>
                         </div>
                     </div>
@@ -86,7 +85,7 @@
 
                             <div class="card">
                                 <div class="card-header d-flex justify-content-between">
-                                    <h3 class="card-title">Game Name List</h3>
+                                    <h3 class="card-title">Gali Disawar Game Name List</h3>
                                     <button class="btn btn-primary" onclick="openAddGame()">Add Game</button>
 
 
@@ -103,11 +102,27 @@
                                                 <th>Game Active</th>
                                                 <th>Admin Status</th>
                                                 <th>Live Status</th>
+
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @foreach ($markets as $market)
+                                                @php
+                                                    // Slot times (from accessor or DB)
+                                                    $slotTime =
+                                                        $market->open_time_format . ' - ' . $market->close_time_format;
+
+                                                    // Admin status
+                                                    $adminOpen = $market->market_status == 1;
+
+                                                    // Game enabled
+                                                    $gameActive = $market->game_status == 1;
+
+                                                    // Live status (time based)
+                                                    $isLive = $market->is_open_now; // accessor (recommended)
+                                                @endphp
+
                                                 <tr>
                                                     <td>{{ $loop->iteration }}</td>
 
@@ -115,32 +130,30 @@
 
                                                     <td>
                                                         <span class="badge badge-info">
-                                                            {{ $market->open_time_format }} -
-                                                            {{ $market->close_time_format }}
+                                                            {{ $slotTime }}
                                                         </span>
                                                     </td>
 
                                                     <td>
                                                         <span
-                                                            class="badge badge-{{ $market->game_status ? 'success' : 'danger' }}">
-                                                            {{ $market->game_status ? 'Enabled' : 'Disabled' }}
+                                                            class="badge badge-{{ $gameActive ? 'success' : 'danger' }}">
+                                                            {{ $gameActive ? 'Enabled' : 'Disabled' }}
                                                         </span>
                                                     </td>
 
                                                     <td>
                                                         <span
-                                                            class="badge badge-{{ $market->market_status ? 'success' : 'danger' }}">
-                                                            {{ $market->market_status ? 'Open' : 'Closed' }}
+                                                            class="badge badge-{{ $adminOpen ? 'success' : 'danger' }}">
+                                                            {{ $adminOpen ? 'Open' : 'Closed' }}
                                                         </span>
                                                     </td>
 
                                                     {{-- <td>
                                                         <span
-                                                            class="badge badge-{{ $market->is_live ? 'success' : 'secondary' }}">
-                                                            {{ $market->is_live ? 'Live Now' : 'Closed Now' }}
+                                                            class="badge badge-{{ $isLive ? 'success' : 'secondary' }}">
+                                                            {{ $isLive ? 'Live Now' : 'Closed Now' }}
                                                         </span>
                                                     </td> --}}
-
                                                     <td>
     <span class="badge badge-{{ $market->status_color }}">
         {{ $market->status_text }}
@@ -151,27 +164,22 @@
                                                     <td>
                                                         <button
                                                             onclick="openEditGame(
-    {{ $market->id }},
-    '{{ $market->name }}',
-    '{{ $market->today_open_time }}',
-    '{{ $market->today_close_time }}',
-    {{ $market->game_status }},
-    {{ $market->market_status }}
-  )"
+                                                              {{ $market->id }},
+                                                              '{{ $market->name }}',
+                                                              '{{ $market->today_open_time }}',
+                                                              '{{ $market->today_close_time }}',
+                                                              {{ $market->game_status }},
+                                                              {{ $market->market_status }}
+                                                            )"
                                                             class="btn btn-info btn-sm">
                                                             Edit
                                                         </button>
 
-
                                                         <button onclick="openSchedule({{ $market->id }})"
                                                             class="btn btn-warning btn-sm">
-                                                            Market Off Day
+                                                            Edit Schedule
                                                         </button>
 
-                                                        <button class="btn btn-warning btn-sm"
-                                                            onclick="openGameTypes({{ $market->id }})">
-                                                            Game Types
-                                                        </button>
 
                                                     </td>
                                                 </tr>
@@ -184,7 +192,7 @@
 
                             <div id="addGamePanel" class="right-panel">
                                 <span class="close-panel" onclick="closePanels()">&times;</span>
-                                <h4>Add Game</h4>
+                                <h4>Add Starline Game</h4>
 
                                 <form id="gameForm">
                                     @csrf
@@ -202,6 +210,7 @@
                                             <input type="time" class="form-control" name="close_time" required>
                                         </div>
                                     </div>
+
                                     <div class="row mt-3">
                                         <div class="col-md-6">
                                             <label>Game Active</label>
@@ -220,19 +229,17 @@
                                         </div>
                                     </div>
 
-
-
-                                    <button class="btn btn-primary btn-block mt-3">Submit</button>
+                                    <button class="btn btn-primary btn-block mt-4">Submit</button>
                                 </form>
                             </div>
 
+
                             <div id="editGamePanel" class="right-panel">
                                 <span class="close-panel" onclick="closePanels()">&times;</span>
-                                <h4>Update Game</h4>
+                                <h4>Update Starline Game</h4>
 
                                 <form id="updateGame">
                                     @csrf
-
                                     <input type="hidden" id="edit_game_id" name="id">
 
                                     <label>Game Name</label>
@@ -240,13 +247,13 @@
 
                                     <div class="row mt-3">
                                         <div class="col-md-6">
-                                            <label>Open Time (All Days)</label>
+                                            <label>Open Time</label>
                                             <input id="edit_open_time" type="time" class="form-control"
                                                 name="open_time" required>
                                         </div>
 
                                         <div class="col-md-6">
-                                            <label>Close Time (All Days)</label>
+                                            <label>Close Time</label>
                                             <input id="edit_close_time" type="time" class="form-control"
                                                 name="close_time" required>
                                         </div>
@@ -254,7 +261,7 @@
 
                                     <div class="row mt-3">
                                         <div class="col-md-6">
-                                            <label>Game Status</label>
+                                            <label>Game Active</label>
                                             <select id="edit_game_status" class="form-control" name="game_status">
                                                 <option value="1">Active</option>
                                                 <option value="0">Inactive</option>
@@ -262,11 +269,11 @@
                                         </div>
 
                                         <div class="col-md-6">
-                                            <label>Admin Force (Market Status)</label>
+                                            <label>Market Status</label>
                                             <select id="edit_market_status" class="form-control"
                                                 name="market_status">
                                                 <option value="1">Open</option>
-                                                <option value="0">Force Closed</option>
+                                                <option value="0">Closed</option>
                                             </select>
                                         </div>
                                     </div>
@@ -275,51 +282,17 @@
                                 </form>
                             </div>
 
-
-
-
                             <div id="schedulePanel" class="right-panel">
                                 <span class="close-panel" onclick="closePanels()">&times;</span>
                                 <h4>Market Off Day</h4>
 
-                                <form id="scheduleForm" method="POST">
+                                <form id="scheduleForm">
                                     @csrf
-                                    <input type="hidden" name="market_id" id="schedule_market_id">
-
-                                    {{-- @foreach ($weekSchedules as $row)
-                                        <div class="my-2">
-                                            <input type="checkbox" name="is_open[{{ $loop->index }}]"
-                                                {{ $row->is_open ? 'checked' : '' }}>
-                                            {{ ucfirst($row->weekday) }}
-
-                                            <input type="time" class="form-control mt-1"
-                                                name="open_time[{{ $loop->index }}]" value="{{ $row->open_time }}">
-                                            <input type="time" class="form-control mt-1"
-                                                name="close_time[{{ $loop->index }}]"
-                                                value="{{ $row->close_time }}">
-                                            <input type="hidden" name="weekday[{{ $loop->index }}]"
-                                                value="{{ $row->weekday }}">
-                                        </div>
-                                    @endforeach --}}
+                                    <div id="scheduleContent"></div>
 
                                     <button class="btn btn-primary btn-block mt-3">Save</button>
                                 </form>
                             </div>
-
-                            <div id="gameTypesPanel" class="right-panel">
-                                <span class="close-panel" onclick="closePanels()">&times;</span>
-                                <h4>Edit Game Types</h4>
-
-                                <form id="gameTypesForm" method="POST">
-                                    @csrf
-                                    <input type="hidden" name="market_id" id="gameTypes_market_id">
-
-                                    <div id="gameTypesContent"></div>
-
-                                    <button class="btn btn-primary btn-block mt-3">Save</button>
-                                </form>
-                            </div>
-
 
 
 
@@ -372,6 +345,11 @@
     <script src="../../dist/js/adminlte.min.js"></script>
     <!-- AdminLTE for demo purposes -->
     <script src="../../dist/js/demo.js"></script>
+    <!-- Page specific script -->
+    {{-- font awesome script --}}
+
+
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
 
@@ -390,6 +368,8 @@
 
         function openEditGame(id, name, openTime, closeTime, gameStatus, marketStatus) {
             closePanels();
+            console.log(openTime);
+            console.log(closeTime);
 
             $('#edit_game_id').val(id);
             $('#edit_name').val(name);
@@ -401,77 +381,40 @@
             $('#editGamePanel').addClass('active');
         }
 
-
-
-        //        function openSchedule(id) {
-        //     document.getElementById('scheduleForm').action = "/admin/games/schedule/" + id;
-        //     document.getElementById('schedulePanel').classList.add('active');
-        // }
-
         function openSchedule(id) {
             closePanels();
 
-            $.get('/admin/games/get-schedule/' + id, function(data) {
+            $.get('/admin/gali-disawar/' + id + '/schedule', function(data) {
 
                 let html = '';
 
                 data.forEach((row, i) => {
                     html += `
-                <div class="my-2">
-                    <input type="checkbox" name="is_open[${i}]" ${row.is_open ? 'checked' : ''}>
-                    ${row.weekday.toUpperCase()}
+                <div class="mb-3">
+                    <label>
+                        <input type="checkbox" name="is_open[${i}]" ${row.is_open ? 'checked' : ''}>
+                        ${row.weekday.toUpperCase()}
+                    </label>
 
                     <input type="time" class="form-control mt-1"
-                           name="open_time[${i}]" value="${row.open_time ?? ''}">
+                        name="open_time[${i}]"
+                        value="${row.open_time ?? ''}">
+
                     <input type="time" class="form-control mt-1"
-                           name="close_time[${i}]" value="${row.close_time ?? ''}">
+                        name="close_time[${i}]"
+                        value="${row.close_time ?? ''}">
 
                     <input type="hidden" name="weekday[${i}]" value="${row.weekday}">
                 </div>
             `;
                 });
 
-                $('#scheduleForm')
-                    .attr('action', '/admin/games/schedule/' + id)
-                    .html(`
-                @csrf
-                <input type="hidden" name="market_id" value="${id}">
-                ${html}
-                <button class="btn btn-primary btn-block mt-3">Save</button>
-            `);
+                $('#scheduleContent').html(html);
+                $('#scheduleForm').attr('action', '/admin/gali-disawar/' + id + '/schedule');
 
                 $('#schedulePanel').addClass('active');
             });
         }
-
-
-        function openGameTypes(marketId) {
-    closePanels();
-
-    $.get('/admin/games/game-types/' + marketId, function(res) {
-
-        let html = '';
-
-        res.types.forEach(t => {
-            html += `
-                <div class="d-flex align-items-center mb-2">
-                    <input type="checkbox"
-                           name="game_types[]"
-                           value="${t.id}"
-                           ${t.is_active == 1 ? 'checked' : ''}>
-                    <span class="ml-2">${t.name}</span>
-                </div>
-            `;
-        });
-
-        $('#gameTypes_market_id').val(marketId);
-        $('#gameTypesForm').attr('action', '/admin/games/game-types/' + marketId);
-        $('#gameTypesContent').html(html);
-
-        $('#gameTypesPanel').addClass('active');
-    });
-}
-
     </script>
 
 
@@ -502,7 +445,7 @@
             e.preventDefault();
 
             $.ajax({
-                url: "{{ route('admin.games.store') }}",
+                url: "/admin/gali-disawar/store",
                 type: "POST",
                 data: $(this).serialize(),
                 success: function(data) {
@@ -554,7 +497,7 @@
             let id = $('#edit_game_id').val();
 
             $.ajax({
-                url: "/admin/games/" + id + "/update-names",
+                url: "/admin/gali-disawar/" + id + "/update",
                 type: "POST",
                 data: $(this).serialize(),
 
@@ -595,62 +538,11 @@
         $('#scheduleForm').on('submit', function(e) {
             e.preventDefault();
 
-            let url = $(this).attr('action'); // /admin/games/schedule/{id}
-
-            $.ajax({
-                url: url,
-                type: "POST",
-                data: $(this).serialize(),
-
-                success: function(res) {
-                    if (res.status === "success") {
-
-                        Swal.fire({
-                            icon: "success",
-                            title: "Updated",
-                            text: res.message,
-                            timer: 1300,
-                            showConfirmButton: false
-                        });
-
-                        setTimeout(() => {
-                            location.reload();
-                        }, 1300);
-
-                    } else {
-
-                        Swal.fire({
-                            icon: "error",
-                            title: "Error",
-                            text: res.message
-                        });
-                    }
-                },
-
-                error: function(xhr) {
-                    let msg = "Something went wrong!";
-
-                    if (xhr.responseJSON && xhr.responseJSON.message) {
-                        msg = xhr.responseJSON.message;
-                    }
-
-                    Swal.fire({
-                        icon: "error",
-                        title: "Error",
-                        text: msg
-                    });
-                }
-            });
-        });
-
-        $(document).on('submit', '#gameTypesForm', function(e) {
-            e.preventDefault();
-
             let url = $(this).attr('action');
 
             $.ajax({
                 url: url,
-                type: "POST",
+                type: 'POST',
                 data: $(this).serialize(),
 
                 success: function(res) {
@@ -664,22 +556,11 @@
                         });
 
                         setTimeout(() => location.reload(), 1200);
-                    } else {
-                        Swal.fire('Error', res.message, 'error');
                     }
-                },
-
-                error: function(xhr) {
-                    let msg = 'Something went wrong';
-                    if (xhr.responseJSON?.message) msg = xhr.responseJSON.message;
-
-                    Swal.fire('Error', msg, 'error');
                 }
             });
         });
     </script>
-
-
 </body>
 
 </html>
