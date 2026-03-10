@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\GameList;
 use App\Models\GameRate;
+use App\Models\GameType;
 use Carbon\Carbon;
 use GMP;
 use Illuminate\Http\Request;
@@ -117,38 +118,28 @@ class GameController extends Controller
 
     public function rates()
     {
-        $rates = GameRate::first(); 
+        $rates = GameType::orderBy('sort_order')->get();
         return view('admin.games.rates', compact('rates'));
     }
 
     public function updateRates(Request $request)
 {
-    $validated = $request->validate([
-        'single_digit_1' => 'required|numeric',
-        'single_digit_2' => 'required|numeric',
-        'jodi_digit_1'   => 'required|numeric',
-        'jodi_digit_2'   => 'required|numeric',
-        'single_pana_1'  => 'required|numeric',
-        'single_pana_2'  => 'required|numeric',
-        'double_pana_1'  => 'required|numeric',
-        'double_pana_2'  => 'required|numeric',
-        'triple_pana_1'  => 'required|numeric',
-        'triple_pana_2'  => 'required|numeric',
-        'half_sangam_1'  => 'required|numeric',
-        'half_sangam_2'  => 'required|numeric',
-        'full_sangam_1'  => 'required|numeric',
-        'full_sangam_2'  => 'required|numeric',
-    ]);
+    foreach ($request->rates as $slug => $data) {
 
-    $rate = GameRate::first();
+        $value2 = (float) $data['value2'];
 
-    if ($rate) {
-        $rate->update($validated);
-    } else {
-        GameRate::create($validated);
+        // value1 is always 10
+        $payoutRate = $value2 / 10;
+
+        GameType::where('slug', $slug)->update([
+            'payout_rate' => $payoutRate,
+        ]);
     }
 
-    return back()->with('success', 'Game rates updated successfully.');
+    return response()->json([
+        'status' => true,
+        'message' => 'Game rates updated successfully',
+    ]);
 }
 
 

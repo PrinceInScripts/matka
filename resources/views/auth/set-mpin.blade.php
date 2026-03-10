@@ -78,14 +78,22 @@
         }
 
         /* MPIN Card */
-        .mpin-card {
+        /* .mpin-card {
             background: #fff;
             padding: 40px 30px;
             border-radius: 14px;
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
             width: 100%;
-            /* max-width: 330px; */
             text-align: left;
+        } */
+
+        .mpin-card {
+            background: #fff;
+            padding: 42px 32px;
+            border-radius: 18px;
+            box-shadow: 0 18px 45px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            /* max-width: 360px; */
         }
 
         .mpin-card h3 {
@@ -109,42 +117,45 @@
 
         .mpin-inputs {
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 25px;
+            justify-content: center;
+            gap: 35px;
+            margin: 25px 0;
         }
 
-        .mpin-inputs input {
-            width: 80px;
-            height: 60px;
+        .mpin-input,
+        .confirm-mpin-input {
+            width: 56px;
+            height: 56px;
             text-align: center;
-            font-size: 24px;
-            border: none;
-            border-radius: 24px;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+            font-size: 22px;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
             outline: none;
-            transition: box-shadow 0.3s ease;
+            font-weight: 600;
+            transition: all .2s ease;
         }
 
-        .mpin-inputs input:focus {
-            box-shadow: 0 0 0 2px #007bff inset;
+        .mpin-input:focus,
+        .confirm-mpin-input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
         }
 
         .login-btn {
             width: 100%;
-            background: #007bff;
-            color: white;
-            font-size: 1.1rem;
-            font-weight: 500;
-            padding: 14px 0;
+            height: 52px;
             border: none;
-            border-radius: 30px;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
-            transition: background 0.3s;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            transition: .2s;
         }
 
         .login-btn:hover {
-            background: #005ce6;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 14px rgba(37, 99, 235, .3);
         }
 
         /* Responsive */
@@ -167,7 +178,7 @@
             .mpin-inputs input {
                 width: 60px;
                 height: 50px;
-                border-radius: 25px;
+                /* border-radius: 25px; */
 
             }
         }
@@ -181,8 +192,8 @@
         <!-- LEFT: MPIN Section -->
         <div class="left-area">
             <div class="mpin-card">
-                <h3>MPIN</h3>
-                <p>Enter MPIN for login</p>
+                <h3>Set MPIN</h3>
+                <p>Create a 4-digit MPIN to secure your account</p>
 
                 <form id="mpinForm">
                     @csrf
@@ -221,122 +232,189 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script>
-        // Auto-focus MPIN input logic
-        const inputs = document.querySelectorAll('.mpin-input');
-
-        inputs.forEach((input, index) => {
-            input.addEventListener('input', (e) => {
-                const value = e.target.value.replace(/[^0-9]/g, '');
-                e.target.value = value;
-                if (value && index < inputs.length - 1) {
-                    inputs[index + 1].focus();
-                }
-            });
-
-            input.addEventListener('keydown', (e) => {
-                if (e.key === 'Backspace' && !input.value && index > 0) {
-                    inputs[index - 1].focus();
-                }
-            });
-        });
-
-        const confirmInputs = document.querySelectorAll('.confirm-mpin-input');
-
-        confirmInputs.forEach((input, index) => {
-            input.addEventListener('input', (e) => {
-                const value = e.target.value.replace(/[^0-9]/g, '');
-                e.target.value = value;
-                if (value && index < confirmInputs.length - 1) {
-                    confirmInputs[index + 1].focus();
-                }
-            });
-
-            input.addEventListener('keydown', (e) => {
-                if (e.key === 'Backspace' && !input.value && index > 0) {
-                    confirmInputs[index - 1].focus();
-                }
-            });
-        });
-    </script>
+   
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
-    <script>
-        $(document).ready(function() {
-            $('#mpinForm').on('submit', function(e) {
-                e.preventDefault();
+   <script>
+$(document).ready(function(){
 
-                // Combine inputs into single MPIN strings
-                const mpin = $('.mpin-input').map(function() {
-                    return this.value;
-                }).get().join('');
-                const confirmMpin = $('.confirm-mpin-input').map(function() {
-                    return this.value;
-                }).get().join('');
+    const mpinInputs = document.querySelectorAll('.mpin-input');
+    const confirmInputs = document.querySelectorAll('.confirm-mpin-input');
 
-                if (mpin.length < 4 || confirmMpin.length < 4) {
-                    Toastify({
-                        text: "MPIN is required.",
-                        duration: 3000,
-                        gravity: "top",
-                        position: "center",
-                        backgroundColor: "red",
-                    }).showToast();
-                    return;
-                }
+    /* autofocus first field */
+    if(mpinInputs.length){
+        mpinInputs[0].focus();
+    }
 
-                if (mpin !== confirmMpin) {
-                    Toastify({
-                        text: "MPINs do not match.",
-                        duration: 3000,
-                        gravity: "top",
-                        position: "center",
-                        backgroundColor: "red",
-                    }).showToast();
-                    return;
-                }
+    /* FIRST MPIN INPUTS */
 
-                $.ajax({
-                    url: "{{ route('set.mpin') }}",
-                    type: 'POST',
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        mpin: mpin
-                    },
-                    success: function(response) {
-                        Toastify({
-                            text: response.message,
-                            duration: 2500,
-                            gravity: "top",
-                            position: "center",
-                            backgroundColor: response.status === 'success' ? "green" :
-                                "red",
-                        }).showToast();
+    mpinInputs.forEach((input,index)=>{
 
-                        if (response.status === 'success') {
-                            setTimeout(function() {
-                                window.location.href = response.redirect;
-                            }, 2600);
-                        } else if (response.status === 'error' && response.redirect) {
-                            setTimeout(function() {
-                                window.location.href = response.redirect;
-                            }, 2600);
-                        }
-                    },
-                    error: function(xhr) {
-                        Toastify({
-                            text: "Something went wrong. Try again.",
-                            duration: 3000,
-                            gravity: "top",
-                            position: "right",
-                            backgroundColor: "red",
-                        }).showToast();
-                    }
-                });
-            });
+        input.addEventListener('input',function(e){
+
+            let value = e.target.value.replace(/[^0-9]/g,'');
+            e.target.value = value;
+
+            if(value && index < mpinInputs.length - 1){
+                mpinInputs[index + 1].focus();
+            }
+
+            if(index === mpinInputs.length - 1 && value){
+                confirmInputs[0].focus();
+            }
+
         });
-    </script>
+
+        input.addEventListener('keydown',function(e){
+
+            if(e.key === "Backspace" && !input.value && index > 0){
+                mpinInputs[index-1].focus();
+            }
+
+        });
+
+    });
+
+
+    /* CONFIRM MPIN INPUTS */
+
+    confirmInputs.forEach((input,index)=>{
+
+        input.addEventListener('input',function(e){
+
+            let value = e.target.value.replace(/[^0-9]/g,'');
+            e.target.value = value;
+
+            if(value && index < confirmInputs.length - 1){
+                confirmInputs[index + 1].focus();
+            }
+
+            if(index === confirmInputs.length - 1 && value){
+                document.getElementById("mpinForm").requestSubmit();
+            }
+
+        });
+
+        input.addEventListener('keydown',function(e){
+
+            if(e.key === "Backspace" && !input.value && index > 0){
+                confirmInputs[index-1].focus();
+            }
+
+        });
+
+    });
+
+
+    /* FORM SUBMIT */
+
+    $('#mpinForm').on('submit', function(e){
+
+        e.preventDefault();
+
+        const mpin = $('.mpin-input').map(function(){
+            return this.value;
+        }).get().join('');
+
+        const confirmMpin = $('.confirm-mpin-input').map(function(){
+            return this.value;
+        }).get().join('');
+
+        if(mpin.length < 4 || confirmMpin.length < 4){
+
+            Toastify({
+                text:"Please enter your MPIN",
+                duration:3000,
+                gravity:"top",
+                position:"center",
+                backgroundColor:"red"
+            }).showToast();
+
+            return;
+        }
+
+        if(mpin !== confirmMpin){
+
+            Toastify({
+                text:"MPINs do not match",
+                duration:3000,
+                gravity:"top",
+                position:"center",
+                backgroundColor:"red"
+            }).showToast();
+
+            $('.confirm-mpin-input').val('');
+            confirmInputs[0].focus();
+
+            return;
+        }
+
+        /* loading state */
+
+        $('.login-btn')
+        .prop('disabled',true)
+        .text('Saving...');
+
+
+        $.ajax({
+
+            url:"{{ route('set.mpin') }}",
+            type:"POST",
+
+            data:{
+                _token:"{{ csrf_token() }}",
+                mpin: mpin
+            },
+
+            success:function(response){
+
+                Toastify({
+                    text:response.message,
+                    duration:2500,
+                    gravity:"top",
+                    position:"center",
+                    backgroundColor:response.status === "success" ? "green" : "red"
+                }).showToast();
+
+                if(response.status === "success"){
+
+                    setTimeout(function(){
+                        window.location.href = response.redirect;
+                    },1200);
+
+                }else{
+
+                    $('.login-btn')
+                    .prop('disabled',false)
+                    .text('Save MPIN');
+
+                }
+
+            },
+
+            error:function(){
+
+                $('.login-btn')
+                .prop('disabled',false)
+                .text('Save MPIN');
+
+                Toastify({
+                    text:"Server error. Try again.",
+                    duration:3000,
+                    gravity:"top",
+                    position:"center",
+                    backgroundColor:"red"
+                }).showToast();
+
+            }
+
+        });
+
+    });
+
+});
+</script>
 
 
 

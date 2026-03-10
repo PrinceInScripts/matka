@@ -47,6 +47,7 @@ Route::get('/single', [PageController::class, 'single'])->name('single');
 Route::get('/bulk', [PageController::class, 'bulk'])->name('bulk');
 Route::get('half-sangam', [PageController::class, 'halfSangam'])->name('half.sangam');
 Route::get('full-sangam', [PageController::class, 'fullSangam'])->name('full.sangam');
+Route::get('/gali_disawar/{slug}',[PageController::class, 'galiDisawarGame'])->name('galidisawar.game');
 
 Route::get('/galidisawar',[GaliDisaController::class, 'galiDisawar'])->name('galidisawar');
 
@@ -166,9 +167,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::post('bid-history/filter', [StarlineController::class, 'filter_bid_history'])->name('bid_history.filter');
             Route::get('declare-result', [StarlineController::class, 'declare_result'])->name('declare_result');
             Route::get('result-history', [StarlineController::class, 'result_history'])->name('result_history');
+            Route::post('result/context', [StarlineController::class, 'getContext'])->name('result.context'); 
+            Route::post('result/save-draft', [StarlineController::class, 'saveDraft'])->name('result.save_draft');
+            Route::get('result/winners/{result}', [StarlineController::class, 'winners'])->name('result.winners');
+            Route::post('result/declare', [StarlineController::class, 'declareWinners'])->name('result.declare');
+            
             Route::get('sell-report', [StarlineController::class, 'sell_report'])->name('sell_report');
             Route::get('winning-report', [StarlineController::class, 'winning_report'])->name('winning_report');
             Route::get('winning-prediction', [StarlineController::class, 'winning_prediction'])->name('winning_prediction');
+             Route::get('/winning-predictions/search', [StarlineController::class, 'searchStarlineWinningPredictions'])->name('winning_predictions.search');
         });
 
         // gali disawar
@@ -186,10 +193,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('bid-history', [GaliDisawarController::class, 'bid_history'])->name('bid_history');
             Route::post('bid-history/filter', [GaliDisawarController::class, 'filter_bid_history'])->name('bid_history.filter');
             Route::get('declare-result', [GaliDisawarController::class, 'declare_result'])->name('declare_result');
+              Route::post('result/context', [GaliDisawarController::class, 'getContext'])->name('result.context'); 
+            Route::post('result/save-draft', [GaliDisawarController::class, 'saveDraft'])->name('result.save_draft');
+            Route::get('result/winners/{result}', [GaliDisawarController::class, 'winners'])->name('result.winners');
+            Route::post('result/declare', [GaliDisawarController::class, 'declareWinners'])->name('result.declare');
+            
             Route::get('result-history', [GaliDisawarController::class, 'result_history'])->name('result_history');
             Route::get('sell-report', [GaliDisawarController::class, 'sell_report'])->name('sell_report');
             Route::get('winning-report', [GaliDisawarController::class, 'winning_report'])->name('winning_report');
             Route::get('winning-prediction', [GaliDisawarController::class, 'winning_prediction'])->name('winning_prediction');
+             Route::get('/winning-predictions/search',[GaliDisawarController::class, 'searchWinningPredictions'])->name('winning_predictions.search');
         });
 
         // Settings

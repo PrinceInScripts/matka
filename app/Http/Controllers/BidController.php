@@ -3,7 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Bid;
+use App\Models\GaliDisawarBid;
+use App\Models\GaliDisawarGameType;
+use App\Models\GaliDisawarType;
 use App\Models\GameType;
+use App\Models\StarlineBidHistory;
+use App\Models\StarlineGamesType;
 use App\Models\WalletTransactions;
 use App\Services\AnkCalculator;
 use Illuminate\Http\Request;
@@ -90,129 +95,411 @@ class BidController extends Controller
         };
     }
 
-    public function placeBid(Request $request)
-    {
+    // public function placeBid(Request $request)
+    // {
 
-        // return $request;
-        $request->validate([
-            'market_id' => 'required|integer',
-            'market_type' => 'required|string',
-            'game_id' => 'required|integer',
-            'game_type_id' => 'required|integer',
-            'bids' => 'required|array|min:1',
-            'bids.*.digits' => 'required|string',
-            'bids.*.points' => 'required|integer|min:1',
-            'bids.*.session' => 'required|string',
-            'date' => 'required|date',
-            'game_type' => 'required|string',
-        ]);
+    //     // return $request;
+    //     $request->validate([
+    //         'market_id' => 'required|integer',
+    //         'market_type' => 'required|string',
+    //         'game_id' => 'required|integer',
+    //         'game_type_id' => 'required|integer',
+    //         'bids' => 'required|array|min:1',
+    //         'bids.*.digits' => 'required|string',
+    //         'bids.*.points' => 'required|integer|min:1',
+    //         'bids.*.session' => 'required|string',
+    //         'date' => 'required|date',
+    //         'game_type' => 'required|string',
+    //     ]);
 
-        $user = Auth::user();
-        $totalPoints = collect($request->bids)->sum('points');
-
-
-        $gameType = GameType::findOrFail($request->game_type_id);
-    $gameTypeSlug = $gameType->slug;
-
-        DB::transaction(function () use ($request, $user, $totalPoints, $gameTypeSlug) {
-            if ($user->wallet->balance < $totalPoints) {
-                throw new \Exception('Insufficient wallet balance');
-            }
-
-            foreach ($request->bids as $bid) {
-                $ank = AnkCalculator::calculate(
-                    $gameTypeSlug,
-                    $bid['digits'],
-                    $bid['session']
-                );
+    //     $user = Auth::user();
+    //     $totalPoints = collect($request->bids)->sum('points');
 
 
-                if ($gameTypeSlug === 'single_digit' || $gameTypeSlug === 'single_digit_bulk') {
+    //     $gameType = GameType::findOrFail($request->game_type_id);
+    // $gameTypeSlug = $gameType->slug;
 
-                    $bid_data = ['digit' => (int) $bid['digits']];
+    //     DB::transaction(function () use ($request, $user, $totalPoints, $gameTypeSlug) {
+    //         if ($user->wallet->balance < $totalPoints) {
+    //             throw new \Exception('Insufficient wallet balance');
+    //         }
 
-                } elseif ($gameTypeSlug === 'jodi' || $gameTypeSlug === 'jodi_bulk') {
-                    $bid_data = ['digit' => $bid['digits']];
+    //         foreach ($request->bids as $bid) {
+    //             $ank = AnkCalculator::calculate(
+    //                 $gameTypeSlug,
+    //                 $bid['digits'],
+    //                 $bid['session']
+    //             );
 
-                } elseif (in_array($gameTypeSlug, [
-                    'single_panna', 'double_panna', 'triple_panna',
-                    'single_panna_bulk', 'double_panna_bulk', 'triple_panna_bulk',
-                ])) {
 
-                    $bid_data = ['panna' => $bid['digits']];
+    //             if ($gameTypeSlug === 'single_digit' || $gameTypeSlug === 'single_digit_bulk') {
 
-                } elseif ($gameTypeSlug === 'half_sangam') {
+    //                 $bid_data = ['digit' => (int) $bid['digits']];
 
-                    [$panna, $digit] = explode('-', $bid['digits']);
+    //             } elseif ($gameTypeSlug === 'jodi' || $gameTypeSlug === 'jodi_bulk') {
+    //                 $bid_data = ['digit' => $bid['digits']];
 
-                    if($bid['session'] === 'open'){
-                        $bid_data = [
-                            'open_panna' => $panna,
-                            'close_digit' => (int) $digit,
-                        ];
-                    } else {
-                        $bid_data = [
-                            'open_digit' => (int) $digit,
-                            'close_panna' => $panna,
-                        ];
-                    }
+    //             } elseif (in_array($gameTypeSlug, [
+    //                 'single_panna', 'double_panna', 'triple_panna',
+    //                 'single_panna_bulk', 'double_panna_bulk', 'triple_panna_bulk',
+    //             ])) {
 
-                } elseif ($gameTypeSlug === 'full_sangam') {
+    //                 $bid_data = ['panna' => $bid['digits']];
 
-                    [$open_panna, $close_panna] = explode('-', $bid['digits']);
+    //             } elseif ($gameTypeSlug === 'half_sangam') {
 
-                    $bid_data = [
-                        'open_panna' => $open_panna,
-                        'close_panna' => $close_panna,
-                    ];
+    //                 [$panna, $digit] = explode('-', $bid['digits']);
 
-                } else {
-                    throw new \Exception('Unsupported game type');
-                }
+    //                 if($bid['session'] === 'open'){
+    //                     $bid_data = [
+    //                         'open_panna' => $panna,
+    //                         'close_digit' => (int) $digit,
+    //                     ];
+    //                 } else {
+    //                     $bid_data = [
+    //                         'open_digit' => (int) $digit,
+    //                         'close_panna' => $panna,
+    //                     ];
+    //                 }
 
-                // crate bid txn id 
-                $bidTxnId = Str::uuid()->toString();
+    //             } elseif ($gameTypeSlug === 'full_sangam') {
 
-                $newBid = Bid::create([
-                    'user_id' => $user->id,
-                    'market_id' => $request->market_id,
-                    'market_type' => $request->game_type,
-                    'game_type_id' => $request->game_type_id,
-                    'number' => $bid['digits'],
-                    'bet_data' => json_encode($bid_data),
-                    'ank' => $ank,
-                    'amount' => $bid['points'],
-                    'session' => $bid['session'],
-                    'draw_date' => $request->date,
-                    'status' => 'pending',
-                    'txn_id' => $bidTxnId,
-                ]);
+    //                 [$open_panna, $close_panna] = explode('-', $bid['digits']);
 
-                $walletTx = WalletTransactions::create([
-                    'wallet_id' => $user->wallet->id,
-                    'type' => 'debit',
-                    'source' => 'bid',
-                    'amount' => $bid['points'],
-                    'reason' => 'Bid placed on '.ucfirst($request->game_type),
-                    'reference_id' => $newBid->id,
-                    'balance_after' => $user->wallet->balance - $bid['points'],
-                ]);
+    //                 $bid_data = [
+    //                     'open_panna' => $open_panna,
+    //                     'close_panna' => $close_panna,
+    //                 ];
 
-                // ✅ Link wallet transaction to bid
-                $newBid->update(['wallet_transaction_id' => $walletTx->id]);
+    //             } else {
+    //                 throw new \Exception('Unsupported game type');
+    //             }
 
-                // ✅ Decrease wallet balance step-by-step
-                $user->wallet->decrement('balance', $bid['points']);
-                // Freeze the amount
-                $user->wallet->increment('frozen_balance', $bid['points']);
+    //             // crate bid txn id 
+    //             $bidTxnId = Str::uuid()->toString();
+
+    //             $newBid = Bid::create([
+    //                 'user_id' => $user->id,
+    //                 'market_id' => $request->market_id,
+    //                 'market_type' => $request->game_type,
+    //                 'game_type_id' => $request->game_type_id,
+    //                 'number' => $bid['digits'],
+    //                 'bet_data' => json_encode($bid_data),
+    //                 'ank' => $ank,
+    //                 'amount' => $bid['points'],
+    //                 'session' => $bid['session'],
+    //                 'draw_date' => $request->date,
+    //                 'status' => 'pending',
+    //                 'txn_id' => $bidTxnId,
+    //             ]);
+
+    //             $walletTx = WalletTransactions::create([
+    //                 'wallet_id' => $user->wallet->id,
+    //                 'type' => 'debit',
+    //                 'source' => 'bid',
+    //                 'amount' => $bid['points'],
+    //                 'reason' => 'Bid placed on '.ucfirst($request->game_type),
+    //                 'reference_id' => $newBid->id,
+    //                 'balance_after' => $user->wallet->balance - $bid['points'],
+    //             ]);
+
+    //             // ✅ Link wallet transaction to bid
+    //             $newBid->update(['wallet_transaction_id' => $walletTx->id]);
+
+    //             // ✅ Decrease wallet balance step-by-step
+    //             $user->wallet->decrement('balance', $bid['points']);
+    //             // Freeze the amount
+    //             $user->wallet->increment('frozen_balance', $bid['points']);
                 
-            }
+    //         }
 
-        });
+    //     });
 
-        return response()->json([
-            'status' => true,
-            'message' => 'Bid placed successfully',
-        ]);
+    //     return response()->json([
+    //         'status' => true,
+    //         'message' => 'Bid placed successfully',
+    //     ]);
+    // }
+
+    private function placeGaliDisawarBid(Request $request)
+{    
+    // return $request;
+    $request->validate([
+        'market_id'    => 'required|integer|exists:gali_disawar_games,id',
+        'game_type_id' => 'required|integer|exists:gali_disawar_types,id',
+        'bids'         => 'required|array|min:1',
+        'bids.*.digits'=> 'required|string',
+        'bids.*.points'=> 'required|integer|min:1',
+        'bids.*.session'=> 'required|in:OPEN,CLOSE',
+        'date'         => 'required|date',
+    ]);
+
+    $user = Auth::user();
+    $totalPoints = collect($request->bids)->sum('points');
+
+    $gameType = GaliDisawarGameType::findOrFail($request->game_type_id);
+    
+   
+
+    // 🔒 Check if game type allowed for this market
+    $isAllowed = GaliDisawarGameType::where([
+        'gali_id'      => $request->market_id,
+        'game_type_id'=> $gameType->id,
+        'status'       => 1,
+    ])->exists();
+
+    if (!$isAllowed) {
+        abort(422, 'Game type not allowed for this market');
     }
+
+    DB::transaction(function () use ($request, $user, $totalPoints, $gameType) {
+
+        if ($user->wallet->balance < $totalPoints) {
+            throw new \Exception('Insufficient wallet balance');
+        }
+         $gameType= GaliDisawarType::findOrFail($gameType->game_type_id);
+         $gameTypeSlug = $gameType->slug;
+
+
+        foreach ($request->bids as $bid) {
+
+            // 🎯 Build bet_data cleanly
+            $betData = match ($gameTypeSlug) {
+                'single_digit', 'left_digit', 'right_digit'
+                    => ['digit' => (int)$bid['digits']],
+
+                'jodi_digit'
+                    => ['jodi' => $bid['digits']],
+
+                default
+                    => throw new \Exception('Unsupported Gali Disawar game type'),
+            };
+
+            $bidTxnId = Str::uuid()->toString();
+
+            $newBid = GaliDisawarBid::create([
+                'user_id'   => $user->id,
+                'gali_id'   => $request->market_id,
+                'game_type_id' => $gameType->id,
+                'bet_data'  => json_encode($betData),
+                'bet_value' => $bid['digits'],
+                'amount'    => $bid['points'],
+                'draw_date' => $request->date,
+                'bid_date'  => now()->toDateString(),
+                'status'    => 'pending',
+                'txn_id'    => $bidTxnId,
+                'winning_amount'=> $bid['points'] * $gameType->payout_rate,
+                'session'   => $bid['session'], //with lowercase session
+            ]);
+
+            $walletTx = WalletTransactions::create([
+                'wallet_id' => $user->wallet->id,
+                'type'      => 'debit',
+                'source'    => 'gali_disawar_bid',
+                'amount'    => $bid['points'],
+                'reason'    => 'Gali Disawar Bid',
+                'reference_id' => $newBid->id,
+                'source' => 'galidisawar_bid',
+                'balance_after' => $user->wallet->balance - $bid['points'],
+            ]);
+
+            $newBid->update([
+                'wallet_transaction_id' => $walletTx->id
+            ]);
+
+            // Wallet updates
+            $user->wallet->decrement('balance', $bid['points']);
+            $user->wallet->increment('frozen_balance', $bid['points']);
+        }
+    });
+
+    return response()->json([
+        'status'  => true,
+        'message' => 'Gali Disawar bid placed successfully',
+    ]);
+}
+
+private function placeStarlineBid(Request $request)
+{
+    // return $request;
+    $request->validate([
+        'market_id'    => 'required|integer|exists:starline_names,id',
+        'game_type_id' => 'required|integer|exists:gametypes,id',
+        'bids'         => 'required|array|min:1',
+        'bids.*.digits'=> 'required|string',
+        'bids.*.points'=> 'required|integer|min:1',
+        'bids.*.session'=> 'required|in:OPEN,CLOSE',
+        'date'         => 'required|date',
+    ]);
+
+    $user = Auth::user();
+    $totalPoints = collect($request->bids)->sum('points');
+
+    $gameType = StarlineGamesType::findOrFail($request->game_type_id);
+
+    DB::transaction(function () use ($request, $user, $totalPoints, $gameType) {
+
+        if ($user->wallet->balance < $totalPoints) {
+            throw new \Exception('Insufficient wallet balance');
+        }
+
+        foreach ($request->bids as $bid) {
+
+            $betData = match ($gameType->slug) {
+                'single_digit'
+                    => ['digit' => (int)$bid['digits']],
+
+                'single_panna', 'double_panna', 'triple_panna'
+                    => ['panna' => $bid['digits']],
+
+                default
+                    => throw new \Exception('Unsupported Starline game type'),
+            };
+
+            $bidTxnId = Str::uuid()->toString();
+
+            $newBid = StarlineBidHistory::create([
+                'user_id'   => $user->id,
+                'starline_id' => $request->market_id,
+                'game_type_id'=> $gameType->id,
+                'bet_data'  => json_encode($betData),
+                'bet_value' => $bid['digits'],
+                'amount'    => $bid['points'],
+                'draw_date' => $request->date,
+                'bid_date'  => now()->toDateString(),
+                'status'    => 'pending',
+                'session'   => $bid['session'],
+                'txn_id'    => $bidTxnId,
+                'winning_amount'=> $bid['points'] * $gameType->payout_rate,
+            ]);
+
+            $walletTx = WalletTransactions::create([
+                'wallet_id' => $user->wallet->id,
+                'type'      => 'debit',
+                'source'    => 'starline_bid',
+                'amount'    => $bid['points'],
+                'reason'    => 'Starline Bid',
+                'reference_id' => $newBid->id,
+                'source' => 'starline_bid',
+                'balance_after' => $user->wallet->balance - $bid['points'],
+            ]);
+
+            $newBid->update(['wallet_transaction_id' => $walletTx->id]);
+
+            $user->wallet->decrement('balance', $bid['points']);
+            $user->wallet->increment('frozen_balance', $bid['points']);
+        }
+    });
+
+    return response()->json([
+        'status'  => true,
+        'message' => 'Starline bid placed successfully',
+    ]);
+}
+
+private function placeMainMarketBid(Request $request)
+{
+    $request->validate([
+        'market_id'    => 'required|integer|exists:gamelists,id',
+        'game_type_id' => 'required|integer|exists:gametypes,id',
+        'bids'         => 'required|array|min:1',
+        'bids.*.digits'=> 'required|string',
+        'bids.*.points'=> 'required|integer|min:1',
+        'bids.*.session'=> 'required|in:OPEN,CLOSE',
+        'date'         => 'required|date',
+    ]);
+
+    $user = Auth::user();
+    $totalPoints = collect($request->bids)->sum('points');
+
+    $gameType = GameType::findOrFail($request->game_type_id);
+
+    DB::transaction(function () use ($request, $user, $totalPoints, $gameType) {
+
+        if ($user->wallet->balance < $totalPoints) {
+            throw new \Exception('Insufficient wallet balance');
+        }
+
+        foreach ($request->bids as $bid) {
+
+            // 🎯 Main market supports complex types
+            $betData = match ($gameType->slug) {
+
+                'single_digit'
+                    => ['digit' => (int)$bid['digits']],
+
+                'jodi'
+                    => ['jodi' => $bid['digits']],
+
+                'single_panna','double_panna','triple_panna'
+                    => ['panna' => $bid['digits']],
+
+                'half_sangam' => $bid['session'] === 'open'
+                    ? ['open_panna' => explode('-', $bid['digits'])[0],
+                       'close_digit'=> explode('-', $bid['digits'])[1]]
+                    : ['open_digit' => explode('-', $bid['digits'])[1],
+                       'close_panna'=> explode('-', $bid['digits'])[0]],
+
+                'full_sangam'
+                    => [
+                        'open_panna'  => explode('-', $bid['digits'])[0],
+                        'close_panna' => explode('-', $bid['digits'])[1],
+                    ],
+
+                default
+                    => throw new \Exception('Unsupported Main Market game type'),
+            };
+
+            $bidTxnId = Str::uuid()->toString();
+
+            $newBid = Bid::create([
+                'user_id'   => $user->id,
+                'market_id' => $request->market_id,
+                'game_type_id'=> $gameType->id,
+                'bet_data'  => json_encode($betData),
+                'number'    => $bid['digits'],
+                'amount'    => $bid['points'],
+                'session'   => $bid['session'],
+                'draw_date' => $request->date,
+                'status'    => 'pending',
+                'txn_id'    => $bidTxnId,
+                'ank'       => AnkCalculator::calculate($gameType->slug, $bid['digits'], $bid['session']),
+                'winning_amount'=> $bid['points'] * $gameType->payout_rate,
+            ]);
+
+            $walletTx = WalletTransactions::create([
+                'wallet_id' => $user->wallet->id,
+                'type'      => 'debit',
+                'source'    => 'main_market_bid',
+                'amount'    => $bid['points'],
+                'reason'    => 'Main Market Bid',
+                'reference_id' => $newBid->id,
+                'source' => 'main_market_bid',
+                'balance_after' => $user->wallet->balance - $bid['points'],
+            ]);
+
+            $newBid->update(['wallet_transaction_id' => $walletTx->id]);
+
+            $user->wallet->decrement('balance', $bid['points']);
+            $user->wallet->increment('frozen_balance', $bid['points']);
+        }
+    });
+
+    return response()->json([
+        'status'  => true,
+        'message' => 'Main Market bid placed successfully',
+    ]);
+}
+public function placeBid(Request $request)
+{
+    $request->validate([
+        'game_type' => 'required|in:main_market,starline,gali_disawar',
+    ]);
+
+    return match ($request->game_type) {
+        'main_market'  => $this->placeMainMarketBid($request),
+        'starline'     => $this->placeStarlineBid($request),
+        'gali_disawar' => $this->placeGaliDisawarBid($request),
+    };
+}
 }

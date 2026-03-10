@@ -37,4 +37,22 @@ class GaliDisawarGame extends Model
     {
         return $this->hasMany(GaliDisawarSchedule::class, 'gali_id');
     }
+
+    public function gameTypes()
+{
+    return $this->belongsToMany(
+        GaliDisawarType::class,
+        'gali_disawar_gametypes',
+        'gali_id',
+        'game_type_id'
+    )
+    ->withPivot('status')
+    ->withTimestamps();
+}
+
+    public function todaySchedule()
+{
+    return $this->hasOne(GaliDisawarSchedule::class, 'gali_id')
+        ->where('weekday', now()->format('D'));
+}
 }

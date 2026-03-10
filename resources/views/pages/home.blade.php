@@ -264,7 +264,7 @@
                         <i class="fa-solid fa-star"></i>
                     </div>
                 </div>
-                <div class="other-card gali">
+                <div class="other-card gali" onclick="window.location.href='/galidisawar'">
                     <div class="design">
                         <i class="fa-solid fa-diamond-turn-right"></i>
                         <i class="fa-solid fa-diamond-turn-right"></i>

@@ -235,7 +235,7 @@
                 <!-- Back Button -->
                 <i class="fa-solid fa-angle-left" id="backBtn" onclick="goBack()"></i>
 
-                <h5 class="m-0 fw-bold text-primary">Play Starline</h5>
+                <h5 class="m-0 fw-bold text-primary">Play Gali Disawar</h5>
 
                 @include('components.walletinfo')
             </div>
@@ -365,6 +365,8 @@
                     const slug = btn.dataset.slug;
                     const type = btn.dataset.type;
 
+                    console.log(status, slug, type); // Debugging line
+
                     if (status == 0) {
                         Toastify({
                             text: "The Market Betting Is Closed For Today.",
@@ -374,7 +376,8 @@
                             backgroundColor: "#ff4d4d",
                         }).showToast();
                     } else {
-                        window.location.href = `/play/${slug}/${type}`;
+                        // window.location.href = `/play/${slug}/${type}`;
+                         window.location.href = '/gali_disawar/' + slug;
                     }
                 });
             });

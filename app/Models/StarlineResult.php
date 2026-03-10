@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class StarlineResult extends Model
 {
     protected $fillable = [
-        'market_id','result_digit','result_pana','draw_date'
+        'starline_id','result_digit','result_pana','draw_date','status'
     ];
 
-    public function market()
+    public function starline()
     {
-        return $this->belongsTo(Gamelist::class, 'market_id');
+        return $this->belongsTo(StarlineName::class, 'starline_id');
     }
 }

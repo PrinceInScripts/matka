@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Bid;
+use App\Models\GaliDisawarGame;
 use App\Models\GameList;
 use App\Models\GameType;
 use App\Models\MarketGameType;
@@ -151,7 +152,7 @@ class PageController extends Controller
 {
     $game = GameList::where('slug', $slug)->firstOrFail();
     $gameTypes = $game->gameTypes()->wherePivot('is_active', 1)->get();
-    $game_type='market';
+    $game_type='main_market';
     return view('pages.play', compact('game', 'gameTypes','game_type'));
 }
     public function starlineGame($slug)
@@ -159,6 +160,17 @@ class PageController extends Controller
     $game = StarlineName::where('slug', $slug)->firstOrFail();
     $gameTypes = $game->gameTypes()->wherePivot('is_active', 1)->get();
     $game_type='starline';
+    return view('pages.play', compact('game', 'gameTypes','game_type'));
+}
+    public function galiDisawarGame($slug)
+{
+    $game = GaliDisawarGame::where('slug', $slug)->firstOrFail();
+    $gameTypes = $game->gameTypes()
+    ->wherePivot('status', 1)
+    ->where('gali_disawar_types.status', 1)
+    ->orderBy('sort_order')
+    ->get();
+    $game_type='gali_disawar';
     return view('pages.play', compact('game', 'gameTypes','game_type'));
 }
 

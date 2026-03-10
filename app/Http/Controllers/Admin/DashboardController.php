@@ -186,20 +186,12 @@ class DashboardController extends Controller
     public function declareResult()
     {
 
-
-
-    // return $today;
-
-$games = GameList::where('game_status', 1)
+    $games = GameList::where('game_status', 1)
     ->with(['todaySchedule'])
     ->whereHas('todaySchedule')
     ->get();
 
-    // return $games;
-
-
-
-
+   
         $pannas = [];
 
         for ($i = 0; $i <= 9; $i++) {

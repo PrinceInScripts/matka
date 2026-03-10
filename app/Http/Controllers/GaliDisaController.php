@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\GaliDisawarGame;
+use App\Models\GaliDisawarGameRate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -12,6 +13,9 @@ class GaliDisaController extends Controller
     public function galiDisawar()
     {
          $today = strtolower(now()->format('D')); // mon, tue...
+          $rates = GaliDisawarGameRate::all()->keyBy('game_type');
+
+        //   return $rates;
 
     $games = GaliDisawarGame::where('game_status', 1)
         ->get()

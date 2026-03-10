@@ -606,6 +606,8 @@
                     game_type: "{{ $game_type ?? 'main' }}"
                 };
 
+                console.log(payload);
+
                 try {
                     $.ajax({
                         url: "{{ route('place.bids') }}",

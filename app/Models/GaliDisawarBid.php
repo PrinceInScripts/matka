@@ -22,6 +22,7 @@ class GaliDisawarBid extends Model
         'bid_date',
         'winning_amount',
         'result_id',
+        'session'
     ];
 
     protected $casts = [
@@ -35,6 +36,11 @@ class GaliDisawarBid extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+     public function gameType()
+    {
+        return $this->belongsTo(GaliDisawarType::class, 'game_type_id');
     }
 
     public function gali()

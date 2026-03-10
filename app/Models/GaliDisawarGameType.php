@@ -12,6 +12,7 @@ class GaliDisawarGameType extends Model
         'gali_id',
         'game_type_id',
         'status',
+        
     ];
 
     protected $casts = [

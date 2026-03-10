@@ -306,6 +306,7 @@ public function declareWinners(Request $request)
                 'game_type' => $bid->gameType->name,
                 'transaction_id' => $bid->transaction_id,
                 'session' => $bid->session,
+                'bid_time' => $bid->created_at->format('Y-m-d H:i:s'),
             ];
             }else{
                 $losers[] = [
@@ -315,6 +316,7 @@ public function declareWinners(Request $request)
                     'game_type' => $bid->gameType->name,
                     'transaction_id' => $bid->transaction_id,
                     'session' => $bid->session,
+                    'bid_time' => $bid->created_at->format('Y-m-d H:i:s'),
                 ];
             }
 
@@ -340,9 +342,12 @@ public function declareWinners(Request $request)
         'close_panna' => 'nullable|string',
     ]);
 
+    // return $request->all();
+
     $query = Bid::with(['user', 'gameType'])
         ->whereDate('draw_date', $request->date)
         ->where('market_id', $request->game_id);
+
 
     if ($request->filled('session')) {
         $session = $request->session;
@@ -421,7 +426,6 @@ public function declareWinners(Request $request)
 
     $data = $query->get();
 
-    // return $data;
 
     return response()->json([
         'data' => $data,

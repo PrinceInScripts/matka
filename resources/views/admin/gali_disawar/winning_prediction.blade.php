@@ -17,6 +17,38 @@
   <link rel="stylesheet" href="../../dist/css/adminlte.min.css">
   {{-- font awesome  --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/Z1srTF+W+o8+T2Vq+0+z7N0zJwQXG6nTpGO5c5XbYl5fX5Yx5D5V5y5d5D5D5D5D5D5A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+      <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <style>
+        .select2-container--bootstrap4 .select2-selection--single {
+            height: calc(2.25rem + 2px);
+            line-height: 1.5;
+            padding: .375rem .75rem;
+            border: 1px solid #000;
+        }
+
+        .select2-container--bootstrap4 .select2-selection--single .select2-selection__arrow {
+            height: 100%;
+            position: absolute;
+            top: 0;
+            right: 0.75rem;
+            width: 20px;
+        }
+
+        .select2-container--bootstrap4 .select2-selection__arrow b {
+            border-color: #495057 transparent transparent transparent;
+            border-style: solid;
+            border-width: 5px 4px 0 4px;
+            height: 0;
+            left: 50%;
+            margin-left: -4px;
+            margin-top: -2px;
+            position: absolute;
+            top: 50%;
+            width: 0;
+        }
+    </style>
+
 </head>
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
@@ -52,14 +84,83 @@
           <div class="col-12">
            
 
-            {{-- <div class="card">
-              <div class="card-header">
-                <h3 class="card-title"></h3>
-              </div>
-              <div class="card-body">
-               
-              </div>
-            </div> --}}
+           <div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Gali Disawar Winning Prediction</h3>
+    </div>
+
+    <div class="card-body">
+        <div class="row">
+
+            <div class="col-md-2">
+                <label>Date</label>
+                <input type="date" id="result_date" class="form-control"
+                       value="{{ date('Y-m-d') }}">
+            </div>
+
+            <div class="col-md-3">
+                <label>Gali Game</label>
+                <select id="gali_id" class="form-control select2">
+                    <option value="">Select Game</option>
+                    @foreach ($games as $game)
+                        <option value="{{ $game->id }}">{{ $game->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="col-md-2">
+                <label>Digit (0–9)</label>
+                <select id="digit" class="form-control select2">
+                    <option value="">Any</option>
+                    @for ($i = 0; $i <= 9; $i++)
+                        <option value="{{ $i }}">{{ $i }}</option>
+                    @endfor
+                </select>
+            </div>
+
+            <div class="col-md-2">
+                <label>Jodi (00–99)</label>
+                <input type="text" id="jodi" class="form-control" maxlength="2"
+                       placeholder="e.g. 23">
+            </div>
+
+            <div class="col-md-2 d-flex align-items-end">
+                <button id="goBtn" class="btn btn-primary w-100">Go</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="card mt-4">
+    <div class="card-header d-flex justify-content-between">
+        <h3 class="card-title">Prediction List</h3>
+        <div>
+            <strong>Total Bid:</strong> ₹ <span id="totalBidAmount">0</span> |
+            <strong>Total Win:</strong> ₹ <span id="totalWinningAmount">0</span>
+        </div>
+    </div>
+
+    <div class="card-body">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>User</th>
+                    <th>Bid Amount</th>
+                    <th>Winning Amount</th>
+                    <th>Txn ID</th>
+                    <th>Session</th>
+                </tr>
+            </thead>
+            <tbody id="predictionBody">
+                <tr>
+                    <td colspan="5" class="text-center">No Data</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
             <!-- /.card -->
           </div>
           <!-- /.col -->
@@ -111,6 +212,34 @@
 {{-- font awesome script--}}
 
 
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+
+    <script>
+        $(document).ready(function() {
+
+            $('.select2').select2({
+                theme: 'bootstrap4',
+                width: '100%',
+                placeholder: 'Select option',
+                allowClear: false,
+                minimumResultsForSearch: 0
+            });
+
+
+        });
+
+        $(document).on('shown.bs.modal', function() {
+            $('.select2').select2({
+                theme: 'bootstrap4',
+                width: '100%',
+                dropdownParent: $('.modal:visible')
+            });
+        });
+    </script>
+
 
 <script>
   $(function () {
@@ -126,8 +255,72 @@
       "info": true,
       "autoWidth": false,
       "responsive": true,
-    });
+    });x
   });
+
+  // <script>
+$('#goBtn').on('click', function () {
+
+    if (!$('#gali_id').val()) {
+        Swal.fire('Missing', 'Select Gali game', 'warning');
+        return;
+    }
+
+    Swal.fire({
+        title: 'Fetching...',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+    });
+
+    $.ajax({
+        url: '/admin/gali-disawar/winning-predictions/search',
+        type: 'GET',
+        data: {
+            date: $('#result_date').val(),
+            gali_id: $('#gali_id').val(),
+            digit: $('#digit').val() || null,
+            jodi: $('#jodi').val() || null
+        },
+        success: function (res) {
+            Swal.close();
+            renderTable(res.data);
+            updateTotals(res.totals);
+        },
+        error: function () {
+            Swal.fire('Error', 'Failed to load data', 'error');
+        }
+    });
+});
+
+function renderTable(rows) {
+    let html = '';
+    let i = 1;
+
+    if (!rows.length) {
+        html = `<tr><td colspan="5" class="text-center">No Data</td></tr>`;
+    }
+
+    rows.forEach(row => {
+        html += `
+            <tr>
+                <td>${i++}</td>
+                <td>${row.user.name}</td>
+                <td>${row.amount}</td>
+                <td>${row.winning_amount}</td>
+                <td>${row.txn_id}</td>
+                <td>${row.session}</td>
+            </tr>
+        `;
+    });
+
+    $('#predictionBody').html(html);
+}
+
+function updateTotals(totals) {
+    $('#totalBidAmount').text(totals.total_bid);
+    $('#totalWinningAmount').text(totals.total_win);
+}
+</script>
 </script>
 </body>
 </html>

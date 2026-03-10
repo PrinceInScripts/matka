@@ -1,57 +1,3 @@
-{{-- <x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
-        @csrf
-
-        <!-- Name -->
-        <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
-        </div>
-
-        <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
-
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                            type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
-
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout> --}}
-
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -108,9 +54,20 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #007bff, #0048ff);
-            color: #fff;
-            padding: 40px;
+            background: linear-gradient(135deg, #0f172a, #1e40af, #2563eb);
+            color: white;
+            padding: 60px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .page-sub {
+            color: #6b7280;
+            margin-bottom: 25px;
         }
 
         .brand-card {
@@ -137,12 +94,11 @@
         /* MPIN Card */
         .mpin-card {
             background: #fff;
-            padding: 40px 30px;
-            border-radius: 14px;
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+            padding: 36px;
+            border-radius: 18px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
             width: 100%;
-            /* max-width: 330px; */
-            text-align: left;
+            max-width: 420px;
         }
 
         .mpin-card h3 {
@@ -167,55 +123,82 @@
         .mpin-inputs {
             display: flex;
             flex-direction: column;
+            gap: 18px;
+            margin-top: 20px;
             margin-bottom: 25px;
-            gap: 15px;
+        }
+
+        .mpin-input:hover {
+            border-color: #cbd5f1;
         }
 
         .input-wrapper {
             position: relative;
         }
 
-        .mpin-inputs input {
+        .mpin-input {
             width: 100%;
-            padding: 12px 40px 12px 10px;
-            border: none;
-            border-radius: 24px;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
-            outline: none;
-            transition: box-shadow 0.3s ease;
+            height: 54px;
+            padding: 0 44px 0 16px;
+            border-radius: 14px;
+            border: 1px solid #e5e7eb;
+            background: #f9fafb;
+            font-size: 15px;
+            transition: all .2s ease;
         }
 
-        .mpin-inputs input:focus {
-            box-shadow: 0 0 0 2px #007bff inset;
+        .mpin-input::placeholder {
+            color: #9ca3af;
         }
+
+        .mpin-input:focus {
+            background: #ffffff;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+        }
+
+        .input-icon {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            font-size: 16px;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .input-icon:hover {
+            color: #2563eb;
+        }
+
+
 
         .input-icon {
             position: absolute;
             right: 12px;
             top: 50%;
             transform: translateY(-50%);
-            pointer-events: none;
             color: gray;
-            /* Icon color */
             font-size: 18px;
+            cursor: pointer;
         }
 
         .login-btn {
             width: 100%;
-            background: #007bff;
-            color: white;
-            font-size: 1.1rem;
-            font-weight: 500;
-            padding: 14px 0;
+            height: 52px;
             border: none;
-            border-radius: 30px;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
-            transition: background 0.3s;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            transition: .2s;
         }
 
         .login-btn:hover {
-            background: #005ce6;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 14px rgba(37, 99, 235, .3);
         }
 
         .login-link {
@@ -257,7 +240,8 @@
 
         <!-- LEFT: MPIN Section -->
         <div class="left-area">
-            <h1>Sign Up</h1>
+            <h1 class="page-title">Create Account</h1>
+            <p class="page-sub">Join Matka Play and start playing</p>
             <div class="mpin-card">
                 <h3>Sign Up</h3>
                 <p>Create your new account</p>
@@ -277,9 +261,22 @@
                                 required />
                             <i class="fa-solid fa-envelope input-icon"></i>
                         </div>
+
+                        <div class="input-wrapper">
+                            <input type="password" class="mpin-input" id="password" name="password"
+                                placeholder="Password" required>
+                            <i class="fa-solid fa-eye toggle-password input-icon" data-target="password"></i>
+                        </div>
+
+                        <div class="input-wrapper">
+                            <input type="password" class="mpin-input" id="password_confirmation"
+                                name="password_confirmation" placeholder="Confirm Password" required>
+                            <i class="fa-solid fa-eye toggle-password input-icon"
+                                data-target="password_confirmation"></i>
+                        </div>
                     </div>
 
-                    <button type="submit" class="login-btn">Continue</button>
+                    <button type="submit" class="login-btn" id="registerBtn">Create Account</button>
                 </form>
 
 
@@ -291,7 +288,7 @@
         <!-- RIGHT: Branding Section -->
         <div class="right-area">
             <div class="brand-card">
-                <img src="{{ asset('images/logo.png') }}" alt="Logo">
+                <img src="{{ asset('https://cdn-icons-png.flaticon.com/128/5977/5977575.png') }}" alt="Logo">
                 <h3>Welcome to Matka Play</h3>
                 <p>Play smart, win big! Enjoy the best Matka gaming experience built for you.</p>
             </div>
@@ -306,44 +303,150 @@
 
     <script>
         $(document).ready(function() {
+
+            $('.toggle-password').each(function() {
+
+                const icon = $(this);
+                const target = $('#' + icon.data('target'));
+
+                /* HOVER → preview password */
+
+                icon.on('mouseenter', function() {
+
+                    if (target.attr('type') === 'password') {
+                        target.attr('type', 'text');
+                    }
+
+                });
+
+                icon.on('mouseleave', function() {
+
+                    if (!icon.hasClass('active')) {
+                        target.attr('type', 'password');
+                    }
+
+                });
+
+                /* CLICK → toggle permanent */
+
+                icon.on('click', function() {
+
+                    icon.toggleClass('active');
+
+                    if (icon.hasClass('active')) {
+                        target.attr('type', 'text');
+                        icon.removeClass('fa-eye').addClass('fa-eye-slash');
+                    } else {
+                        target.attr('type', 'password');
+                        icon.removeClass('fa-eye-slash').addClass('fa-eye');
+                    }
+
+                });
+
+            });
+            /* Toggle password visibility */
+
+            // $('.toggle-password').on('click', function() {
+
+            //     let target = $(this).data('target');
+            //     let input = $('#' + target);
+
+            //     if (input.attr('type') === 'password') {
+            //         input.attr('type', 'text');
+            //         $(this).removeClass('fa-eye').addClass('fa-eye-slash');
+            //     } else {
+            //         input.attr('type', 'password');
+            //         $(this).removeClass('fa-eye-slash').addClass('fa-eye');
+            //     }
+
+            // });
+
+
+            /* Register form submit */
+
             $('#registerForm').on('submit', function(e) {
+
                 e.preventDefault();
 
+                let password = $('#password').val();
+                let confirmPassword = $('#password_confirmation').val();
+
+                if (password !== confirmPassword) {
+
+                    $('#registerBtn')
+                        .prop('disabled', false)
+                        .text('Create Account');
+
+                    Toastify({
+                        text: "Passwords do not match",
+                        duration: 3000,
+                        gravity: "top",
+                        position: "center",
+                        backgroundColor: "red"
+                    }).showToast();
+
+                    return;
+                }
+                /* Button loading */
+
+                $('#registerBtn')
+                    .prop('disabled', true)
+                    .text('Creating...');
+
                 $.ajax({
+
                     type: 'POST',
                     url: '{{ route('register') }}',
                     data: $(this).serialize(),
+
                     success: function(response) {
+
                         Toastify({
                             text: response.message,
                             duration: 2500,
                             gravity: "top",
                             position: "center",
                             backgroundColor: response.status === 'success' ? "green" :
-                                "red",
+                                "red"
                         }).showToast();
 
                         if (response.status === 'success') {
+
                             setTimeout(() => {
                                 window.location.href = response.redirect;
                             }, 1200);
+
                         } else {
-                            setTimeout(() => {
-                                window.location.href = response.redirect;
-                            }, 2000);
+
+                            $('#registerBtn')
+                                .prop('disabled', false)
+                                .text('Create Account');
+
                         }
+
                     },
-                    error: function(xhr) {
+
+                    error: function() {
+
+                        $('#registerBtn')
+                            .prop('disabled', false)
+                            .text('Create Account');
+
                         Toastify({
-                            text: "Something went wrong. Try again.",
+                            text: "Server error. Try again.",
                             duration: 3000,
                             gravity: "top",
-                            position: "right",
-                            backgroundColor: "red",
+                            position: "center",
+                            backgroundColor: "red"
                         }).showToast();
+
                     }
+
                 });
+
             });
+            $('#name').focus();
+
         });
     </script>
 

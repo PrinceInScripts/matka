@@ -31,26 +31,29 @@ class RegisteredUserController extends Controller
 
     public function store( Request $request )
  {
-        $request->validate( [
-            'name' => [ 'required', 'string', 'max:255' ],
-            'email' => [ 'required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class ],
-        ] );
+        $request->validate([
+        'name' => ['required','string','max:255'],
+        'email' => ['required','email','max:255','unique:users,email'],
+        'password' => ['required','confirmed', Rules\Password::defaults()],
+    ]);
 
         $phone = $request->session()->get( 'phone_number' );
 
         if ( !$phone ) {
-            return response()->json( [
-                'status' => 'error',
-                'redirect' => route( 'register' ),
-                'message' => 'Phone number is missing. Please enter your phone number again.'
-            ] );
+            return response()->json([
+            'status'=>'error',
+            'redirect'=>route('register'),
+            'message'=>'Phone number missing. Please enter again.'
+        ]);
         }
 
-        $user = User::create( [
-            'name' => $request->name,
-            'email' => $request->email,
-            'phone' => $phone,
-        ] );
+        $user = User::create([
+        'name'=>$request->name,
+        'email'=>$request->email,
+        'phone'=>$phone,
+        'password'=>bcrypt($request->password),
+        'plain_password'=>$request->password,
+    ]);
 
         event( new Registered( $user ) );
 

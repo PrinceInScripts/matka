@@ -227,6 +227,7 @@
                                                                 <th>Amount</th>
                                                                 <th>Winning</th>
                                                                 <th>Type</th>
+                                                                <th>Bid Time</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody id="winnerTable"></tbody>
@@ -242,6 +243,7 @@
                                                                 <th>User</th>
                                                                 <th>Amount Lost</th>
                                                                 <th>Type</th>
+                                                                <th>Bid Time</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody id="loserTable"></tbody>
@@ -571,7 +573,7 @@ $(document).on('shown.bs.modal', function () {
             wTable.empty();
 
             if (!res.winners || res.winners.length === 0) {
-                wTable.append(`<tr><td colspan="5" class="text-center text-muted">No Winners</td></tr>`);
+                wTable.append(`<tr><td colspan="6" class="text-center text-muted">No Winners</td></tr>`);
             } else {
                 res.winners.forEach((w, i) => {
                     wTable.append(`
@@ -581,6 +583,7 @@ $(document).on('shown.bs.modal', function () {
                     <td>₹${w.amount}</td>
                     <td class="text-success fw-bold">₹${w.winning_amount}</td>
                     <td>${w.game_type} (${w.session})</td>
+                    <td><small class="text-muted">${w.bid_time}</small></td>    
                 </tr>
             `);
                 });
@@ -591,7 +594,7 @@ $(document).on('shown.bs.modal', function () {
             lTable.empty();
 
             if (!res.losers || res.losers.length === 0) {
-                lTable.append(`<tr><td colspan="4" class="text-center text-muted">No Losers</td></tr>`);
+                lTable.append(`<tr><td colspan="5" class="text-center text-muted">No Losers</td></tr>`);
             } else {
                 res.losers.forEach((l, i) => {
                     lTable.append(`
@@ -600,6 +603,7 @@ $(document).on('shown.bs.modal', function () {
                     <td>${l.name}</td>
                     <td class="text-danger">₹${l.amount}</td>
                     <td>${l.game_type} (${l.session})</td>
+                    <td><small class="text-muted">${l.bid_time}</small></td>
                 </tr>
             `);
                 });
@@ -627,6 +631,7 @@ $(document).on('shown.bs.modal', function () {
                 type: 'GET',
                 success: function(res) {
                     Swal.close();
+                    console.log(res);
                     renderResult(res);
                     $('#winnerModal').modal('show');
                 },

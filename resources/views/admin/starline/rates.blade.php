@@ -56,44 +56,32 @@
             <section class="content">
                 <div class="container-fluid">
                     <form id="ratesForm">
-  @csrf
+                        @csrf
 
-  <div class="row g-4">
-    <div class="col-md-6">
-      <label class="form-label fw-semibold">Single Digit Payout</label>
-      <input type="number" step="0.01" name="rates[single_digit]"
-             class="form-control"
-             value="{{ $rates['single_digit']->payout_rate ?? '' }}">
-    </div>
+                         <div class="row">
+                                            @foreach ($rates as $rate)
+                                                <div class="col-md-12">
+                                                    <h5 class="mt-3">{{ $rate->name }}</h5>
+                                                </div>
 
-    <div class="col-md-6">
-      <label class="form-label fw-semibold">Single Panna Payout</label>
-      <input type="number" step="0.01" name="rates[single_panna]"
-             class="form-control"
-             value="{{ $rates['single_panna']->payout_rate ?? '' }}">
-    </div>
+                                                {{-- Value 1 (fixed) --}}
+                                                <div class="col-md-6">
+                                                    {{-- <label>Value 1</label> --}}
+                                                    <input type="number" class="form-control" value="10" disabled>
+                                                </div>
 
-    <div class="col-md-6">
-      <label class="form-label fw-semibold">Double Panna Payout</label>
-      <input type="number" step="0.01" name="rates[double_panna]"
-             class="form-control"
-             value="{{ $rates['double_panna']->payout_rate ?? '' }}">
-    </div>
+                                                {{-- Value 2 (editable) --}}
+                                                <div class="col-md-6">
+                                                    {{-- <label>Value 2</label> --}}
+                                                    <input type="number" class="form-control"
+                                                        name="rates[{{ $rate->slug }}][value2]"
+                                                        value="{{ $rate->payout_rate * 10 }}" required>
+                                                </div>
+                                            @endforeach
+                                        </div>
 
-    <div class="col-md-6">
-      <label class="form-label fw-semibold">Triple Panna Payout</label>
-      <input type="number" step="0.01" name="rates[triple_panna]"
-             class="form-control"
-             value="{{ $rates['triple_panna']->payout_rate ?? '' }}">
-    </div>
-
-    <div class="col-12">
-      <button type="submit" class="btn btn-primary px-4">
-        Update Rates
-      </button>
-    </div>
-  </div>
-</form>
+                          <button class="btn btn-primary mt-3">Submit</button>
+                    </form>
 
                     <!-- /.row -->
                 </div>
@@ -145,57 +133,57 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-$(document).ready(function () {
+        $(document).ready(function() {
 
-  // Set CSRF token globally for AJAX
-  $.ajaxSetup({
-    headers: {
-      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    }
-  });
+            // Set CSRF token globally for AJAX
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
 
-  $('#ratesForm').on('submit', function (e) {
-    e.preventDefault();
+            $('#ratesForm').on('submit', function(e) {
+                e.preventDefault();
 
-    let form = $(this);
-    let btn  = form.find('button[type="submit"]');
+                let form = $(this);
+                let btn = form.find('button[type="submit"]');
 
-    btn.prop('disabled', true).text('Updating...');
+                btn.prop('disabled', true).text('Updating...');
 
-    $.ajax({
-      url: "{{ route('admin.starline.rates.update') }}",
-      type: "POST",
-      data: form.serialize(), // handles rates[...] array perfectly
-      success: function (response) {
-        Swal.fire({
-          icon: 'success',
-          title: 'Updated',
-          text: response.message,
-          timer: 2000,
-          showConfirmButton: false
+                $.ajax({
+                    url: "{{ route('admin.starline.rates.update') }}",
+                    type: "POST",
+                    data: form.serialize(), // handles rates[...] array perfectly
+                    success: function(response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Updated',
+                            text: response.message,
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                    },
+                    error: function(xhr) {
+                        let msg = 'Something went wrong';
+
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            msg = xhr.responseJSON.message;
+                        }
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: msg
+                        });
+                    },
+                    complete: function() {
+                        btn.prop('disabled', false).text('Update Rates');
+                    }
+                });
+            });
+
         });
-      },
-      error: function (xhr) {
-        let msg = 'Something went wrong';
-
-        if (xhr.responseJSON && xhr.responseJSON.message) {
-          msg = xhr.responseJSON.message;
-        }
-
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: msg
-        });
-      },
-      complete: function () {
-        btn.prop('disabled', false).text('Update Rates');
-      }
-    });
-  });
-
-});
-</script>
+    </script>
 
 
 

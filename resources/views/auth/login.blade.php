@@ -1,52 +1,3 @@
-{{-- <x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
-
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
-
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
-
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
-            </label>
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
-            @endif
-
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout> --}}
-
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -56,6 +7,7 @@
     <title>Matka Play | Login</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
 
     <style>
         body,
@@ -63,123 +15,215 @@
             height: 100%;
             margin: 0;
             font-family: 'Poppins', sans-serif;
-            background-color: #f8f9fa;
+            background: #f5f7fb;
         }
 
-        /* Wrapper for entire page */
+        /* Main layout */
         .login-wrapper {
             display: flex;
-            flex-wrap: wrap;
-            height: 100vh;
-            overflow: hidden;
+            min-height: 100vh;
         }
 
-        /* Left login section */
+        /* LEFT SIDE (Login Area) */
+
         .login-left {
-            background-color: #f9fafb;
+            flex: 1;
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
+            background: #f5f7fb;
             padding: 40px 20px;
-            width: 100%;
-            max-width: 600px;
-            /* keeps login form limited in width on large screens */
         }
 
         .login-box {
-            background-color: #fff;
-            border-radius: 16px;
-            padding: 40px;
             width: 100%;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            max-width: 480px;
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 40px 30px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
         }
 
-        .login-box h2 {
-            font-weight: 700;
+        /* Logo */
+
+        .logo {
+            width: 110px;
+            display: block;
+            margin: 0 auto 25px auto;
+        }
+
+        /* Title */
+
+        .title {
             text-align: center;
-            font-size: 24px;
-            margin-bottom: 10px;
+            font-weight: 600;
+            font-size: 22px;
+            margin-bottom: 28px;
         }
 
-        .login-box p {
-            text-align: center;
-            color: #6c757d;
-            margin-bottom: 30px;
+        /* Phone Input Layout */
+
+        .phone-group{
+display:flex;
+align-items:center;
+gap:10px;
+width:100%;
+}
+
+.ts-wrapper{
+width:120px !important;
+}
+
+.ts-control{
+height:52px;
+border-radius:12px;
+border:1px solid #e5e7eb;
+padding:10px;
+display:flex;
+align-items:center;
+}
+
+        /* Country code */
+
+        /* .country {
+            width: 85px;
+            height: 52px;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            padding: 0 10px;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background: #fff;
+        } */
+         .country{
+            width: 100px;
+height:52px;
+border-radius:12px;
+border:1px solid #e5e7eb;
+font-size:14px;
+
+}
+
+        /* Phone input */
+
+        /* .phone-input {
+            flex: 1;
+            height: 52px;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            font-size: 16px;
+            padding: 0 14px;
+        } */
+
+        .phone-input{
+flex:1;
+height:52px;
+border-radius:12px;
+border:1px solid #e5e7eb;
+font-size:16px;
+padding:0 14px;
+width:100%;
+}
+        .phone-input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
         }
 
-        .login-box label {
-            font-weight: 500;
-            color: #333;
-        }
-
-        .login-box .form-control,
-        .login-box .form-select {
-            border-radius: 10px;
-            padding: 10px 14px;
-        }
+        /* Button */
 
         .btn-login {
             width: 100%;
-            background-color: #007BFF;
-            color: #fff;
-            border-radius: 10px;
-            padding: 12px;
-            font-weight: 500;
+            height: 52px;
+            border-radius: 12px;
             border: none;
+            margin-top: 20px;
+            background: #2563eb;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all .2s ease;
         }
 
         .btn-login:hover {
-            background-color: #0056b3;
+            background: #1d4ed8;
         }
 
-        /* Right section (banner/logo area) */
+        /* Help text */
+
+        .help-text {
+            text-align: center;
+            font-size: 13px;
+            color: #6b7280;
+            margin-top: 15px;
+        }
+
+        /* RIGHT SIDE (Brand Panel) */
+
         .login-right {
             flex: 1;
-            background: linear-gradient(120deg, #11141a, #2c2f36);
+            background: #1d4ed8;
             color: white;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
-            flex-direction: column;
-            padding: 40px;
+            padding: 60px;
         }
 
         .login-right img {
-            width: 160px;
-            margin-bottom: 20px;
+            width: 170px;
+            margin-bottom: 25px;
         }
 
         .login-right h3 {
-            font-weight: 600;
             font-size: 32px;
+            font-weight: 600;
             margin-bottom: 10px;
         }
 
         .login-right p {
-            color: #ccc;
+            color: #cbd5f5;
+            max-width: 420px;
             font-size: 16px;
-            max-width: 400px;
         }
 
-        /* Responsive behavior */
-        @media (max-width: 991px) {
+
+        .terms-box {
+            margin-top: 14px;
+            font-size: 13px;
+            color: #555;
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+        }
+
+        .terms-box input {
+            margin-top: 3px;
+        }
+
+        .btn-login.loading {
+            opacity: .8;
+        }
+
+        /* Mobile */
+
+        @media (max-width:991px) {
+
             .login-wrapper {
                 flex-direction: column;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .login-left {
-                width: 100%;
-                max-width: 100%;
-                height: 100vh;
             }
 
             .login-right {
                 display: none;
-                /* hide right section on mobile */
             }
+
+            .login-left {
+                padding: 30px;
+            }
+
         }
     </style>
 </head>
@@ -192,31 +236,52 @@
             <div class="login-box">
                 {{-- <h2>Matka Play</h2> --}}
 
-                <form id="loginForm">
-                    @csrf
-                    <div class="mb-3">
-                        <label style="font-size: 28px;color:#007BFF;font-weight:600" class="form-label">Enter
-                            Number</label><br>
-                        <label class="form-label">Enter your valid mobile number</label>
-                        <div class="input-group">
-                            <select class="form-select" style="max-width: 90px;" name="country_code">
-                                <option selected>+91</option>
-                                <option value="+1">+1</option>
-                                <option value="+44">+44</option>
-                                <option value="+971">+971</option>
-                            </select>
-                            <input type="text" id="phone" class="form-control" name="mobile" maxlength="10" placeholder="Enter your number">
+                
+
+                <div class="login-container">
+
+                    <img src="{{ asset('https://cdn-icons-png.flaticon.com/128/5977/5977575.png') }}" class="logo"
+                        alt="logo">
+
+                    <h2 class="title">Login with Mobile</h2>
+
+                    <form id="loginForm">
+                        @csrf
+
+                        <div class="phone-group">
+                            <select id="country_code" name="country_code" class="country">
+    <option value="+91" selected>🇮🇳 (+91)</option>
+    <option value="+1">🇺🇸 (+1)</option>
+    <option value="+44">🇬🇧 (+44)</option>
+    <option value="+971">🇦🇪 (+971)</option>
+    <option value="+61">🇦🇺 (+61)</option>
+</select>
+
+                            <input type="tel" id="phone" name="mobile" maxlength="10"
+                                placeholder="Enter mobile number" class="phone-input">
                         </div>
-                    </div>
-                    <button type="submit" class="btn btn-login mt-3">NEXT</button>
-                </form>
+
+                        <button type="submit" class="btn-login">
+                            Continue
+                        </button>
+
+                        <div class="terms-box">
+                            <input type="checkbox" id="terms">
+                            <label for="terms">
+                                I agree to the <a href="#">Terms & Conditions</a>
+                            </label>
+                        </div>
+
+                    </form>
+
+                </div>
 
             </div>
         </div>
 
         <!-- Right side: Logo/banner (hidden on small screens) -->
         <div class="login-right">
-            <img src="{{ asset('images/logo.png') }}" alt="Matka Play Logo">
+            <img src="{{ asset('https://cdn-icons-png.flaticon.com/128/5977/5977575.png') }}" alt="Matka Play Logo">
             <h3>Welcome to Matka Play</h3>
             <p>Play smart, win big! Enjoy the best Matka gaming experience built for you.</p>
         </div>
@@ -228,82 +293,123 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
 
     <script>
         $(document).ready(function() {
-            $('#loginForm').on('submit', function(e) {
-                e.preventDefault();
+            new TomSelect("#country_code",{
+    create:false,
+    sortField:{
+        field:"text",
+        direction:"asc"
+    }
+});
+                    $('#phone').focus();
 
-                const phoneInput = $('#phone').val().trim();
-                const phoneRegex = /^[0-9]{10,15}$/;
+                  
 
-                if(phoneInput === '') {
-                    Toastify({
-                        text: "Mobile number is required.",
-                        duration: 3000,
-                        gravity: "top",
-                        position: "center",
-                        backgroundColor: "red",
-                    }).showToast();
-                    return;
-                }
+                    $('#loginForm').on('submit', function(e) {
 
-                if (!phoneRegex.test(phoneInput)) {
-                    Toastify({
-                        text: "Please enter a valid mobile number.",
-                        duration: 3000,
-                        gravity: "top",
-                        position: "center",
-                        backgroundColor: "red",
-                    }).showToast();
-                    return;
-                }
-
-                let formData = $(this).serialize();
-
-                console.log(formData);
-
-                $.ajax({
-                    url: "{{ route('login') }}", // Your Laravel route
-                    type: "POST",
-                    data: formData,
-                    success: function(response) {
-                        console.log(response);
-                        
-                       Toastify({
-                            text: response.message,
-                            duration: 2500,
-                            gravity: "top",
-                            position: "center",
-                            backgroundColor: response.status === 'success' ? "green" : "red",
-                            }).showToast();
-
-                        // Optional: redirect or clear form
-                        // window.location.href = '/dashboard';
-
-                        if (response.status === 'success') {
-                        setTimeout(() => {
-                            window.location.href = response.redirect;
-                        }, 1200);
-                        } else {
-                        setTimeout(() => {
-                            window.location.href = response.redirect;
-                        }, 2000);
-                        }
-                    },
-                         error: function(xhr) {
+                            if (!$('#terms').is(':checked')) {
                                 Toastify({
-                                text: "Something went wrong. Try again.",
-                                duration: 3000,
-                                gravity: "top",
-                                position: "right",
-                                backgroundColor: "red",
+                                    text: "Please accept Terms & Conditions",
+                                    duration: 3000,
+                                    gravity: "top",
+                                    position: "center",
+                                    backgroundColor: "red"
                                 }).showToast();
+                                return;
+                            }
+                            e.preventDefault();
+
+                            const phoneInput = $('#phone').val().trim();
+                            const phoneRegex = /^[0-9]\d{9}$/;
+
+                            if (phoneInput === '') {
+                                Toastify({
+                                    text: "Mobile number is required.",
+                                    duration: 3000,
+                                    gravity: "top",
+                                    position: "center",
+                                    backgroundColor: "red",
+                                }).showToast();
+                                return;
                             }
 
-                });
-            });
-        })
+
+                            if (!phoneRegex.test(phoneInput)) {
+                                Toastify({
+                                    text: "Enter valid mobile number",
+                                    duration: 3000,
+                                    gravity: "top",
+                                    position: "center",
+                                    backgroundColor: "red"
+                                }).showToast();
+                                return;
+                            }
+
+                            $('.btn-login').prop('disabled', true).text('Checking...');
+
+                            let formData = $(this).serialize();
+
+                            console.log(formData);
+
+                            $.ajax({
+                                    url: "{{ route('login') }}", // Your Laravel route
+                                    type: "POST",
+                                    data: formData,
+                                    success: function(response) {
+                                        console.log(response);
+
+                                        Toastify({
+                                            text: response.message,
+                                            duration: 2000,
+                                            gravity: "top",
+                                            position: "center",
+                                            backgroundColor: response.status === "success" ? "green" :
+                                                "red"
+                                        }).showToast();
+
+                                        // Optional: redirect or clear form
+                                        // window.location.href = '/dashboard';
+
+                                        // if (response.status === 'success') {
+                                        // setTimeout(() => {
+                                        //     window.location.href = response.redirect;
+                                        // }, 1200);
+                                        // } else {
+                                        // setTimeout(() => {
+                                        //     window.location.href = response.redirect;
+                                        // }, 2000);
+                                        // }
+
+                                        if (response.status === "success") {
+                                            setTimeout(() => {
+                                                window.location.href = response.redirect;
+                                            }, 1200);
+                                        } else {
+                                            $('.btn-login').prop('disabled', false).text('Continue');
+                                        }
+                                    },
+
+
+                                    error: function(xhr) {
+
+                                        $('.btn-login').prop('disabled', false).text('Continue');
+                                        Toastify({
+                                            text: "Server error",
+                                            duration: 3000,
+                                            gravity: "top",
+                                            position: "center",
+                                            backgroundColor: "red"
+                                        }).showToast();
+
+                                            console.error(xhr);
+                                    }
+
+                                    });
+                            });
+                    })
     </script>
 </body>
 

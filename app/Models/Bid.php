@@ -16,7 +16,7 @@ class Bid extends Model
         'market_id',
         'game_type_id',
         'wallet_transaction_id',
-        'market_type',
+        // 'market_type',   
         'number',
         'bet_data',
         'ank',
