@@ -313,6 +313,13 @@ class BidController extends Controller
         }
     });
 
+    sendNotification(
+    $user->id,
+    "Bet Placed",
+    "Your bet has been successfully placed on Gali Disawar",
+    "game"
+);
+
     return response()->json([
         'status'  => true,
         'message' => 'Gali Disawar bid placed successfully',
@@ -390,6 +397,13 @@ private function placeStarlineBid(Request $request)
             $user->wallet->increment('frozen_balance', $bid['points']);
         }
     });
+
+    sendNotification(
+    $user->id,
+    "Bet Placed",
+    "Your bet has been successfully placed on Starline",
+    "game"
+);
 
     return response()->json([
         'status'  => true,
@@ -484,6 +498,13 @@ private function placeMainMarketBid(Request $request)
             $user->wallet->increment('frozen_balance', $bid['points']);
         }
     });
+
+    sendNotification(
+    $user->id,
+    "Bet Placed",
+    "Your bet has been successfully placed on Main Market",
+    "game"
+);
 
     return response()->json([
         'status'  => true,

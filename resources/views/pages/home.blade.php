@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 
-    <link href="https://pro.fontawesome.com/releases/v6.5.2/css/all.css" rel="stylesheet">
+    {{-- <link href="https://pro.fontawesome.com/releases/v6.5.2/css/all.css" rel="stylesheet"> --}}
 
     <!-- Custom CSS -->
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/style.css') }}" />
@@ -23,14 +23,14 @@
             flex: 1;
             overflow-y: auto;
             background: #f5f6fa;
-            padding: 60px 15px 90px 15px;
+            padding: 20px 15px 90px 15px;
             /* extra padding for fixed bars */
             height: calc(100dvh - 140px);
             -webkit-overflow-scrolling: touch;
             box-sizing: border-box;
         }
 
-        .notice-box {
+        /* .notice-box {
             background: #fff;
             border-left: 6px solid #007bff;
             border-radius: 12px;
@@ -45,6 +45,27 @@
         .notice-box span {
             color: #007bff;
             font-weight: 700;
+        } */
+
+        .announcement {
+            background: #fff;
+            border-left: 5px solid #2563eb;
+            padding: 14px 16px;
+            border-radius: 12px;
+            font-weight: 600;
+            margin-bottom: 14px;
+            padding: 15px;
+            text-align: center;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .announcement .brand {
+            color: #2563eb;
+            font-weight: 700;
+            margin-right: 6px;
         }
 
         .contact-row {
@@ -131,6 +152,51 @@
         }
 
 
+        .quick-actions {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .action-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            color: white;
+        }
+
+        .deposit {
+            background: #22c55e;
+        }
+
+        .withdraw {
+            background: #ef4444;
+        }
+
+        .support-box {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px;
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, .05);
+        }
+
+        .support-box a {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            color: #22c55e;
+        }
 
         .market-card h5 {
             font-weight: 700;
@@ -180,6 +246,72 @@
             float: right;
             color: #007bff;
             font-size: 20px;
+        }
+
+        .game-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .game-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: white;
+            padding: 14px;
+            border-radius: 14px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, .05);
+            text-decoration: none;
+            transition: .2s;
+        }
+
+        .game-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, .08);
+        }
+
+        .game-icon {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background: #e0edff;
+            color: #2563eb;
+            font-size: 18px;
+        }
+
+        .game-info {
+            flex: 1;
+            margin-left: 12px;
+        }
+
+        .game-info h4 {
+            margin: 0;
+            font-weight: 600;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .game-info p {
+            margin: 0;
+            font-size: 13px;
+            color: #777;
+        }
+
+        .game-play {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: #2563eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
         }
 
         .other-card {
@@ -236,66 +368,92 @@
     <div class="app-layout">
         <!-- LEFT AREA -->
         <div class="left-area">
-            @include('components.topbar');
+            @include('components.topbar')
 
             <div class="home-content">
-                <div class="notice-box">
-                    <span>Matka Play</span> ALL MARKET HAVE BEEN DECLARED AS HOLIDAY...<br>
-                    {{-- We Wish You And Your Family A Very Happy <span>DIWALI</span>. --}}
-                </div>
-
-                <div class="contact-row">
-                    <a href="https://wa.me/919694149535"><i class="fa-brands fa-whatsapp"></i>
-                        <span>+919694149535</span></a>
-                    <a href="https://wa.me/919694149535"><i class="fa-brands fa-whatsapp"></i>
-                        <span>+919694149535</span></a>
-                </div>
-
-                <div class="other-card" onclick="window.location.href='/starline'">
-                    <div class="design">
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                    </div>
-                    <h5>Play Starline </h5>
-                    <div class="design">
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                    </div>
-                </div>
-                <div class="other-card gali" onclick="window.location.href='/galidisawar'">
-                    <div class="design">
-                        <i class="fa-solid fa-diamond-turn-right"></i>
-                        <i class="fa-solid fa-diamond-turn-right"></i>
-                        <i class="fa-solid fa-diamond-turn-right"></i>
-                    </div>
-                    <h5>Gali Disawar</h5>
-                    <div class="design">
-                        <i class="fa-solid fa-diamond-turn-right"></i>
-                        <i class="fa-solid fa-diamond-turn-right"></i>
-                        <i class="fa-solid fa-diamond-turn-right"></i>
-                    </div>
-                </div>
-
-
-                {{-- <div class="market-card">
-                    <div class="left-side">
-                        <h5>KARNATAKA DAY </h5>
-                        <small>***_**_***</small>
-                        <div class="show">160-70-578</div>
-                        <div class="running">Betting Is Running Now</div>
-                        <div class="closed">Betting Is Closed For Today</div>
-                        <div class="times">
-                            <div>Last Bids Time Open: <span class="info">09:40 am</span></div>
-                            <div>Last Bids Time Close: <span class="info">10:40 am</span></div>
-                        </div>
-                    </div>
-                    <div class="right-side">
-                        <button><i class="fa-solid fa-calendar-days"></i></button>
-                        <button><i class="fa-solid fa-circle-play"></i></button>
-                    </div>
+                {{-- <div class="announcement">
+                    <span class="brand">Matka Play</span>
+                    ALL MARKET HAVE BEEN DECLARED AS HOLIDAY...
                 </div> --}}
+
+                @if($announcement)
+<div class="announcement">
+
+<span class="brand">{{ $announcement->title }}</span>
+
+{{ $announcement->message }}
+
+</div>
+@endif
+
+                <div class="support-box">
+
+                    <a href="https://wa.me/919694149535" target="_blank">
+                        <i class="fa-brands fa-whatsapp"></i>
+                        +91 9694149535
+                    </a>
+
+                    <a href="https://wa.me/919694149535" target="_blank">
+                        <i class="fa-brands fa-whatsapp"></i>
+                        +91 9694149535
+                    </a>
+
+                </div>
+
+                <div class="quick-actions">
+
+                    <a href="/deposit" class="action-btn deposit">
+                        <i class="fa fa-plus-circle"></i>
+                        <span>Deposit</span>
+                    </a>
+
+                    <a href="/withdraw" class="action-btn withdraw">
+                        <i class="fa fa-arrow-up"></i>
+                        <span>Withdraw</span>
+                    </a>
+
+                </div>
+
+                <div class="game-section">
+
+                    <a href="/starline" class="game-card starline">
+
+                        <div class="game-icon">
+                            <i class="fa fa-star"></i>
+                        </div>
+
+                        <div class="game-info">
+                            <h4>Starline</h4>
+                            <p>Fast result market</p>
+                        </div>
+
+                        <div class="game-play">
+                            <i class="fa fa-play"></i>
+                        </div>
+
+                    </a>
+
+
+                    <a href="/gali-disawar" class="game-card gali">
+
+                        <div class="game-icon">
+                            <i class="fa fa-diamond"></i>
+                        </div>
+
+                        <div class="game-info">
+                            <h4>Gali Disawar</h4>
+                            <p>Classic matka market</p>
+                        </div>
+
+                        <div class="game-play">
+                            <i class="fa fa-play"></i>
+                        </div>
+
+                    </a>
+
+                </div>
+
+              
 
                 @foreach ($games as $game)
                     <div class="market-card">
@@ -374,7 +532,8 @@
                         <i class="fa fa-angle-right text-secondary"></i>
                     </div>
 
-                    <div class="chart-option d-flex justify-content-between align-items-center p-3 rounded-3 shadow-sm">
+                    <div
+                        class="chart-option d-flex justify-content-between align-items-center p-3 rounded-3 shadow-sm">
                         <span class="fw-semibold">Pana Chart</span>
                         <i class="fa fa-angle-right text-secondary"></i>
                     </div>
@@ -391,7 +550,7 @@
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     {{-- jquery --}}
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    
+
     <script>
         const chartModal = new bootstrap.Modal(document.getElementById('chartModal'));
 
@@ -404,7 +563,7 @@
         });
 
 
-       
+
 
         $(document).on('click', '.play-btn', function() {
             let isLive = $(this).data('live');

@@ -1,19 +1,10 @@
-const menuBtn = document.getElementById("menuBtn");
-const sidebar = document.getElementById("sidebar");
-// const overlay = document.getElementById("overlay");
-const closebtn = document.getElementById("closebtn");
 
-menuBtn.addEventListener("click", () => {
-    sidebar.classList.toggle("active");
-    // overlay.classList.toggle("active");
-});
 
-// overlay.addEventListener("click", () => {
-//     sidebar.classList.remove("active");
-//     overlay.classList.remove("active");
-// });
 
-closebtn.addEventListener("click", () => {
-    sidebar.classList.remove("active");
-    // overlay.classList.remove("active");
-});
+document.getElementById("menuBtn").onclick = function(){
+document.getElementById("sidebar").classList.add("active");
+}
+
+document.getElementById("closebtn").onclick = function(){
+document.getElementById("sidebar").classList.remove("active");
+}

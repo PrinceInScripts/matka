@@ -29,69 +29,42 @@
             box-sizing: border-box;
         }
 
-        .game-rate-page{
+        .info-page{
 display:flex;
 flex-direction:column;
 gap:15px;
 }
 
 .page-title{
+text-align:center;
 font-weight:600;
-text-align:center;
+margin-bottom:5px;
 }
 
-.rate-tabs{
-display:flex;
-justify-content:space-between;
-background:white;
-border-radius:10px;
-padding:5px;
-}
-
-.rate-tabs .nav-link{
-flex:1;
-border-radius:8px;
-text-align:center;
-font-size:18px;
-color:#555;
-font-weight:800;
-
-}
-
-.rate-tabs .nav-link.active{
-background:#2563eb;
-color:white;
-/* font-weight:900; */
-}
-
-.rate-card{
+.info-card{
 background:white;
 border-radius:12px;
 padding:15px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:10px;
 box-shadow:0 2px 8px rgba(0,0,0,.05);
 }
 
-.rate-name{
+.info-card h6{
 font-weight:600;
-display:flex;
-align-items:center;
-gap:8px;
-}
-
-.rate-value{
-font-weight:700;
+margin-bottom:10px;
 color:#2563eb;
 }
 
-.color-dot{
-width:10px;
-height:10px;
-border-radius:50%;
-display:inline-block;
+.game-rule{
+border-bottom:1px solid #eee;
+padding:8px 0;
+}
+
+.play-steps{
+padding-left:18px;
+}
+
+.play-steps li{
+margin-bottom:6px;
 }
 
        
@@ -108,126 +81,86 @@ display:inline-block;
         <div class="left-area">
             @include('components.topbar')
             <div class="home-content">
-                <div class="game-rate-page">
+               <div class="info-page">
 
 <h5 class="page-title">
-Game Rates
+How To Play
 </h5>
 
-<ul class="nav nav-pills rate-tabs" id="rateTabs">
+<div class="info-card">
 
-<li class="nav-item">
-<button class="nav-link active" data-bs-toggle="pill" data-bs-target="#main">
-Main Market
-</button>
-</li>
+<h6>Matka Game Types</h6>
 
-<li class="nav-item">
-<button class="nav-link" data-bs-toggle="pill" data-bs-target="#starline">
-Starline
-</button>
-</li>
+<div class="game-rule">
+<strong>Single Digit</strong>
+<p>Select any digit from 0–9.</p>
+</div>
 
-<li class="nav-item">
-<button class="nav-link" data-bs-toggle="pill" data-bs-target="#gali">
-Gali Disawar
-</button>
-</li>
+<div class="game-rule">
+<strong>Jodi</strong>
+<p>Select two digits (00–99).</p>
+</div>
+
+<div class="game-rule">
+<strong>Single Panna</strong>
+<p>Select 3 different digits like 123.</p>
+</div>
+
+<div class="game-rule">
+<strong>Double Panna</strong>
+<p>Two digits same and one different like 112.</p>
+</div>
+
+<div class="game-rule">
+<strong>Triple Panna</strong>
+<p>Three same digits like 111.</p>
+</div>
+
+<div class="game-rule">
+<strong>Half Sangam</strong>
+<p>Combination of Panna + Digit.</p>
+</div>
+
+<div class="game-rule">
+<strong>Full Sangam</strong>
+<p>Combination of Panna + Panna.</p>
+</div>
+
+</div>
+
+
+<div class="info-card">
+
+<h6>Steps To Place Bet</h6>
+
+<ol class="play-steps">
+
+<li>Select Market</li>
+<li>Select Game Type</li>
+<li>Enter Digit / Panna</li>
+<li>Enter Amount</li>
+<li>Confirm Bet</li>
+
+</ol>
+
+</div>
+
+
+<div class="info-card">
+
+<h6>Winning Rules</h6>
+
+<ul>
+
+<li>Winning amount is credited automatically.</li>
+
+<li>Results are declared according to market time.</li>
+
+<li>Once bet is placed it cannot be cancelled.</li>
+
+<li>Please verify digits before confirming bet.</li>
 
 </ul>
-
-
-<div class="tab-content">
-
-<!-- MAIN MARKET -->
-
-<div class="tab-pane fade show active" id="main">
-
-@foreach($mainRates as $game)
-
-<div class="rate-card">
-
-<div class="rate-name">
-
-<span class="color-dot"
-style="background:{{$game->color}}"></span>
-
-{{$game->name}}
-
-</div>
-
-<div class="rate-value">
-
-10 : {{ intval($game->payout_rate * 10) }}
-
-</div>
-
-</div>
-
-@endforeach
-
-</div>
-
-
-<!-- STARLINE -->
-
-<div class="tab-pane fade" id="starline">
-
-@foreach($starlineRates as $game)
-
-<div class="rate-card">
-
-<div class="rate-name">
-
-<span class="color-dot"
-style="background:{{$game->color}}"></span>
-
-{{$game->name}}
-
-</div>
-
-<div class="rate-value">
-
-10 : {{ intval($game->payout_rate * 10) }}
-
-</div>
-
-</div>
-
-@endforeach
-
-</div>
-
-
-<!-- GALI DISAWAR -->
-
-<div class="tab-pane fade" id="gali">
-
-@foreach($galiRates as $game)
-
-<div class="rate-card">
-
-<div class="rate-name">
-
-<span class="color-dot"
-style="background:{{$game->color}}"></span>
-
-{{$game->name}}
-
-</div>
-
-<div class="rate-value">
-
-10 : {{ intval($game->payout_rate * 10) }}
-
-</div>
-
-</div>
-
-@endforeach
-
-</div>
-
 
 </div>
 

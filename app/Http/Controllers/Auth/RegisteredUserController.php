@@ -11,6 +11,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
+use App\Models\Wallet;
+
+
+// import helpers
+// use App\Helpers\NotificationHelper;
 
 class RegisteredUserController extends Controller
  {
@@ -55,6 +60,18 @@ class RegisteredUserController extends Controller
         'plain_password'=>$request->password,
     ]);
 
+    Wallet::create([
+    'user_id' => $user->id,
+    'balance' => 0
+]);
+
+sendNotification(
+    $user->id,
+    "Welcome to Matka Play",
+    "Your account has been created successfully",
+    "account"
+);
+
         event( new Registered( $user ) );
 
         $request->session()->put( 'login_user_id', $user->id );
@@ -90,6 +107,13 @@ class RegisteredUserController extends Controller
 
         $user->mpin = Hash::make( $request->mpin );
         $user->save();
+
+        sendNotification(
+    $user->id,
+    "MPIN Created",
+    "Your security MPIN has been set successfully",
+    "security"
+);
 
         // Login user
         Auth::login( $user );

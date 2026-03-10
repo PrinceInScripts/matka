@@ -20,10 +20,10 @@
             <span>Wallet</span>
     </div>
         {{-- <div class="bottom-item" onclick="window.location.href='{{ route('website') }}'"> --}}
-    <div class="bottom-item">
-            <img src="https://cdn-icons-png.flaticon.com/128/1383/1383676.png" width="24" height="24"
+    <div class="bottom-item" onclick="window.location.href='{{ route('profile.index') }}'">
+            <img src="https://cdn-icons-png.flaticon.com/128/1144/1144760.png" width="24" height="24"
                 alt="" class="bottom-logo" />
-            <span>Website</span>
+            <span>Profile</span>
     </div>
 
 

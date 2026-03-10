@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Announcement;
 use App\Models\Bid;
 use App\Models\GaliDisawarGame;
 use App\Models\GameList;
 use App\Models\GameType;
 use App\Models\MarketGameType;
+use App\Models\Setting;
 use App\Models\StarlineGameType;
 use App\Models\StarlineName;
 use App\Models\StarlineSchedule;
@@ -76,7 +78,23 @@ class PageController extends Controller
 
         // return $games;
 
-        return view('pages.home', compact('games'));
+        $announcement = Announcement::where('is_active',1)
+->where(function($q){
+
+$q->whereNull('start_time')
+->orWhere('start_time','<=',now());
+
+})
+->where(function($q){
+
+$q->whereNull('end_time')
+->orWhere('end_time','>=',now());
+
+})
+->latest()
+->first();
+
+        return view('pages.home', compact('games', 'announcement'));
     }
 
     public function starline()
@@ -341,8 +359,17 @@ class PageController extends Controller
 
     public function gameRates()
     {
-        $gamesTypes = GameType::all();
-        return view('pages.game-rates', compact('gamesTypes'));
+       $mainRates = GameType::all();
+
+
+$starlineRates = DB::table('starline_gamestype')
+->get();
+
+$galiRates = DB::table('gali_disawar_types')
+->get();
+
+
+        return view('pages.game-rates', compact('mainRates', 'starlineRates', 'galiRates'));
     }
 
     public function halfSangam()
@@ -355,4 +382,25 @@ class PageController extends Controller
         return view('games.fullsangam');
     }
 
+
+    public function support(){
+       $settings = Setting::pluck('setting_value','setting_key');
+
+    return view('pages.support',[
+        'whatsapp1' => $settings['support_whatsapp_1'] ?? '',
+        'whatsapp2' => $settings['support_whatsapp_2'] ?? '',
+        'phone'     => $settings['support_call'] ?? '',
+        'telegram'  => $settings['support_telegram'] ?? ''
+    ]);
+    }
+
+    public function termsconditions(){
+
+    return view('pages.termsconditions');
+    }
+
+    public function howtoplay(){
+        return view('pages.howtoplay');
+    }
+   
 }

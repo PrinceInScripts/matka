@@ -22,6 +22,7 @@ use App\Http\Controllers\BidController;
 use App\Http\Controllers\FundController;
 use App\Http\Controllers\GaliDisaController;
 use App\Http\Controllers\GameLayoutController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ResultController;
 use LDAP\Result;
 
@@ -35,7 +36,7 @@ Route::get('/dashboard', function () {
 
 Route::get('/test',[PageController::class, 'test1'])->name('test');
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/home', [PageController::class, 'home'])->name('home');
@@ -73,6 +74,25 @@ Route::get('deposit-history',[FundController::class, 'depositHistory'])->name('d
 Route::get('withdraw-history',[FundController::class, 'withdrawHistory'])->name('withdraw.history');
 
 Route::post('/place-bid', [BidController::class, 'placeBid'])->name('place.bids');
+
+Route::get('/notifications',[NotificationController::class,'index']);
+Route::get('/notifications/count',[NotificationController::class,'count']);
+Route::post('/notifications/read',[NotificationController::class,'markRead']);
+
+Route::post('/change-password', [ProfileController::class,'changePassword'])
+->name('change.password');
+
+Route::post('/verify-password', [ProfileController::class,'verifyPassword'])
+->name('verify.password');
+
+Route::post('/change-mpin', [ProfileController::class,'changeMpin'])
+->name('change.mpin');
+
+Route::get('/support',[PageController::class,'support'])->name('support');
+Route::get('/how-to-play',[PageController::class,'howtoplay'])->name('how.to.play');
+Route::get('/terms-conditions',[PageController::class,'termsconditions'])->name('terms.conditions');
+
+
 
 });
 

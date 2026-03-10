@@ -29,71 +29,44 @@
             box-sizing: border-box;
         }
 
-        .game-rate-page{
+
+        .info-page{
 display:flex;
 flex-direction:column;
 gap:15px;
 }
 
 .page-title{
+text-align:center;
 font-weight:600;
-text-align:center;
+margin-bottom:5px;
 }
 
-.rate-tabs{
-display:flex;
-justify-content:space-between;
-background:white;
-border-radius:10px;
-padding:5px;
-}
-
-.rate-tabs .nav-link{
-flex:1;
-border-radius:8px;
-text-align:center;
-font-size:18px;
-color:#555;
-font-weight:800;
-
-}
-
-.rate-tabs .nav-link.active{
-background:#2563eb;
-color:white;
-/* font-weight:900; */
-}
-
-.rate-card{
+.info-card{
 background:white;
 border-radius:12px;
 padding:15px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:10px;
 box-shadow:0 2px 8px rgba(0,0,0,.05);
 }
 
-.rate-name{
+.info-card h6{
 font-weight:600;
-display:flex;
-align-items:center;
-gap:8px;
-}
-
-.rate-value{
-font-weight:700;
+margin-bottom:10px;
 color:#2563eb;
 }
 
-.color-dot{
-width:10px;
-height:10px;
-border-radius:50%;
-display:inline-block;
+.game-rule{
+border-bottom:1px solid #eee;
+padding:8px 0;
 }
 
+.play-steps{
+padding-left:18px;
+}
+
+.play-steps li{
+margin-bottom:6px;
+}
        
     </style>
 
@@ -108,126 +81,70 @@ display:inline-block;
         <div class="left-area">
             @include('components.topbar')
             <div class="home-content">
-                <div class="game-rate-page">
+               <div class="info-page">
 
 <h5 class="page-title">
-Game Rates
+Terms & Conditions
 </h5>
 
-<ul class="nav nav-pills rate-tabs" id="rateTabs">
+<div class="info-card">
 
-<li class="nav-item">
-<button class="nav-link active" data-bs-toggle="pill" data-bs-target="#main">
-Main Market
-</button>
-</li>
+<h6>Account Rules</h6>
 
-<li class="nav-item">
-<button class="nav-link" data-bs-toggle="pill" data-bs-target="#starline">
-Starline
-</button>
-</li>
+<ul>
 
-<li class="nav-item">
-<button class="nav-link" data-bs-toggle="pill" data-bs-target="#gali">
-Gali Disawar
-</button>
-</li>
+<li>Only one account per user is allowed.</li>
+
+<li>Users must provide correct information.</li>
+
+<li>Accounts found abusing the system may be suspended.</li>
 
 </ul>
 
-
-<div class="tab-content">
-
-<!-- MAIN MARKET -->
-
-<div class="tab-pane fade show active" id="main">
-
-@foreach($mainRates as $game)
-
-<div class="rate-card">
-
-<div class="rate-name">
-
-<span class="color-dot"
-style="background:{{$game->color}}"></span>
-
-{{$game->name}}
-
 </div>
 
-<div class="rate-value">
 
-10 : {{ intval($game->payout_rate * 10) }}
+<div class="info-card">
 
-</div>
+<h6>Betting Rules</h6>
 
-</div>
+<ul>
 
-@endforeach
+<li>All bets are final once placed.</li>
+
+<li>Company is not responsible for user mistakes.</li>
+
+<li>Results declared by the system are final.</li>
+
+</ul>
 
 </div>
 
 
-<!-- STARLINE -->
+<div class="info-card">
 
-<div class="tab-pane fade" id="starline">
+<h6>Wallet & Transactions</h6>
 
-@foreach($starlineRates as $game)
+<ul>
 
-<div class="rate-card">
+<li>Minimum recharge and withdraw limits apply.</li>
 
-<div class="rate-name">
+<li>Withdraw requests are processed within working hours.</li>
 
-<span class="color-dot"
-style="background:{{$game->color}}"></span>
+<li>Fraudulent transactions will lead to account suspension.</li>
 
-{{$game->name}}
-
-</div>
-
-<div class="rate-value">
-
-10 : {{ intval($game->payout_rate * 10) }}
-
-</div>
-
-</div>
-
-@endforeach
+</ul>
 
 </div>
 
 
-<!-- GALI DISAWAR -->
+<div class="info-card">
 
-<div class="tab-pane fade" id="gali">
+<h6>Support</h6>
 
-@foreach($galiRates as $game)
-
-<div class="rate-card">
-
-<div class="rate-name">
-
-<span class="color-dot"
-style="background:{{$game->color}}"></span>
-
-{{$game->name}}
-
-</div>
-
-<div class="rate-value">
-
-10 : {{ intval($game->payout_rate * 10) }}
-
-</div>
-
-</div>
-
-@endforeach
-
-</div>
-
+<p>
+For any issues contact support through WhatsApp listed in the Support section.
+</p>
 
 </div>
 
