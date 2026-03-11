@@ -3,14 +3,14 @@
 namespace App\Http\Controllers;
 use App\Models\Notification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class NotificationController extends Controller
 {
 
     public function index()
     {
-        $userId = session('login_user_id');
-
+       $userId =Auth::id();
         $notifications = Notification::where('user_id',$userId)
                         ->latest()
                         ->limit(30)
@@ -21,10 +21,10 @@ class NotificationController extends Controller
 
     public function count()
     {
-        $userId = session('login_user_id');
+        $userId = Auth::id();
 
         $count = Notification::where('user_id',$userId)
-                ->where('is_read',false)
+                ->where('is_read',0)
                 ->count();
 
         return response()->json(['count'=>$count]);
@@ -32,8 +32,8 @@ class NotificationController extends Controller
 
     public function markRead(Request $request)
     {
-        Notification::where('user_id',session('login_user_id'))
-            ->update(['is_read'=>true]);
+        Notification::where('user_id',Auth::id())
+            ->update(['is_read'=>1]);
 
         return response()->json(['status'=>'success']);
     }

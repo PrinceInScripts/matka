@@ -402,12 +402,12 @@
 
                 <div class="quick-actions">
 
-                    <a href="/deposit" class="action-btn deposit">
+                    <a href="/deposit-funds" class="action-btn deposit">
                         <i class="fa fa-plus-circle"></i>
                         <span>Deposit</span>
                     </a>
 
-                    <a href="/withdraw" class="action-btn withdraw">
+                    <a href="/withdraw-funds" class="action-btn withdraw">
                         <i class="fa fa-arrow-up"></i>
                         <span>Withdraw</span>
                     </a>
@@ -434,7 +434,7 @@
                     </a>
 
 
-                    <a href="/gali-disawar" class="game-card gali">
+                    <a href="/galidisawar" class="game-card gali">
 
                         <div class="game-icon">
                             <i class="fa fa-diamond"></i>

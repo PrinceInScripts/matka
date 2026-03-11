@@ -1,3 +1,7 @@
+@php
+    $isStarline = $game->type === 'starline';
+@endphp
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -12,9 +16,11 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
 
+    <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet">
+
+
 
     <style>
-        /* ✅ FIXED TOP BAR */
         .top-bar {
             position: fixed;
             top: 0;
@@ -48,13 +54,11 @@
             font-size: 20px;
         }
 
-        /* ✅ SCROLLABLE CONTENT ONLY */
         .home-content {
             flex: 1;
             overflow-y: auto;
             background: #f5f6fa;
             padding: 80px 15px 90px;
-            /* extra padding for fixed bars */
             height: calc(100dvh - 140px);
             -webkit-overflow-scrolling: touch;
             box-sizing: border-box;
@@ -77,9 +81,8 @@
         }
 
 
-        /* ---------- CUSTOM UI AREA ---------- */
 
-        .game-section {
+        /* .game-section {
             background: #fff;
             padding: 20px;
             border-radius: 10px;
@@ -200,7 +203,254 @@
             border-radius: 50%;
             padding: 5px 8px;
             cursor: pointer;
+        } */
+
+        .game-section {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
         }
+
+        .game-header h5 {
+            font-weight: 700;
+            color: #2563eb;
+            margin-bottom: 15px;
+        }
+
+        /* INPUT GRID */
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+        }
+
+        .bid-form input,
+        .bid-form select {
+            height: 48px;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            padding: 0 12px;
+            font-size: 14px;
+            background: #fafafa;
+            transition: 0.2s;
+        }
+
+        .bid-form input:focus,
+        .bid-form select:focus {
+            background: #fff;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+        }
+
+        /* ADD BID BUTTON */
+
+        .add-bid-btn {
+            width: 100%;
+            height: 46px;
+            border: none;
+            border-radius: 12px;
+            background: #2563eb;
+            color: white;
+            font-weight: 600;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: .2s;
+        }
+
+        .add-bid-btn:hover {
+            background: #1d4ed8;
+        }
+
+        /* BID LIST */
+
+        .bid-list {
+            margin-top: 18px;
+        }
+
+        .bid-list-header {
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .bid-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+        }
+
+        .bid-number {
+            font-weight: 700;
+            color: #111;
+        }
+
+        .bid-points {
+            font-weight: 600;
+            color: #2563eb;
+        }
+
+        .delete-bid {
+            background: #ef4444;
+            color: white;
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        /* SUMMARY */
+
+        .submit-panel {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .bid-summary {
+            display: flex;
+            gap: 20px;
+        }
+
+        .summary-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2563eb;
+        }
+
+        .summary-label {
+            font-size: 12px;
+            color: #777;
+            display: block;
+        }
+
+        .submit-bid-btn {
+            flex: 1;
+            height: 48px;
+            border: none;
+            border-radius: 12px;
+            background: #22c55e;
+            color: white;
+            font-weight: 700;
+        }
+
+        .submit-bid-btn:hover {
+            background: #16a34a;
+        }
+
+        .empty-bids {
+            text-align: center;
+            color: #888;
+            padding: 15px;
+            font-size: 13px;
+        }
+
+        .bid-attribute {
+            background: #2563eb;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+
+        .bid-columns {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #777;
+            margin-bottom: 6px;
+            padding: 0 6px;
+        }
+
+        .bid-form select#digit{
+height:48px;
+border-radius:10px;
+border:1px solid #e5e7eb;
+padding:0 10px;
+font-size:14px;
+background:#fafafa;
+}
+
+.ts-wrapper{
+width:100%;
+}
+
+/* Tom Select Fix */
+
+.ts-wrapper.single .ts-control{
+height:48px;
+min-height:48px;
+border-radius:10px;
+border:1px solid #e5e7eb;
+background:#fafafa;
+
+display:flex;
+align-items:center;
+
+padding:0 12px;
+font-size:14px;
+box-shadow:none;
+}
+
+.ts-wrapper.single .ts-control .item{
+line-height:1;
+}
+
+/* Search input alignment */
+
+.ts-wrapper.single .ts-control input{
+height:100%;
+line-height:48px;
+padding:0;
+margin:0;
+}
+
+/* Focus state */
+
+.ts-wrapper.single .ts-control.focus{
+border-color:#2563eb;
+box-shadow:0 0 0 2px rgba(37,99,235,0.1);
+background:#fff;
+}
+.ts-dropdown{
+border-radius:10px;
+border:1px solid #e5e7eb;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button{
+-webkit-appearance:none;
+margin:0;
+}
     </style>
 
 </head>
@@ -217,14 +467,14 @@
 
                 <h5 class="m-0 fw-bold text-primary">{{ $game->name }}</h5>
 
-               @include('components.walletinfo')
+                @include('components.walletinfo')
             </div>
 
 
             <div class="home-content">
-                <div class="game-section">
+                {{-- <div class="game-section">
                     <div class="game-header">
-                        <h5>Game Entry</h5>
+                       <h5>Place Your Bid</h5>
                     </div>
                    @php
                         $today_date = date('Y-m-d');
@@ -249,7 +499,7 @@
                             <div class="col-6 form-group">
                                 <input type="text" id="digit"
                                    
-                                    name="digit" {{-- maxlength="{{ $digitsLimit }}" --}} placeholder="{{ $gameType->name }}">
+                                    name="digit" placeholder="{{ $gameType->name }}">
                             </div>
                             <div class="col-6 form-group">
                                 <input type="number" id="points" name="points" placeholder="Enter points">
@@ -288,6 +538,123 @@
                             <button type="button" class="submit-bid-btn mt-2">SUBMIT BID</button>
                         </div>
                     </form>
+                </div> --}}
+                <div class="game-section">
+
+                    <div class="game-header">
+                        <h5>Place Your Bid</h5>
+                    </div>
+
+                    @php
+                        $today_date = date('Y-m-d');
+                    @endphp
+
+                    <form class="bid-form">
+
+                        <div class="form-row">
+
+                            <div class="form-group">
+                                <label>Date</label>
+                                <input id="date" name="date" type="date" value="{{ $today_date }}">
+                            </div>
+
+                            @if (!$isStarline)
+                                <div class="form-group">
+                                    <label>Session</label>
+                                    <select id="session" name="session">
+                                        <option>OPEN</option>
+                                        <option>CLOSE</option>
+                                    </select>
+                                </div>
+                            @endif
+
+                        </div>
+
+
+                        <div class="form-row">
+
+                          <div class="form-group">
+<label>{{ $gameType->name }}</label>
+
+<select id="digit" name="digit">
+
+<option value="" disabled selected>Select {{ $gameType->name }}</option>
+
+@foreach($numbers as $number)
+<option value="{{ $number }}">{{ $number }}</option>
+@endforeach
+
+</select>
+
+</div>
+
+                            <div class="form-group">
+                                <label>Points</label>
+                                <input type="number" id="points" name="points" placeholder="Enter points">
+                            </div>
+
+                        </div>
+
+                        <button type="button" class="add-bid-btn">
+                            <i class="fa fa-plus"></i>
+                            Add Bid
+                        </button>
+
+                    </form>
+
+                    <div class="bid-list">
+
+                        <div class="bid-list-header">
+                            Added Bids
+                        </div>
+
+                        <div class="bid-attribute">
+                            {{ $gameType->name }}
+                        </div>
+
+                        <div class="bid-columns">
+                            <span>Digit</span>
+                            <span>Points</span>
+
+                            @if (!$isStarline)
+                                <span>Session</span>
+                            @endif
+
+                            <span></span>
+                        </div>
+
+                        <div class="bid-items">
+
+                            <div class="empty-bids">
+                                No bids added
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="submit-panel">
+
+                        <div class="bid-summary">
+
+                            <div>
+                                <span class="summary-value total-points">0</span>
+                                <span class="summary-label">Points</span>
+                            </div>
+
+                            <div>
+                                <span class="summary-value total-bids">0</span>
+                                <span class="summary-label">Bids</span>
+                            </div>
+
+                        </div>
+
+                        <button class="submit-bid-btn">
+                            Submit Bid
+                        </button>
+
+                    </div>
+
                 </div>
             </div>
 
@@ -308,196 +675,60 @@
     {{-- jq --}}
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+    
+
     <script>
+        new TomSelect("#digit",{
+create:false,
+sortField:"text",
+maxOptions:500
+});
         function goBack() {
             window.history.back();
         }
     </script>
 
-    {{-- <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const addBidBtn = document.querySelector(".add-bid-btn");
-            const submitBidBtn = document.querySelector(".submit-bid-btn");
-            const bidTableBody = document.querySelector(".bid-table tbody");
-            const pointsDisplay = document.querySelector(".submit-btn .digit:nth-child(1)");
-            const bidsDisplay = document.querySelector(".submit-btn .digit:nth-child(3)");
-
-            const inputs = {
-                date: document.getElementById("date"),
-                session: document.getElementById("session"),
-                pana: document.getElementById("digit"),
-                points: document.getElementById("points"),
-            };
-
-            let totalPoints = 0;
-            let totalBids = 0;
-
-            // 🟦 Add Bid
-            addBidBtn.addEventListener("click", () => {
-                const pana = inputs.pana.value.trim();
-                const points = parseInt(inputs.points.value.trim()) || 0;
-                const gameType = inputs.session.value;
-
-                if (pana === "" || points <= 0) {
-                    alert("Please enter a valid digit and points!");
-                    return;
-                }
-
-                // Remove "No Bids Added" placeholder
-                const noBidRow = bidTableBody.querySelector(".text-muted");
-                if (noBidRow) noBidRow.parentElement.remove();
-
-                // Create new row
-                const newRow = document.createElement("tr");
-                newRow.innerHTML = `
-            <td>${pana}</td>
-            <td>${points}</td>
-            <td style="color:#3FDD3F;" class="game-type">${gameType}</td>
-            <td><button class="btnn"><i class="fa-solid fa-xmark"></i></button></td>
-        `;
-                bidTableBody.appendChild(newRow);
-                const digitInput = document.getElementById('digit');
-
-                digitInput.style.borderColor = '';
-
-                // Update totals
-                totalBids++;
-                totalPoints += points;
-                updateDisplay();
-
-                // Clear input fields
-                inputs.pana.value = "";
-                inputs.points.value = "";
-
-                // Add delete handler
-                newRow.querySelector(".btnn").addEventListener("click", () => {
-                    totalPoints -= points;
-                    totalBids--;
-                    newRow.remove();
-                    if (bidTableBody.children.length === 0) {
-                        bidTableBody.innerHTML =
-                            `<tr><td colspan="4" class="text-center text-muted">No Bids Added</td></tr>`;
-                    }
-                    updateDisplay();
-                });
-            });
-
-            // 🟩 Submit Bid
-            submitBidBtn.addEventListener("click", () => {
-                if (totalBids === 0) {
-                    alert("No bids to submit!");
-                    return;
-                }
-
-                const bids = [];
-                bidTableBody.querySelectorAll("tr").forEach(row => {
-                    const cells = row.querySelectorAll("td");
-                    if (cells.length === 4) {
-                        bids.push({
-                            pana: cells[0].innerText,
-                            points: parseInt(cells[1].innerText),
-                            gameType: cells[2].innerText,
-                        });
-                    }
-                });
-
-                console.log("🧾 Submitted Bids:", bids);
-
-                alert(`You submitted ${totalBids} bids totaling ${totalPoints} points.`);
-
-                // Reset table and totals
-                bidTableBody.innerHTML =
-                    `<tr><td colspan="4" class="text-center text-muted">No Bids Added</td></tr>`;
-                totalBids = 0;
-                totalPoints = 0;
-                updateDisplay();
-            });
-
-            // 🔵 Update display numbers
-            function updateDisplay() {
-                document.querySelector(".submit-btn div:first-child .digit").textContent = totalPoints;
-                document.querySelector(".submit-btn div:nth-child(2) .digit").textContent = totalBids;
-            }
-        });
-
-
-        function checkDigit(validNumbers, digitsLimit) {
-            const input = document.getElementById('digit');
-            let val = input.value.trim();
-
-            if (!val) {
-                input.style.borderColor = '';
-                return;
-            }
-
-            // Limit length
-            if (val.length > digitsLimit) {
-                input.value = val.slice(0, digitsLimit);
-                Toastify({
-                    text: `Only ${digitsLimit} digits allowed.`,
-                    duration: 2500,
-                    gravity: "top",
-                    position: "center",
-                    backgroundColor: "#ff6b6b",
-                }).showToast();
-                return;
-            }
-
-            if (val.length < digitsLimit) {
-                input.style.borderColor = '#ffaa00'; // orange = typing in progress
-                return;
-            }
-
-
-            // Validate number
-            if (!validNumbers.includes(val)) {
-                input.style.borderColor = 'red';
-                Toastify({
-                    text: `Invalid number! Please enter a valid one.`,
-                    duration: 2500,
-                    gravity: "top",
-                    position: "center",
-                    backgroundColor: "#ff6b6b",
-                }).showToast();
-            } else {
-                input.style.borderColor = 'green';
-            }
-        }
-    </script> --}}
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
+
             const addBidBtn = document.querySelector(".add-bid-btn");
             const submitBidBtn = document.querySelector(".submit-bid-btn");
-            const bidTableBody = document.querySelector(".bid-table tbody");
+            const bidContainer = document.querySelector(".bid-items");
 
             let totalPoints = 0;
             let totalBids = 0;
 
             const inputs = {
                 date: document.getElementById("date"),
-                session: document.getElementById("session"),
-                pana: document.getElementById("digit"),
+                digit: document.getElementById("digit"),
                 points: document.getElementById("points"),
-            }
+                @if (!$isStarline)
+                    session: document.getElementById("session"),
+                @endif
+            };
 
             const validNumbers = @json($numbers);
             const digitsLimit = {{ $digitsLimit }};
 
-            inputs.pana.addEventListener("input", () => {
-                checkDigit(inputs.pana, validNumbers, digitsLimit);
+            inputs.digit.addEventListener("input", () => {
+                checkDigit(inputs.digit);
             });
 
-            // 🟦 Add Bid button click
+
+            // ADD BID
             addBidBtn.addEventListener("click", () => {
-                const pana = inputs.pana.value.trim();
-                const points = parseInt(inputs.points.value.trim()) || 0;
-                const gameType = inputs.session.value;
 
-                // Validate fields before adding
-                if (!pana || points <= 0) {
+                const digit = inputs.digit.value.trim();
+                const points = parseInt(inputs.points.value) || 0;
+                @if (!$isStarline)
+                    const session = inputs.session.value;
+                @endif
+
+                if (!digit || points <= 0) {
                     Toastify({
-                        text: "Please enter a valid number and points!",
+                        text: "Enter valid number and points",
                         duration: 2500,
                         gravity: "top",
                         position: "center",
@@ -506,9 +737,9 @@
                     return;
                 }
 
-                if (pana.length !== digitsLimit) {
+                if (digit.length !== digitsLimit) {
                     Toastify({
-                        text: `Number must be exactly ${digitsLimit} digits long.`,
+                        text: `Number must be ${digitsLimit} digits`,
                         duration: 2500,
                         gravity: "top",
                         position: "center",
@@ -517,60 +748,81 @@
                     return;
                 }
 
-                if (!validNumbers.includes(pana)) {
+                if (!validNumbers.includes(digit)) {
                     Toastify({
-                        text: "Invalid number! Please enter a valid one.",
+                        text: "Invalid number",
                         duration: 2500,
                         gravity: "top",
                         position: "center",
                         backgroundColor: "#ff6b6b",
                     }).showToast();
-                    inputs.pana.style.borderColor = 'red';
                     return;
                 }
 
-                // ✅ Passed all validation — add the bid
-                const noBidRow = bidTableBody.querySelector(".text-muted");
-                if (noBidRow) noBidRow.parentElement.remove();
 
-                const newRow = document.createElement("tr");
-                newRow.innerHTML = `
-            <td>${pana}</td>
-            <td>${points}</td>
-            <td style="color:#3FDD3F;" class="game-type">${gameType}</td>
-            <td><button class="btnn"><i class="fa-solid fa-xmark"></i></button></td>
-        `;
-                bidTableBody.appendChild(newRow);
+                // REMOVE EMPTY MESSAGE
+                const empty = bidContainer.querySelector(".empty-bids");
+                if (empty) empty.remove();
 
-                // Update totals
-                totalBids++;
+
+                // CREATE BID ITEM
+                const bidItem = document.createElement("div");
+
+                bidItem.className = "bid-item";
+
+               bidItem.innerHTML = `
+<div class="bid-number">${digit}</div>
+<div class="bid-points">${points}</div>
+
+@if(!$isStarline)
+<div class="bid-session">${session}</div>
+@endif
+
+<button class="delete-bid"><i class="fa fa-xmark"></i></button>
+`;
+
+                bidContainer.appendChild(bidItem);
+
+
+                // UPDATE TOTALS
                 totalPoints += points;
-                updateDisplay();
+                totalBids++;
 
-                // Reset inputs
-                inputs.pana.value = "";
+                updateTotals();
+
+
+                // RESET INPUTS
+                inputs.digit.value = "";
                 inputs.points.value = "";
-                inputs.pana.style.borderColor = "";
+                inputs.digit.style.borderColor = "";
 
-                // Delete row handler
-                newRow.querySelector(".btnn").addEventListener("click", () => {
+
+                // DELETE BID
+                bidItem.querySelector(".delete-bid").addEventListener("click", () => {
+
                     totalPoints -= points;
                     totalBids--;
-                    newRow.remove();
 
-                    if (bidTableBody.children.length === 0) {
-                        bidTableBody.innerHTML =
-                            `<tr><td colspan="4" class="text-center text-muted">No Bids Added</td></tr>`;
+                    bidItem.remove();
+
+                    if (bidContainer.children.length === 0) {
+                        bidContainer.innerHTML = `<div class="empty-bids">No bids added</div>`;
                     }
-                    updateDisplay();
+
+                    updateTotals();
+
                 });
+
             });
 
-            submitBidBtn.addEventListener("click", async () => {
-                
+
+
+            // SUBMIT BIDS
+            submitBidBtn.addEventListener("click", () => {
+
                 if (totalBids === 0) {
                     Toastify({
-                        text: "No bids to submit!",
+                        text: "No bids to submit",
                         duration: 2500,
                         gravity: "top",
                         position: "center",
@@ -579,26 +831,24 @@
                     return;
                 }
 
-                // Collect all bids
                 const bids = [];
-                bidTableBody.querySelectorAll("tr").forEach(row => {
-                    const cells = row.querySelectorAll("td");
-                    if (cells.length === 4) {
-                        bids.push({
-                            digits: cells[0].innerText,
-                            points: parseInt(cells[1].innerText),
-                            session: cells[2].innerText,
-                        });
-                    }
+
+                document.querySelectorAll(".bid-item").forEach(item => {
+
+                    bids.push({
+                        digits: item.querySelector(".bid-number").innerText,
+                        points: parseInt(item.querySelector(".bid-points").innerText),
+                        @if (!$isStarline)
+                            session: item.querySelector(".bid-session").innerText,
+                        @endif
+                    });
+
                 });
 
-                console.log("🧾 Submitted Bids:", bids);
 
-
-                // Prepare data for backend
                 const payload = {
                     date: inputs.date.value,
-                    market_id: "{{ $game->id ?? '' }}", // from blade
+                    market_id: "{{ $game->id ?? '' }}",
                     market_type: "{{ $game->type ?? 'main' }}",
                     game_id: "{{ $game->id ?? '' }}",
                     game_type_id: "{{ $gameType->id ?? '' }}",
@@ -606,116 +856,99 @@
                     game_type: "{{ $game_type ?? 'main' }}"
                 };
 
-                console.log(payload);
 
-                try {
-                    $.ajax({
-                        url: "{{ route('place.bids') }}",
-                        type: "POST",
-                        data: JSON.stringify(payload),
-                        contentType: "application/json",
-                        headers: {
-                            "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                $.ajax({
+
+                    url: "{{ route('place.bids') }}",
+                    type: "POST",
+                    data: JSON.stringify(payload),
+                    contentType: "application/json",
+
+                    headers: {
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
                     },
-                        success: function(response) {
-                            Toastify({
-                                text: "Bids submitted successfully!",
-                                duration: 2500,
-                                gravity: "top",
-                                position: "center",
-                                backgroundColor: "#28a745",
-                            }).showToast();
 
-                            // Reset UI
-                            $("#bidTableBody").html(
-                                `<tr><td colspan="4" class="text-center text-muted">No Bids Added</td></tr>`
-                            );
-                            totalBids = 0;
-                            totalPoints = 0;
-                            updateDisplay();
-                        },
-                        error: function(xhr) {
-                            let message = "Failed to submit bids!";
-                            if (xhr.responseJSON && xhr.responseJSON.message) {
-                                message = xhr.responseJSON.message;
-                            }
+                    success: function() {
 
-                            Toastify({
-                                text: message,
-                                duration: 2500,
-                                gravity: "top",
-                                position: "center",
-                                backgroundColor: "#ff6b6b",
-                            }).showToast();
+                        Toastify({
+                            text: "Bids submitted successfully",
+                            duration: 2500,
+                            gravity: "top",
+                            position: "center",
+                            backgroundColor: "#28a745",
+                        }).showToast();
+
+
+                        // RESET UI
+                        bidContainer.innerHTML = `<div class="empty-bids">No bids added</div>`;
+
+                        totalPoints = 0;
+                        totalBids = 0;
+
+                        updateTotals();
+
+                    },
+
+                    error: function(xhr) {
+
+                        let message = "Failed to submit bids";
+
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            message = xhr.responseJSON.message;
                         }
-                    });
 
-                } catch (err) {
-                    console.error("Error submitting bids:", err);
-                    Toastify({
-                        text: "Network or server error!",
-                        duration: 2500,
-                        gravity: "top",
-                        position: "center",
-                        backgroundColor: "#ff6b6b",
-                    }).showToast();
-                }
+                        Toastify({
+                            text: message,
+                            duration: 2500,
+                            gravity: "top",
+                            position: "center",
+                            backgroundColor: "#ff6b6b",
+                        }).showToast();
 
-                 bidTableBody.innerHTML = `<tr><td colspan="4" class="text-center text-muted">No Bids Added</td></tr>`;
-        totalBids = 0;
-        totalPoints = 0;
-        updateDisplay();
+                    }
+
+                });
+
             });
 
 
-            // 🔵 Helper: Update totals in footer
-            function updateDisplay() {
-                document.querySelector(".submit-btn div:first-child .digit").textContent = totalPoints;
-                document.querySelector(".submit-btn div:nth-child(2) .digit").textContent = totalBids;
+
+            // UPDATE TOTAL DISPLAY
+            function updateTotals() {
+
+                document.querySelector(".total-points").textContent = totalPoints;
+                document.querySelector(".total-bids").textContent = totalBids;
+
             }
 
-            // 🔵 Validation Function
-            function checkDigit(input, validNumbers, digitsLimit) {
+
+
+            // VALIDATE DIGIT INPUT
+            function checkDigit(input) {
+
                 let val = input.value.trim();
 
-                // Empty
                 if (!val) {
                     input.style.borderColor = "";
                     return;
                 }
 
-                // Too long
                 if (val.length > digitsLimit) {
                     input.value = val.slice(0, digitsLimit);
-                    Toastify({
-                        text: `Only ${digitsLimit} digits allowed.`,
-                        duration: 2500,
-                        gravity: "top",
-                        position: "center",
-                        backgroundColor: "#ff6b6b",
-                    }).showToast();
                     return;
                 }
 
-                // Still typing
                 if (val.length < digitsLimit) {
-                    input.style.borderColor = "#ffaa00"; // yellow = in progress
+                    input.style.borderColor = "#ffaa00";
                     return;
                 }
 
-                // Validate when fully typed
                 if (!validNumbers.includes(val)) {
                     input.style.borderColor = "red";
-                    Toastify({
-                        text: `Invalid number! Please enter a valid one.`,
-                        duration: 2500,
-                        gravity: "top",
-                        position: "center",
-                        backgroundColor: "#ff6b6b",
-                    }).showToast();
                 } else {
                     input.style.borderColor = "green";
                 }
+
             }
 
         });

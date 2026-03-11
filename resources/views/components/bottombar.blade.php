@@ -4,10 +4,10 @@
             class="bottom-logo">
         <span>History</span>
     </div>
-    <div class="bottom-item" onclick="window.location.href='{{ route('all.bids') }}'">
+    <div class="bottom-item" onclick="window.location.href='{{ route('my.bids') }}'">
         <img src="https://cdn-icons-png.flaticon.com/128/1962/1962683.png" width="24" height="24" alt=""
             class="bottom-logo" />
-        <span>All Bids</span>
+        <span>My Bids</span>
     </div>
     <div class="bottom-item" onclick="window.location.href='{{ route('home') }}'">
         <img src="https://cdn-icons-png.flaticon.com/128/6997/6997164.png" width="24" height="24" alt=""

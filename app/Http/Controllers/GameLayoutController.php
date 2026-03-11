@@ -104,6 +104,7 @@ class GameLayoutController extends Controller
         //     'game_type' => $game_type,
 
         // ] );
+        
 
         return view( "games.$layout", [
             'game' => $market,

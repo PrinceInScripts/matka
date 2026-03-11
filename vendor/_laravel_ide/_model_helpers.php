@@ -6197,6 +6197,7 @@ namespace App\Models {
     /**
      * App\Models\Notification
      *
+     * @property \Illuminate\Support\Carbon $updated_at
      * @property \Illuminate\Support\Carbon $created_at
      * @property bool|null $is_read
      * @property mixed $type
@@ -6212,6 +6213,7 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<Notification>|Notification whereType($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Notification>|Notification whereIsRead($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Notification>|Notification whereCreatedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Notification>|Notification whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Notification>|Notification newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<Notification>|Notification newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<Notification>|Notification query()

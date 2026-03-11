@@ -14,7 +14,7 @@
         position: sticky;
         top: 0;
         z-index: 1000;
-        height:56px;
+        height: 56px;
     }
 
     .topbar-title {
@@ -53,7 +53,7 @@
         font-size: 18px;
         /* color: #444; */
         color: #2563eb;
-        margin-right:10px;
+        margin-right: 10px;
     }
 
     #notification-count {
@@ -115,37 +115,49 @@
         text-align: center;
         color: #888;
     }
-    .notification-empty{
-padding:20px;
-text-align:center;
-color:#888;
-}
 
-.notification-empty i{
-font-size:22px;
-margin-bottom:6px;
-display:block;
-color:#bbb;
-}
+    .notification-empty {
+        padding: 20px;
+        text-align: center;
+        color: #888;
+    }
 
-.notification-item{
-padding:10px 12px;
-border-bottom:1px solid #eee;
-cursor:pointer;
-}
+    .notification-empty i {
+        font-size: 22px;
+        margin-bottom: 6px;
+        display: block;
+        color: #bbb;
+    }
 
-.notification-item:hover{
-background:#f9fafb;
-}
+    .notification-item {
+        padding: 10px 12px;
+        border-bottom: 1px solid #eee;
+        cursor: pointer;
+    }
 
-.notification-title{
-font-weight:600;
-font-size:14px;
-}
+    .notification-item:hover {
+        background: #f9fafb;
+    }
 
-.notification-msg{
-font-size:13px;
-color:#666;
+    .notification-title {
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .notification-msg {
+        font-size: 13px;
+        color: #666;
+    }
+
+    .notification-item.unread {
+        background: #eff6ff;
+        border-left: 3px solid #2563eb;
+    }
+
+    #notification-count.dot{
+width:8px;
+height:8px;
+padding:0;
 }
 </style>
 
@@ -168,20 +180,20 @@ color:#666;
 
             <div class="notification-dropdown" id="notificationDropdown">
 
-    <div class="notification-header">
-        Notifications
-    </div>
+                <div class="notification-header">
+                    Notifications
+                </div>
 
-    <div id="notificationList">
+                <div id="notificationList">
 
-        <div class="notification-empty">
-            <i class="fa fa-bell-slash"></i>
-            <p>No notifications yet</p>
-        </div>
+                    <div class="notification-empty">
+                        <i class="fa fa-bell-slash"></i>
+                        <p>No notifications yet</p>
+                    </div>
 
-    </div>
+                </div>
 
-</div>
+            </div>
 
         </div>
 
@@ -193,68 +205,147 @@ color:#666;
     </div>
 
 </div>
-
 <script>
     (function() {
 
+        let dropdown = document.getElementById("notificationDropdown");
+        let btn = document.getElementById("notificationBtn");
+
+        /* LOAD UNREAD COUNT */
+
         function loadNotificationCount() {
+
             fetch('/notifications/count')
                 .then(res => res.json())
                 .then(data => {
-                    document.getElementById('notification-count').innerText = data.count;
+
+                    let badge = document.getElementById('notification-count');
+                     badge.style.display = "inline-block";
+                        badge.innerText = data.count;
+
+                    // if (data.count > 0) {
+
+                    //     badge.style.display = "inline-block";
+                    //     badge.innerText = data.count;
+
+                    // } 
+                    // else {
+
+                    //     badge.style.display = "none";
+                    //     badge.innerText = ;
+
+                    // }
+
                 });
+
         }
 
-        function loadNotifications(){
 
-fetch('/notifications')
-.then(res=>res.json())
-.then(data=>{
+        /* LOAD NOTIFICATIONS */
 
-let html='';
+        function loadNotifications() {
 
-if(data.length === 0){
+            fetch('/notifications')
+                .then(res => res.json())
+                .then(data => {
 
-html = `
-<div class="notification-empty">
-<i class="fa fa-bell-slash"></i>
-<p>No notifications yet</p>
-</div>
-`;
+                    let html = "";
 
-}else{
+                    if (data.length === 0) {
 
-data.forEach(function(n){
+                        html = `
+                        <div class="notification-empty">
+                        <i class="fa fa-bell-slash"></i>
+                        <p>No notifications yet</p>
+                        </div>
+                        `;
 
-html += `
-<div class="notification-item">
-<div class="notification-title">${n.title}</div>
-<div class="notification-msg">${n.message}</div>
-</div>
-`;
+                    } else {
 
-});
+                        data.forEach(n => {
 
-}
+                            html += `
+                            <div class="notification-item ${n.is_read ? '' : 'unread'}">
 
-document.getElementById('notificationList').innerHTML = html;
+                            <div class="notification-title">
+                            ${n.title}
+                            </div>
 
-});
-}
+                            <div class="notification-msg">
+                            ${n.message}
+                            </div>
 
-       document.getElementById('notificationBtn').onclick = function(){
+                            </div>
+                            `;
 
-let dropdown = document.getElementById('notificationDropdown');
+                        });
 
-dropdown.style.display =
-dropdown.style.display === 'block' ? 'none' : 'block';
+                    }
 
-document.getElementById('notificationList').innerHTML =
-'<div class="notification-empty">Loading...</div>';
+                    document.getElementById("notificationList").innerHTML = html;
 
-loadNotifications();
+                });
 
-};
+        }
+
+
+        /* MARK AS READ */
+
+        function markNotificationsRead() {
+
+            fetch('/notifications/read', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                })
+                .then(res => res.json())
+                .then(() => {
+
+                    let badge = document.getElementById("notification-count");
+
+                    // badge.style.display = "none";
+                    // badge.innerText = "";
+                     badge.style.display = "inline-block";
+                        badge.innerText = data.count;
+
+                });
+
+        }
+
+
+        /* CLICK BELL */
+
+        btn.onclick = function() {
+
+            if (dropdown.style.display === "block") {
+
+                dropdown.style.display = "none";
+
+            } else {
+
+                dropdown.style.display = "block";
+
+                document.getElementById("notificationList").innerHTML =
+                    '<div class="notification-empty">Loading...</div>';
+
+                loadNotifications();
+                markNotificationsRead();
+
+            }
+
+        };
+
+
+        /* LOAD COUNT WHEN PAGE LOAD */
+
+        loadNotificationCount();
+
 
     })();
+
+    document.addEventListener("DOMContentLoaded", function(){
+loadNotificationCount();
+});
 </script>

@@ -1,26 +1,51 @@
 @if($transactions->count())
     @foreach($transactions as $tx)
         <div class="statement-card">
-            <div class="date">{{ $tx->created_at->format('M d, Y h:i A') }}</div>
-            <div class="particular">{{ ucfirst($tx->remark ?? $tx->type) }}</div>
 
-            <div class="amounts mt-2">
-                <div>
-                    <span class="label">Previous Amount:</span>
-                    <span class="value neutral">₹{{ $tx->balance_before ?? '0' }}</span>
-                </div>
-                <div>
-                    <span class="label">Transaction Amount:</span>
-                    <span class="value {{ $tx->type === 'credit' ? 'positive' : 'negative' }}">
-                        {{ $tx->type === 'credit' ? '+' : '-' }}₹{{ $tx->amount }}
-                    </span>
-                </div>
-                <div>
-                    <span class="label">Current Amount:</span>
-                    <span class="value neutral">₹{{ $tx->balance_after ?? '0' }}</span>
-                </div>
-            </div>
-        </div>
+<div class="statement-header">
+
+<div class="statement-left">
+
+<div class="statement-icon {{ $tx->type == 'credit' ? 'icon-credit' : 'icon-debit' }}">
+<i class="fa-solid {{ $tx->type == 'credit' ? 'fa-arrow-down' : 'fa-arrow-up' }}"></i>
+</div>
+
+<div>
+
+<div class="statement-type">
+{{ ucfirst($tx->type) }}
+</div>
+
+<div class="statement-date">
+{{ $tx->created_at->format('M d, Y • h:i A') }}
+</div>
+
+</div>
+</div>
+
+<div class="statement-amount {{ $tx->type == 'credit' ? 'amount-credit' : 'amount-debit' }}">
+{{ $tx->type == 'credit' ? '+' : '-' }}₹{{ $tx->amount }}
+</div>
+
+</div>
+
+
+<div class="statement-body">
+{{ ucfirst($tx->reason ?? 'Wallet Transaction') }}
+</div>
+
+
+<div class="balance-row">
+<span>Previous Balance</span>
+<span>₹{{ $tx->balance_before ?? '0' }}</span>
+</div>
+
+<div class="balance-row">
+<span>Current Balance</span>
+<span>₹{{ $tx->balance_after ?? '0' }}</span>
+</div>
+
+</div>
     @endforeach
 
     <div class="pagination justify-content-center">

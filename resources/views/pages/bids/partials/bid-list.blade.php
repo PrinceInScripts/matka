@@ -1,34 +1,85 @@
 @if ($bids->count())
-  @foreach ($bids as $bid)
-    <div class="statement-card">
-      <div class="date">{{ $bid->created_at->format('M d, Y h:i A') }}</div>
-      <div class="particular">
-        <strong>{{ $bid->market->name ?? '-' }}</strong> — {{ $bid->gameType->name ?? '-' }}
-        <small>({{ ucfirst($bid->session) }})</small><br>
-        Number: <strong>{{ $bid->number }}</strong>
-      </div>
-      <div class="amounts mt-2">
-        <div><span class="label">Prev Balance:</span> <span class="value neutral">₹{{ number_format(($bid->walletTransaction->balance_after ?? 0) + $bid->amount, 2) }}</span></div>
-        <div><span class="label">Transaction:</span> <span class="value negative">-₹{{ number_format($bid->amount, 2) }}</span></div>
-        <div><span class="label">Curr Balance:</span> <span class="value neutral">₹{{ number_format($bid->walletTransaction->balance_after ?? 0, 2) }}</span></div>
-        <div><span class="label">Status:</span>
-          <span class="value 
-            @if($bid->status == 'Won') positive 
-            @elseif($bid->status == 'Lost') negative 
-            @else neutral @endif">
-            {{ ucfirst($bid->status) }}
-          </span>
-        </div>
-      </div>
-    </div>
-  @endforeach
 
-  <div style="display: flex;justify-content:center" class="text-center">
-    {{ $bids->links('pagination::bootstrap-5') }}
-  </div>
+@foreach ($bids as $bid)
+
+<div class="bid-card">
+
+<div class="bid-header">
+
+<div class="bid-market">
+{{ $bid->market->name ?? '-' }}
+</div>
+
+<div class="bid-status
+@if($bid->status == 'won') status-win
+@elseif($bid->status == 'lost') status-loss
+@else status-pending
+@endif">
+
+{{ ucfirst($bid->status) }}
+
+</div>
+
+</div>
+
+
+<div class="bid-body">
+
+<div class="bid-row">
+
+<span>Game</span>
+<strong>{{ $bid->gameType->name ?? '-' }}</strong>
+
+</div>
+
+<div class="bid-row">
+
+<span>Session</span>
+<strong>{{ strtoupper($bid->session) }}</strong>
+
+</div>
+
+<div class="bid-row">
+
+<span>Number</span>
+<strong class="bid-number">{{ $bid->number }}</strong>
+
+</div>
+
+<div class="bid-row">
+
+<span>Amount</span>
+<strong class="bid-amount">₹{{ number_format($bid->amount,2) }}</strong>
+
+</div>
+
+</div>
+
+
+<div class="bid-footer">
+
+<span class="bid-date">
+{{ $bid->created_at->format('d M Y • h:i A') }}
+</span>
+
+</div>
+
+</div>
+
+@endforeach
+
+
+<div class="text-center mt-3">
+{{ $bids->links('pagination::bootstrap-5') }}
+</div>
+
 @else
-  <div class="text-center text-muted py-3">
-    <i class="fa-regular fa-circle-xmark fa-2x d-block mb-2"></i>
-    No bids found.
-  </div>
+
+<div class="empty-bids">
+
+<i class="fa fa-receipt"></i>
+<p>No bids found</p>
+
+</div>
+
 @endif

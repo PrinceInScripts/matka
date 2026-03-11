@@ -292,30 +292,102 @@ $q->whereNull('end_time')
 
     public function accountStatement(Request $request)
 {
-    $user = Auth::user();
+   $user = Auth::user();
 
     $query = WalletTransactions::whereHas('wallet', function ($q) use ($user) {
         $q->where('user_id', $user->id);
     });
 
-    // ✅ Filters
+    /* -------------------------
+       TYPE FILTER
+    -------------------------*/
+
     if ($request->filled('type')) {
         $query->where('type', $request->type);
     }
 
-    if ($request->filled('reason')) {
-        $query->where('reason', 'like', "%{$request->reason}%");
+
+    /* -------------------------
+       SOURCE FILTER
+    -------------------------*/
+
+    if ($request->filled('source')) {
+        $query->where('source', $request->source);
     }
 
+
+    /* -------------------------
+       WIN FILTER
+    -------------------------*/
+
+    if ($request->source === 'win') {
+        $query->whereIn('source', [
+            'main_market_win',
+            'starline_win',
+            'gali_disawar_win'
+        ]);
+    }
+
+
+    /* -------------------------
+       LOSS FILTER
+    -------------------------*/
+
+    if ($request->source === 'loss') {
+        $query->whereIn('source', [
+            'main_market_bid',
+            'starline_bid',
+            'gali_disawar_bid'
+        ]);
+    }
+
+
+    /* -------------------------
+       REASON SEARCH
+    -------------------------*/
+
+    if ($request->filled('reason')) {
+        $query->where(function ($q) use ($request) {
+
+            $q->where('reason','like','%'.$request->reason.'%')
+              ->orWhere('source','like','%'.$request->reason.'%');
+
+        });
+    }
+
+
+    /* -------------------------
+       DATE RANGE
+    -------------------------*/
+
     if ($request->filled('date_from')) {
-        $query->whereDate('created_at', '>=', $request->date_from);
+        $query->whereDate('created_at','>=',$request->date_from);
     }
 
     if ($request->filled('date_to')) {
-        $query->whereDate('created_at', '<=', $request->date_to);
+        $query->whereDate('created_at','<=',$request->date_to);
     }
 
-    $transactions = $query->orderBy('id', 'desc')->paginate(10);
+
+    /* -------------------------
+       FETCH DATA
+    -------------------------*/
+
+    $transactions = $query
+        ->orderBy('id','desc')
+        ->paginate(10);
+
+
+    // if ($request->ajax()) {
+
+    //     return response()->json([
+    //         'html' => view(
+    //             'pages.account-statement-partials-list',
+    //             compact('transactions')
+    //         )->render()
+    //     ]);
+
+    // }
 
     if ($request->ajax()) {
         return response()->json([

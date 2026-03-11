@@ -23,40 +23,126 @@ class BidController extends Controller
         return view('pages.bids.all-bids');
     }
 
+    // public function myBids(Request $request)
+    // {
+    //     $user = Auth::user();
+
+    //     $query = Bid::with([
+    //         'market:id,name',
+    //         'gameType:id,name',
+    //         'walletTransaction:id,wallet_id,type,amount,balance_after,created_at',
+    //     ])->where('user_id', $user->id);
+
+    //     if ($request->filled('market')) {
+    //         $query->whereHas('market', fn ($q) => $q->where('name', 'like', "%{$request->market}%"));
+    //     }
+
+    //     if ($request->filled('game_type')) {
+    //         $query->whereHas('gameType', fn ($q) => $q->where('name', 'like', "%{$request->game_type}%"));
+    //     }
+
+    //     if ($request->filled('status')) {
+    //         $query->where('status', $request->status);
+    //     }
+
+    //     $bids = $query->orderBy('id', 'desc')->paginate(10);
+
+    //     if ($request->ajax()) {
+    //         return response()->json([
+    //             'html' => view('pages.bids.partials.bid-list', compact('bids'))->render(),
+    //         ]);
+    //     }
+
+    //     return view('pages.bids.my-bids', compact('bids'));
+    // }
+
     public function myBids(Request $request)
-    {
-        $user = Auth::user();
+{
+    $user = Auth::user();
 
-        $query = Bid::with([
-            'market:id,name',
-            'gameType:id,name',
-            'walletTransaction:id,wallet_id,type,amount,balance_after,created_at',
-        ])->where('user_id', $user->id);
+    $query = Bid::with([
+        'market:id,name',
+        'gameType:id,name',
+        'walletTransaction:id,wallet_id,type,amount,balance_after,created_at',
+    ])
+    ->where('user_id', $user->id);
 
-        // ✅ Filters
-        if ($request->filled('market')) {
-            $query->whereHas('market', fn ($q) => $q->where('name', 'like', "%{$request->market}%"));
+
+    /* -----------------------------
+       MARKET TYPE FILTER
+    -----------------------------*/
+
+    if ($request->filled('market')) {
+
+        if ($request->market === 'main_market') {
+            $query->where('market_type', 'main');
         }
 
-        if ($request->filled('game_type')) {
-            $query->whereHas('gameType', fn ($q) => $q->where('name', 'like', "%{$request->game_type}%"));
+        if ($request->market === 'starline') {
+            $query->where('market_type', 'starline');
         }
 
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
+        if ($request->market === 'gali_disawar') {
+            $query->where('market_type', 'gali_disawar');
         }
-
-        // ✅ Paginate Eloquent models (not arrays)
-        $bids = $query->orderBy('id', 'desc')->paginate(10);
-
-        if ($request->ajax()) {
-            return response()->json([
-                'html' => view('pages.bids.partials.bid-list', compact('bids'))->render(),
-            ]);
-        }
-
-        return view('pages.bids.my-bids', compact('bids'));
     }
+
+
+    /* -----------------------------
+       STATUS FILTER
+    -----------------------------*/
+
+    if ($request->filled('status')) {
+        $query->where('status', strtolower($request->status));
+    }
+
+
+    /* -----------------------------
+       DATE RANGE FILTER
+    -----------------------------*/
+
+    if ($request->range === 'today') {
+        $query->whereDate('created_at', today());
+    }
+
+    if ($request->range === 'week') {
+        $query->where('created_at', '>=', now()->subDays(7));
+    }
+
+    if ($request->range === 'month') {
+        $query->where('created_at', '>=', now()->subMonth());
+    }
+
+    if ($request->range === 'custom') {
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+    }
+
+
+    /* -----------------------------
+       PAGINATION
+    -----------------------------*/
+
+    $bids = $query
+        ->orderBy('id', 'desc')
+        ->paginate(10);
+
+
+    if ($request->ajax()) {
+
+        return response()->json([
+            'html' => view('pages.bids.partials.bid-list', compact('bids'))->render(),
+        ]);
+    }
+
+    return view('pages.bids.my-bids', compact('bids'));
+}
 
     public function requestFund()
     {
@@ -299,7 +385,7 @@ class BidController extends Controller
                 'amount'    => $bid['points'],
                 'reason'    => 'Gali Disawar Bid',
                 'reference_id' => $newBid->id,
-                'source' => 'galidisawar_bid',
+                // 'source' => 'galidisawar_bid',
                 'balance_after' => $user->wallet->balance - $bid['points'],
             ]);
 
@@ -317,7 +403,7 @@ class BidController extends Controller
     $user->id,
     "Bet Placed",
     "Your bet has been successfully placed on Gali Disawar",
-    "game"
+    "bet"
 );
 
     return response()->json([
@@ -353,7 +439,7 @@ private function placeStarlineBid(Request $request)
         foreach ($request->bids as $bid) {
 
             $betData = match ($gameType->slug) {
-                'single_digit'
+                'single_digit',
                     => ['digit' => (int)$bid['digits']],
 
                 'single_panna', 'double_panna', 'triple_panna'
@@ -387,7 +473,7 @@ private function placeStarlineBid(Request $request)
                 'amount'    => $bid['points'],
                 'reason'    => 'Starline Bid',
                 'reference_id' => $newBid->id,
-                'source' => 'starline_bid',
+                // 'source' => 'starline_bid',
                 'balance_after' => $user->wallet->balance - $bid['points'],
             ]);
 
@@ -402,7 +488,7 @@ private function placeStarlineBid(Request $request)
     $user->id,
     "Bet Placed",
     "Your bet has been successfully placed on Starline",
-    "game"
+    "bet"
 );
 
     return response()->json([
@@ -439,13 +525,13 @@ private function placeMainMarketBid(Request $request)
             // 🎯 Main market supports complex types
             $betData = match ($gameType->slug) {
 
-                'single_digit'
+                'single_digit','single_bulk_digit'
                     => ['digit' => (int)$bid['digits']],
 
-                'jodi'
+                'jodi','jodi_bulk'
                     => ['jodi' => $bid['digits']],
 
-                'single_panna','double_panna','triple_panna'
+                'single_panna','double_panna','triple_panna','single_panna_bulk','double_panna_bulk','triple_panna_bulk'
                     => ['panna' => $bid['digits']],
 
                 'half_sangam' => $bid['session'] === 'open'
@@ -484,7 +570,7 @@ private function placeMainMarketBid(Request $request)
             $walletTx = WalletTransactions::create([
                 'wallet_id' => $user->wallet->id,
                 'type'      => 'debit',
-                'source'    => 'main_market_bid',
+                // 'source'    => 'main_market_bid',
                 'amount'    => $bid['points'],
                 'reason'    => 'Main Market Bid',
                 'reference_id' => $newBid->id,
@@ -503,7 +589,7 @@ private function placeMainMarketBid(Request $request)
     $user->id,
     "Bet Placed",
     "Your bet has been successfully placed on Main Market",
-    "game"
+    "bet"
 );
 
     return response()->json([

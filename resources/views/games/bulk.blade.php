@@ -1,12 +1,10 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Madhur Morning | Matka Play</title>
+    <title>Matka Play | Home</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -85,55 +83,136 @@
             text-transform: uppercase;
         }
 
-        .game-section {
-            background: #fff;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        .bet-controls {
+            background: #f8fafc;
+            padding: 14px;
+            border-radius: 14px;
+            margin-bottom: 18px;
         }
 
-        .form-control,
-        select {
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        .control-date input {
+            width: 100%;
+            height: 46px;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            padding: 0 12px;
+            font-size: 14px;
+            background: white;
+        }
+
+        .control-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .control-points input {
+            flex: 1;
+            height: 46px;
+            width: 100%;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            padding: 0 12px;
+        }
+
+        .control-session select {
+            width: 185px;
+            height: 46px;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            padding: 0 10px;
+            background: white;
         }
 
         /* Keypad */
         .keypad {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
+            gap: 12px;
             margin-top: 15px;
-
         }
 
         .keypad button {
             position: relative;
-            background: #fff;
-            border: none;
-            border-radius: 10px;
-            padding: 12px;
-            font-size: 18px;
-            font-weight: 600;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: 0.2s;
+            background: white;
+            border: 2px solid #e8edf6;
+            border-radius: 14px;
+            height: 70px;
+
+            font-size: 20px;
+            font-weight: 700;
+
+            color: #1e293b;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            transition: .2s;
         }
 
         .keypad button:hover {
-            background: #007bff;
-            color: #fff;
+            border-color: #2563eb;
+            background: #eff6ff;
         }
 
-        .keypad .point-tag {
+        .keypad button.active {
+            background: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
+
+        .point-tag {
             position: absolute;
-            top: 13px;
-            right: 0;
-            left: 0;
-            text-align: center;
-            font-size: 10px;
-            color: #007bff;
+            top: 6px;
+            right: 8px;
+
+            background: #22c55e;
+            color: white;
+
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 6px;
+        }
+
+        .bid-card {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 20px;
+        }
+
+        .bid-card-header {
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .bid-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            padding: 10px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .bid-digit {
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .bid-points {
+            color: #2563eb;
             font-weight: 600;
-            transform: translateY(-70%);
+        }
+
+        .remove-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 26px;
+            height: 26px;
         }
 
         /* Submit area */
@@ -141,30 +220,42 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+
+            background: white;
+            border-radius: 12px;
+            padding: 10px 12px;
             margin-top: 15px;
         }
 
-        .submit-area div {
-            text-align: center;
-            color: #007bff;
-            font-weight: 600;
-        }
-
-        .submit-area div span {
-            color: #000;
-            display: block;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
         .submit-area button {
-            background: #007bff;
-            color: #fff;
-            font-weight: 600;
+            background: #22c55e;
             border: none;
-            padding: 10px 20px;
-            border-radius: 25px;
-            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+            color: white;
+            font-weight: 700;
+
+            height: 48px;
+            padding: 0 25px;
+            border-radius: 12px;
+        }
+
+         .bid-attribute {
+            background: #2563eb;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+
+        .bid-columns {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #777;
+            margin-bottom: 6px;
+            padding: 0 6px;
         }
     </style>
 </head>
@@ -179,84 +270,94 @@
                 <h5 class="m-0 fw-bold text-primary">{{ $game->name }}</h5>
                 @include('components.walletinfo')
             </div>
-              @php
-                        $today_date = date('Y-m-d');
-                    @endphp
+            @php
+                $today_date = date('Y-m-d');
+            @endphp
 
 
             <div class="home-content">
-                <div class="game-section">
-                    <div class="row mb-3">
-                        <div class="col-6">
-                            <input type="date" class="form-control" value="{{ $today_date }}">
+                <div class="bet-controls">
+
+                    <div class="control-date">
+                        <input type="date" id="dateInput" value="{{ $today_date }}">
+                    </div>
+
+                    <div class="control-row">
+
+                        <div class="control-points">
+                            <input type="number" id="pointsInput" placeholder="Enter Points">
                         </div>
-                        <div class="col-6">
-                            <select class="form-select">
+
+                        <div class="control-session">
+                            <select id="sessionSelect">
                                 <option>OPEN</option>
                                 <option>CLOSE</option>
                             </select>
                         </div>
+
                     </div>
 
-                    <input type="number" id="pointsInput" class="form-control mb-4 w-50" placeholder="Enter points">
-
-                    <!-- Keypad -->
-                    {{-- <div class="keypad" id="keypad">
-                        <button data-num="1">1</button>
-                        <button data-num="2">2</button>
-                        <button data-num="3">3</button>
-                        <button data-num="4">4</button>
-                        <button data-num="5">5</button>
-                        <button data-num="6">6</button>
-                        <button data-num="7">7</button>
-                        <button data-num="8">8</button>
-                        <button data-num="9">9</button>
-                        <button data-num="0" style="grid-column: 2;">0</button>
-                    </div> --}}
-
-                    {{-- <div class="keypad" id="keypad">
-                    @foreach ($numbers as $number)
-                        <button data-num="{{ $number }}">{{ $number }}</button>
-                    @endforeach
-                    </div> --}}
-
-                    <div class="keypad" id="keypad">
-                        @foreach ($numbers as $index => $number)
-                            @php
-                                $isLast = $loop->last;
-                                $isSingleInLastRow = $isLast && $loop->count % 3 === 1;
-                            @endphp
-
-                            <button data-num="{{ $number }}"
-                                @if ($isSingleInLastRow) style="grid-column: 2;" @endif>
-                                {{ $number }}
-                            </button>
-                        @endforeach
-                    </div>
-
-
-                    <table class="table table-bordered text-center mt-3">
-                        <thead>
-                            <tr>
-                                <th>Digit</th>
-                                <th>Points</th>
-                                <th>Session</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="bidTableBody">
-                            <tr>
-                                <td colspan="4" class="text-muted">No Bids Added</td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <div class="submit-area">
-                        <div><strong id="bidCount">0</strong><span>Bids</span></div>
-                        <div><strong id="pointCount">0</strong><span>Points</span></div>
-                        <button id="submitBid">Submit BID</button>
-                    </div>
                 </div>
+                <div class="keypad" id="keypad">
+@foreach ($numbers as $index => $number)
+@php
+$isLast = $loop->last;
+$isSingleInLastRow = $isLast && $loop->count % 3 === 1;
+@endphp
+
+<button data-num="{{ $number }}"
+@if($isSingleInLastRow) style="grid-column:2;" @endif>
+{{ $number }}
+</button>
+
+@endforeach
+</div>
+
+<div class="bid-card">
+
+<div class="bid-card-header">
+Added Bids
+</div>
+
+<div class="bid-attribute">
+                            {{ $gameType->name }}
+                        </div>
+
+                        <div class="bid-columns">
+                            <span>Digit</span>
+                            <span>Points</span>
+
+                            {{-- @if (!$isStarline) --}}
+                                <span>Session</span>
+                            {{-- @endif --}}
+
+                            <span></span>
+                        </div>
+<div id="bidList">
+<div style="text-align:center;color:#777;padding:10px;">
+No bids added
+</div>
+</div>
+
+</div>
+
+<div class="submit-area">
+
+<div>
+<strong id="bidCount">0</strong>
+<div style="font-size:12px;">Bids</div>
+</div>
+
+<div>
+<strong id="pointCount">0</strong>
+<div style="font-size:12px;">Points</div>
+</div>
+
+<button id="submitBid">
+Submit BID
+</button>
+
+</div>
             </div>
 
             @include('components.bottombar')
@@ -296,7 +397,13 @@
             const session = sessionSelect.value;
 
             if (!points || points <= 0) {
-                alert("Enter valid points first!");
+                Toastify({
+                    text: "Enter valid points first!",
+                    duration: 2500,
+                    gravity: "top",
+                    position: "center",
+                    backgroundColor: "#ff6b6b",
+                }).showToast();
                 return;
             }
 
@@ -307,50 +414,105 @@
             };
 
             updateKeypadPoints();
-            updateTable();
+            updateBidList();
+
         });
 
+        // function updateKeypadPoints() {
+        //     document.querySelectorAll(".keypad button").forEach(btn => {
+        //         const num = btn.dataset.num;
+        //         const existingTag = btn.querySelector(".point-tag");
+        //         if (bids[num]) {
+        //             if (!existingTag) {
+        //                 const tag = document.createElement("div");
+        //                 tag.classList.add("point-tag");
+        //                 tag.textContent = bids[num].points;
+        //                 btn.appendChild(tag);
+        //             } else {
+        //                 existingTag.textContent = bids[num].points;
+        //             }
+        //         } else if (existingTag) {
+        //             existingTag.remove();
+        //         }
+        //     });
+        // }
+
         function updateKeypadPoints() {
+
             document.querySelectorAll(".keypad button").forEach(btn => {
+
                 const num = btn.dataset.num;
                 const existingTag = btn.querySelector(".point-tag");
+
                 if (bids[num]) {
+
+                    btn.classList.add("active");
+
                     if (!existingTag) {
+
                         const tag = document.createElement("div");
                         tag.classList.add("point-tag");
                         tag.textContent = bids[num].points;
+
                         btn.appendChild(tag);
+
                     } else {
+
                         existingTag.textContent = bids[num].points;
+
                     }
-                } else if (existingTag) {
-                    existingTag.remove();
+
+                } else {
+
+                    btn.classList.remove("active");
+
+                    if (existingTag) existingTag.remove();
+
                 }
+
             });
+
         }
 
-        function updateTable() {
+        function updateBidList() {
+
             const keys = Object.keys(bids);
+
             if (keys.length === 0) {
-                bidTable.innerHTML = `<tr><td colspan="4" class="text-muted">No Bids Added</td></tr>`;
+
+                document.getElementById("bidList").innerHTML =
+                    `<div style="text-align:center;color:#777;padding:10px;">No bids added</div>`;
+
             } else {
-                bidTable.innerHTML = keys.map(num => `
-          <tr>
-            <td>${num}</td>
-            <td>${bids[num].points}</td>
-            <td style="color:#3FDD3F" class="game-types">${bids[num].session}</td>
-            <td><button class="btnn" onclick="removeBid('${num}')">X</button></td>
-          </tr>`).join("");
+
+                document.getElementById("bidList").innerHTML = keys.map(num => `
+<div class="bid-row">
+
+<div class="bid-digit">${num}</div>
+
+<div class="bid-points">₹${bids[num].points}</div>
+
+<div class="game-types">${bids[num].session}</div>
+
+<button class="remove-btn" onclick="removeBid('${num}')">
+<i class="fa fa-xmark"></i>
+</button>
+
+</div>
+`).join("");
+
             }
 
             bidCount.textContent = keys.length;
             pointCount.textContent = keys.reduce((sum, n) => sum + bids[n].points, 0);
+
         }
 
         function removeBid(num) {
             delete bids[num];
             updateKeypadPoints();
-            updateTable();
+            updateBidList();
+
         }
 
         submitBtn.addEventListener("click", async () => {
@@ -407,11 +569,12 @@
                     // ✅ Reset all data
                     bids = {};
                     updateKeypadPoints();
-                    updateTable();
+                    updateBidList();
+
                     pointsInput.value = "";
 
-                     submitBtn.disabled = false;
-        submitBtn.innerHTML = originalBtnText;
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnText;
                 },
                 error: function(xhr) {
                     console.error(xhr.responseText);
@@ -423,8 +586,8 @@
                         backgroundColor: "#ff6b6b",
                     }).showToast();
 
-                      submitBtn.disabled = false;
-        submitBtn.innerHTML = originalBtnText;
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnText;
                 }
             });
 

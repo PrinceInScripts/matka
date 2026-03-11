@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\DepositRequest;
 use App\Models\Wallet;
 use App\Models\WalletTransactions;
 use Illuminate\Http\Request;
@@ -78,6 +79,26 @@ $transactions = WalletTransactions::where('wallet_id',$wallet->id)
         return view('pages.funds.add_funds_auto');
     }
 
+    public function depositFunds()
+    {
+        return view('pages.funds.deposit');
+    }
+    public function depositFundsStore(Request $request)
+    {
+        $request->validate([
+'amount'=>'required|numeric|min:100'
+]);
+
+DepositRequest::create([
+'user_id'=>Auth::id(),
+'amount'=>$request->amount,
+'method'=>$request->method,
+'status'=>'pending'
+]);
+
+return response()->json(['status'=>true]);
+    }
+
     public function depositFundsManual()
     {
         return view('pages.funds.add_funds_manual');
@@ -86,6 +107,31 @@ $transactions = WalletTransactions::where('wallet_id',$wallet->id)
     public function withdrawFunds()
     {
         return view('pages.funds.withdraw');
+    }
+    public function withdrawFundsStore(Request $request)
+    {
+        $request->validate([
+'amount'=>'required|numeric|min:500'
+]);
+
+$user = auth()->user();
+
+if($user->wallet->balance < $request->amount){
+
+return response()->json([
+'message'=>'Insufficient balance'
+],422);
+
+}
+
+WithdrawRequest::create([
+'user_id'=>$user->id,
+'amount'=>$request->amount,
+'upi'=>$request->upi,
+'status'=>'pending'
+]);
+
+return response()->json(['status'=>true]);
     }
 
     public function addBank()

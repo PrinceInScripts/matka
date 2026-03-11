@@ -113,11 +113,6 @@ background:#22c55e;
 color:white;
 font-weight:700;
 }
-
-.withdraw-btn{
-background:#ef4444;
-}
-
     
     </style>
 
@@ -136,30 +131,46 @@ background:#ef4444;
 <div class="fund-card">
 
 <div class="fund-header">
-<i class="fa-solid fa-money-bill-transfer"></i>
-<span>Withdraw Funds</span>
+<i class="fa-solid fa-wallet"></i>
+<span>Add Funds</span>
 </div>
 
 <div class="wallet-info">
-Available Balance
+Current Balance
 <strong>₹{{ auth()->user()->wallet->balance }}</strong>
 </div>
 
-<form id="withdrawForm">
+<form id="depositForm">
 
 <div class="input-group-box">
-<label>Withdraw Amount</label>
-<input type="number" id="withdrawAmount" placeholder="Minimum ₹500">
+<label>Enter Amount</label>
+<input type="number" id="depositAmount" placeholder="Minimum ₹100">
 </div>
 
-<div class="input-group-box">
-<label>UPI ID</label>
-<input type="text" id="upiId" placeholder="example@upi">
+<div class="quick-amounts">
+
+<button type="button" class="amount-chip" data-amount="500">₹500</button>
+<button type="button" class="amount-chip" data-amount="1000">₹1000</button>
+<button type="button" class="amount-chip" data-amount="2000">₹2000</button>
+<button type="button" class="amount-chip" data-amount="5000">₹5000</button>
+
 </div>
 
-<button class="fund-btn withdraw-btn" type="submit">
-<i class="fa fa-arrow-up"></i>
-Withdraw
+<div class="payment-method">
+
+<label>Select Payment</label>
+
+<select id="paymentMethod">
+<option value="upi">UPI</option>
+<option value="qr">QR Code</option>
+<option value="bank">Bank Transfer</option>
+</select>
+
+</div>
+
+<button class="fund-btn" type="submit">
+<i class="fa fa-arrow-down"></i>
+Deposit
 </button>
 
 </form>
@@ -202,22 +213,35 @@ Withdraw
         });
     </script>
 
-    <script>
+<script>
 
 $(function(){
 
-$("#withdrawForm").submit(function(e){
+/* quick amount */
+$(".amount-chip").click(function(){
+
+let amt = $(this).data("amount");
+
+$("#depositAmount").val(amt);
+
+});
+
+
+/* submit deposit */
+
+$("#depositForm").submit(function(e){
 
 e.preventDefault();
 
-let amount = $("#withdrawAmount").val();
-let upi = $("#upiId").val();
+let amount = $("#depositAmount").val();
+let method = $("#paymentMethod").val();
 
-if(!amount || amount < 500){
+if(!amount || amount < 100){
 
 Toastify({
-text:"Minimum withdraw ₹500",
-backgroundColor:"#ef4444"
+text:"Minimum deposit ₹100",
+backgroundColor:"#ef4444",
+duration:2500
 }).showToast();
 
 return;
@@ -225,26 +249,27 @@ return;
 
 $.ajax({
 
-url:"{{ route('withdraw.funds.store') }}",
+url:"{{ route('deposit.funds.store') }}",
 method:"POST",
 
 data:{
 amount:amount,
-upi:upi,
+method:method,
 _token:"{{ csrf_token() }}"
 },
 
 beforeSend:function(){
 
-$(".withdraw-btn").text("Processing...");
+$(".fund-btn").text("Processing...");
 
 },
 
 success:function(res){
 
 Toastify({
-text:"Withdraw request submitted",
-backgroundColor:"#22c55e"
+text:"Deposit request submitted",
+backgroundColor:"#22c55e",
+duration:2500
 }).showToast();
 
 location.reload();
@@ -254,11 +279,12 @@ location.reload();
 error:function(){
 
 Toastify({
-text:"Withdraw failed",
-backgroundColor:"#ef4444"
+text:"Deposit failed",
+backgroundColor:"#ef4444",
+duration:2500
 }).showToast();
 
-$(".withdraw-btn").text("Withdraw");
+$(".fund-btn").text("Deposit");
 
 }
 

@@ -67,8 +67,12 @@ Route::get('/approved-debit', [BidController::class, 'approvedDebit'])->name('ap
 
 Route::get('/wallet',[FundController::class, 'wallet'])->name('wallet');
 Route::get('deposit-funds-auto',[FundController::class, 'depositFundsAuto'])->name('deposit.funds.auto');
+Route::get('deposit-funds',[FundController::class, 'depositFunds'])->name('deposit.funds');
+Route::post('deposit-funds',[FundController::class, 'depositFundsStore'])->name('deposit.funds.store');
+
 Route::get('deposit-funds-manual',[FundController::class, 'depositFundsManual'])->name('deposit.funds.manual');
 Route::get('withdraw-funds',[FundController::class, 'withdrawFunds'])->name('withdraw.funds');
+Route::post('withdraw-funds',[FundController::class, 'withdrawFundsStore'])->name('withdraw.funds.store');
 Route::get('add-bank',[FundController::class, 'addBank'])->name('add.bank');
 Route::get('deposit-history',[FundController::class, 'depositHistory'])->name('deposit.history');
 Route::get('withdraw-history',[FundController::class, 'withdrawHistory'])->name('withdraw.history');
