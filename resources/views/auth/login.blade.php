@@ -388,6 +388,9 @@ width:100%;
                                                 window.location.href = response.redirect;
                                             }, 1200);
                                         } else {
+                                            setTimeout(() => {
+                                                window.location.href = response.redirect;
+                                            }, 1200);
                                             $('.btn-login').prop('disabled', false).text('Continue');
                                         }
                                     },
@@ -403,6 +406,8 @@ width:100%;
                                             position: "center",
                                             backgroundColor: "red"
                                         }).showToast();
+
+                                         
 
                                             console.error(xhr);
                                     }

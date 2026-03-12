@@ -112,7 +112,7 @@ sendNotification(
     $user->id,
     "MPIN Created",
     "Your security MPIN has been set successfully",
-    "security"
+    "account"
 );
 
         // Login user

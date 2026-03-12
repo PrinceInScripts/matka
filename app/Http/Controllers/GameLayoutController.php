@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Services\GameNumberService;
 use App\Models\Market;
 use App\Models\GameType;
+use App\Models\StarlineGamesType;
 use App\Models\StarlineGameType;
 use App\Models\StarlineName;
 use Illuminate\Support\Facades\DB;
@@ -68,7 +69,7 @@ class GameLayoutController extends Controller
             ->where( 'status', 1 )
             ->get();
         } elseif ( $game_type === 'starline' ) {
-            $gameType=StarlineGameType::where('slug', $gameCode)->get();
+            $gameType=StarlineGamesType::where('slug', $gameCode)->get();
         } else {
             $gameType=GameType::where('slug', $gameCode)->get();
         }

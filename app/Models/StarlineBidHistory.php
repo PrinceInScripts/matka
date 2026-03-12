@@ -46,7 +46,7 @@ class StarlineBidHistory extends Model
 
     public function gameType()
     {
-        return $this->belongsTo(StarlineGameType::class, 'game_type_id');
+        return $this->belongsTo(StarlineGamesType::class, 'game_type_id');
     }
 
     public function walletTransaction()

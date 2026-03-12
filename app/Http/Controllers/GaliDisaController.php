@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\GaliDisawarGame;
 use App\Models\GaliDisawarGameRate;
+use App\Models\GaliDisawarType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -72,6 +73,8 @@ class GaliDisaController extends Controller
             return $game;
         });
 
-        return view('games.galidisawar', compact('games'));
+        $gameTypes=GaliDisawarType::all();
+
+        return view('games.galidisawar', compact('games', 'gameTypes'));
     }
 }

@@ -10,6 +10,7 @@ use App\Models\GameList;
 use App\Models\GameType;
 use App\Models\MarketGameType;
 use App\Models\Setting;
+use App\Models\StarlineGamesType;
 use App\Models\StarlineGameType;
 use App\Models\StarlineName;
 use App\Models\StarlineSchedule;
@@ -158,7 +159,10 @@ $q->whereNull('end_time')
             return $game;
         });
 
-        return view('games.starline', compact('games'));
+        $gameTypes=StarlineGamesType::all();
+
+
+        return view('games.starline', compact('games','gameTypes'));
     }
 
     public function galidisawar()

@@ -214,8 +214,7 @@ class DashboardController extends Controller
             ->values()
             ->toArray();
 
-        $results = Result::with('market')->get();
-        // return $results;
+        $results = Result::with('market')->orderBy('result_date','desc')->limit(50)->get();
 
         return view('admin.declare_result', compact('games', 'pannas', 'results'));
     }
@@ -223,7 +222,7 @@ class DashboardController extends Controller
     public function winningPredictions()
     {
         $games = GameList::where('game_status', 1)->get();
-        $results = Result::with('market')->get();
+        $results = Result::with('market')->orderBy('result_date','desc')->limit(30)->get();
 
         $pannas = [];
 
@@ -252,10 +251,9 @@ class DashboardController extends Controller
 
     public function ankData(\Illuminate\Http\Request $request)
     {
-        // return $request;
         $request->validate(['game_id' => 'required|exists:gamelists,id', 'session' => 'required|in:open,close']);
-        $game = GameList::findOrFail($request->game_id);
-        $ankData = Bid::selectRaw('ank, COUNT(*) as total_bids, SUM(amount) as total_amount')
+        $game = \App\Models\GameList::findOrFail($request->game_id);
+        $ankData = \App\Models\Bid::selectRaw('ank, COUNT(*) as total_bids, SUM(amount) as total_amount')
             ->where('market_id', $request->game_id)
             ->whereRaw('LOWER(session) = ?', [$request->session])
             ->whereDate('draw_date', now())

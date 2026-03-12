@@ -11,13 +11,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class ResultController extends Controller {
-    public function getContext( Request $request ) {
+    public function getContext(Request $request)
+    {
+        $result = Result::where([
+            'market_id'   => $request->game_id,
+            'result_date' => $request->result_date ?? $request->date ?? now()->toDateString(),
+        ])->first();
 
-        return Result::where( [
-            'market_id' => $request->game_id,
-            // 'session' => $request->session,
-            'result_date' => $request->result_date,
-        ] )->first();
+        return response()->json($result); // null-safe JSON
     }
 
     public function saveDraft( Request $request ) {
@@ -165,6 +166,13 @@ public function declareWinners(Request $request)
                     'winning_amount' => $winningAmount,
                 ]);
 
+                sendNotification(
+                    $bid->user_id,
+                    '🎉 You Won!',
+                    "Congratulations! You won ₹{$winningAmount} in {$bid->gameType->name}.",
+                    'bet'
+                );
+
                 $wallet->increment('balance', $winningAmount);
                 $wallet->refresh(); // ← ensure we have latest balance for transaction record
 
@@ -184,12 +192,21 @@ public function declareWinners(Request $request)
 
             } else {
 
+
+
                 // ❌ LOST BID
                 $bid->update([
                     'status'         => 'lost',
                     'result_id'      => $result->id,
                     'winning_amount' => 0,
                 ]);
+
+                sendNotification(
+                    $bid->user_id,
+                    '❌ You Lost',
+                    "Sorry, you lost ₹{$bid->amount} in {$bid->gameType->name}. Better luck next time!",
+                    'bet'
+                );
             }
         }
 

@@ -435,7 +435,7 @@ class StarlineController extends Controller
         'panna'      => 'nullable|string|size:3',
     ]);
 
-    $query = StarlineBidHistory::with(['user', 'gameType'])
+    $query = StarlineBidHistory::with(['user','starline', 'gameType'])
         ->whereDate('draw_date', $request->date)
         ->where('starline_id', $request->starline_id);
 
@@ -476,35 +476,15 @@ class StarlineController extends Controller
 
 public function getContext(Request $request)
 {
-    $request->validate([
-        'starline_id' => 'required|integer',
-        'date'        => 'required|date',
-        'digit'       => 'nullable|integer|min:0|max:9',
-        'panna'       => 'nullable|string',
-    ]);
+    $starlineId = $request->starline_id ?? $request->game_id;
+    $date       = $request->date ?? now()->toDateString();
 
-    $query = StarlineBidHistory::with(['user', 'gameType'])
-        ->where('starline_id', $request->starline_id)
-        ->whereDate('draw_date', $request->date)
-        ->where('status', 'pending');
+    $result = StarlineResult::where([
+        'starline_id' => $starlineId,
+        'draw_date'   => $date,
+    ])->first();
 
-    if ($request->filled('digit')) {
-        $query->whereJsonContains('bet_data->digit', (int) $request->digit);
-    }
-
-    if ($request->filled('panna')) {
-        $query->whereJsonContains('bet_data->panna', $request->panna);
-    }
-
-    $bids = $query->get();
-
-    return response()->json([
-        'data' => $bids,
-        'totals' => [
-            'total_bid' => $bids->sum('amount'),
-            'total_win' => $bids->sum('winning_amount'),
-        ],
-    ]);
+    return response()->json($result); // null-safe JSON
 }
 
 public function saveDraft(Request $request)
@@ -539,7 +519,7 @@ public function winners(StarlineResult $result)
     $bids = StarlineBidHistory::with(['user', 'gameType'])
         ->where('starline_id', $result->starline_id)
         ->whereDate('draw_date', $result->draw_date)
-        // ->where('status', 'pending')
+        ->where('status', 'pending')
         ->get();
 
     $winners = [];
@@ -672,6 +652,13 @@ public function declareWinners(Request $request)
                     'result_id' => $result->id,
                 ]);
 
+                sendNotification(
+                    $bid->user_id,
+                    '🎉 You Won!',
+                    "Congratulations! You won ₹{$winAmount} in {$bid->gameType->name}.",
+                    'bet'
+                );
+
                 $wallet->increment('balance', $winAmount);
 $wallet->refresh(); // ← add this line
 
@@ -689,6 +676,15 @@ $wallet->refresh(); // ← add this line
 
             } else {
 
+               sendNotification(
+                    $bid->user_id,
+                    '❌ You Lost',
+                    "Sorry, you lost ₹{$bid->amount} in {$bid->gameType->name}. Better luck next time!",
+                    'bet'
+                );
+
+                 
+
                 $bid->update([
                     'status' => 'lost',
                     'winning_amount' => 0,
@@ -698,10 +694,9 @@ $wallet->refresh(); // ← add this line
         }
 
         // 🏁 mark declared
-        $result->update([
-            'declared_at' => now(),
-             'status' => 'declared',
-        ]);
+        $result->declared_at = now();
+        $result->status = 'declared';
+        $result->save();
     });
 
     return response()->json([

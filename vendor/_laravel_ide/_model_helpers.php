@@ -8143,7 +8143,7 @@ namespace App\Models {
      * @property int $id
      * @property-read \App\Models\StarlineName $starline
      * @property-read \App\Models\User $user
-     * @property-read \App\Models\StarlineGameType $gameType
+     * @property-read \App\Models\StarlineGamesType $gameType
      * @property-read \App\Models\WalletTransactions $walletTransaction
      * @method static \Illuminate\Database\Eloquent\Builder<StarlineBidHistory>|StarlineBidHistory whereId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<StarlineBidHistory>|StarlineBidHistory whereUserId($value)

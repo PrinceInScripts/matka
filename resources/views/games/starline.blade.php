@@ -240,18 +240,12 @@
                 @include('components.walletinfo')
             </div>
             <div class="home-content" style="padding-top: 80px">
-                <div class="notice-box">
-                    <span>Single Digit : </span> 10-100
-                </div>
-                <div class="notice-box">
-                    <span>Single Panna : </span> 10-1600
-                </div>
-                <div class="notice-box">
-                    <span>Double Panna : </span> 10-3200
-                </div>
-                <div class="notice-box">
-                    <span>Triple Panna : </span> 10-700
-                </div>
+               @foreach($gameTypes as $type)
+<div class="notice-box">
+    <span>{{ $type->name }} :</span>
+    10-{{ 10 * $type->payout_rate }}
+</div>
+@endforeach
 
                 <div class="history-buttons ">
                    <button><i class="fa-solid fa-history"></i>

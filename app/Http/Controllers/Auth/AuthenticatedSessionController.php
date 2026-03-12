@@ -48,7 +48,7 @@ class AuthenticatedSessionController extends Controller
 
         return response()->json([
             'status' => 'error',
-            'redirect' => route('create.mpin'),
+            'redirect' => route('set.mpin'),
             'message' => 'MPIN not set. Please create your MPIN first.'
         ]);
     }
