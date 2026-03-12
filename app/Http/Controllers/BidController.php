@@ -378,6 +378,11 @@ class BidController extends Controller
                 'session'   => $bid['session'], //with lowercase session
             ]);
 
+            $user->wallet->decrement('balance', $bid['points']);
+            $user->wallet->increment('frozen_balance', $bid['points']);
+            $user->wallet->refresh(); // reload from DB
+
+
             $walletTx = WalletTransactions::create([
                 'wallet_id' => $user->wallet->id,
                 'type'      => 'debit',
@@ -386,16 +391,14 @@ class BidController extends Controller
                 'reason'    => 'Gali Disawar Bid',
                 'reference_id' => $newBid->id,
                 // 'source' => 'galidisawar_bid',
-                'balance_after' => $user->wallet->balance - $bid['points'],
+                'balance_after' => $user->wallet->balance,
             ]);
 
             $newBid->update([
                 'wallet_transaction_id' => $walletTx->id
             ]);
 
-            // Wallet updates
-            $user->wallet->decrement('balance', $bid['points']);
-            $user->wallet->increment('frozen_balance', $bid['points']);
+           
         }
     });
 
@@ -466,6 +469,10 @@ private function placeStarlineBid(Request $request)
                 'winning_amount'=> $bid['points'] * $gameType->payout_rate,
             ]);
 
+             $user->wallet->decrement('balance', $bid['points']);
+            $user->wallet->increment('frozen_balance', $bid['points']);
+            $user->wallet->refresh(); // reload from DB
+
             $walletTx = WalletTransactions::create([
                 'wallet_id' => $user->wallet->id,
                 'type'      => 'debit',
@@ -474,13 +481,12 @@ private function placeStarlineBid(Request $request)
                 'reason'    => 'Starline Bid',
                 'reference_id' => $newBid->id,
                 // 'source' => 'starline_bid',
-                'balance_after' => $user->wallet->balance - $bid['points'],
+                'balance_after' => $user->wallet->balance,
             ]);
 
             $newBid->update(['wallet_transaction_id' => $walletTx->id]);
 
-            $user->wallet->decrement('balance', $bid['points']);
-            $user->wallet->increment('frozen_balance', $bid['points']);
+           
         }
     });
 
@@ -567,6 +573,10 @@ private function placeMainMarketBid(Request $request)
                 'winning_amount'=> $bid['points'] * $gameType->payout_rate,
             ]);
 
+             $user->wallet->decrement('balance', $bid['points']);
+            $user->wallet->increment('frozen_balance', $bid['points']);
+            $user->wallet->refresh(); // reload from DB
+
             $walletTx = WalletTransactions::create([
                 'wallet_id' => $user->wallet->id,
                 'type'      => 'debit',
@@ -575,13 +585,12 @@ private function placeMainMarketBid(Request $request)
                 'reason'    => 'Main Market Bid',
                 'reference_id' => $newBid->id,
                 'source' => 'main_market_bid',
-                'balance_after' => $user->wallet->balance - $bid['points'],
+                'balance_after' => $user->wallet->balance,
             ]);
 
             $newBid->update(['wallet_transaction_id' => $walletTx->id]);
 
-            $user->wallet->decrement('balance', $bid['points']);
-            $user->wallet->increment('frozen_balance', $bid['points']);
+           
         }
     });
 

@@ -94,6 +94,8 @@ $q->whereNull('end_time')
 ->latest()
 ->first();
 
+// return $announcement;
+
         return view('pages.home', compact('games', 'announcement'));
     }
 

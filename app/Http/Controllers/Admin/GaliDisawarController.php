@@ -470,6 +470,9 @@ public function declareWinners(Request $request)
 
                 // 💰 update wallet first
                 $wallet->increment('balance', $winAmount);
+                    $wallet->refresh(); // ← ensure we have latest balance for transaction record
+    
+                    // ✅ update bid status
 
                 $bid->update([
                     'status' => 'won',
@@ -530,7 +533,7 @@ public function declareWinners(Request $request)
     $bids = GaliDisawarBid::with(['user', 'gameType'])
         ->where('gali_id', $result->gali_id)
         ->whereDate('draw_date', $result->draw_date)
-        ->where('status', 'pending')
+        // ->where('status', 'pending')
         ->get();
         
 
@@ -614,18 +617,55 @@ public function declareWinners(Request $request)
 
     public function result_history()
     {
-        return view('admin.gali_disawar.result_history');
+        $results   = GaliDisawarResult::with('gali')->orderBy('draw_date','desc')->get();
+        $declared  = $results->where('status','declared')->count();
+        $draft     = $results->where('status','draft')->count();
+        $thisMonth = $results->where('draw_date','>=', now()->startOfMonth())->count();
+        return view('admin.gali_disawar.result_history', compact('results','declared','draft','thisMonth'));
     }
-
 
     public function sell_report()
     {
-        return view('admin.gali_disawar.sell_report');
+        $games = GaliDisawarGame::where('game_status',1)->get();
+        return view('admin.gali_disawar.sell_report', compact('games'));
+    }
+
+    public function sell_report_filter(\Illuminate\Http\Request $request)
+    {
+        $request->validate(['date' => 'required|date']);
+        $query = GaliDisawarBid::with('galiDisawar')
+            ->whereDate('bid_date', $request->date);
+        if ($request->filled('game_id')) $query->where('gali_id', $request->game_id);
+        $bids = $query->get();
+        $grouped = $bids->groupBy(fn($b) => $b->game_type_id ?? 'Unknown')
+            ->map(fn($g) => [
+                'game_type'    => $g->first()->game_type_id ?? '—',
+                'total_bids'   => $g->count(),
+                'total_amount' => $g->sum('amount'),
+                'total_win'    => $g->where('status','won')->sum('winning_amount'),
+            ])->values();
+        return response()->json([
+            'status' => true, 'data' => $grouped,
+            'total_bids'   => $bids->count(),
+            'total_amount' => $bids->sum('amount'),
+            'total_win'    => $bids->where('status','won')->sum('winning_amount'),
+        ]);
     }
 
     public function winning_report()
     {
-        return view('admin.gali_disawar.winning_report');
+        $games = GaliDisawarGame::where('game_status',1)->get();
+        return view('admin.gali_disawar.winning_report', compact('games'));
+    }
+
+    public function winning_report_filter(\Illuminate\Http\Request $request)
+    {
+        $request->validate(['date' => 'required|date']);
+        $query = GaliDisawarBid::with('user','galiDisawar')
+            ->where('status','won')->whereDate('bid_date', $request->date);
+        if ($request->filled('game_id')) $query->where('gali_id', $request->game_id);
+        $bids = $query->orderBy('winning_amount','desc')->get();
+        return response()->json(['status' => true, 'data' => $bids, 'total_win' => $bids->sum('winning_amount')]);
     }
 
     public function winning_prediction()

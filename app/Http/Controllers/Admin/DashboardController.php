@@ -127,7 +127,7 @@ class DashboardController extends Controller
                 $bidAmount = DB::table('wallet_transactions as wt')
                     ->join('bids as b', 'b.id', '=', 'wt.reference_id')
                     ->where('wt.type', 'debit')
-                    ->where('wt.source', 'bid')
+                    ->where('wt.source', 'main_market_bid')
                     ->where('b.market_id', $game->id)
                     ->whereBetween('wt.created_at', [$open, $close])
                     ->sum('wt.amount');
@@ -249,4 +249,21 @@ class DashboardController extends Controller
 
         return view('admin.winning_predictions', compact('games', 'results', 'pannas'));
     }
+
+    public function ankData(\Illuminate\Http\Request $request)
+    {
+        // return $request;
+        $request->validate(['game_id' => 'required|exists:gamelists,id', 'session' => 'required|in:open,close']);
+        $game = GameList::findOrFail($request->game_id);
+        $ankData = Bid::selectRaw('ank, COUNT(*) as total_bids, SUM(amount) as total_amount')
+            ->where('market_id', $request->game_id)
+            ->whereRaw('LOWER(session) = ?', [$request->session])
+            ->whereDate('draw_date', now())
+            ->groupBy('ank')
+            ->get()
+            ->keyBy('ank')
+            ->toArray();
+        return response()->json(['status' => true, 'game_name' => $game->name, 'ank_data' => $ankData]);
+    }
+
 }

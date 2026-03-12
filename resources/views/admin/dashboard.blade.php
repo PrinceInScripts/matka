@@ -4,657 +4,421 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>AdminLTE 3 | Dashboard</title>
-
-    <!-- Google Font: Source Sans Pro -->
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-    <!-- Font Awesome -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Dashboard | Admin</title>
     <link rel="stylesheet" href="{{ asset('plugins/fontawesome-free/css/all.min.css') }}">
-    <!-- Ionicons -->
-    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
-    <!-- Tempusdominus Bootstrap 4 -->
-    <link rel="stylesheet"
-        href="{{ asset('plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css') }}">
-    <!-- iCheck -->
     <link rel="stylesheet" href="{{ asset('plugins/icheck-bootstrap/icheck-bootstrap.min.css') }}">
-    <!-- JQVMap -->
-    <link rel="stylesheet" href="{{ asset('plugins/jqvmap/jqvmap.min.css') }}">
-    <!-- Theme style -->
     <link rel="stylesheet" href="{{ asset('dist/css/adminlte.min.css') }}">
-    <!-- overlayScrollbars -->
-    <link rel="stylesheet" href="{{ asset('plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
-    <!-- Daterange picker -->
-    <link rel="stylesheet" href="{{ asset('plugins/daterangepicker/daterangepicker.css') }}">
-    <!-- summernote -->
-    <link rel="stylesheet" href="{{ asset('plugins/summernote/summernote-bs4.min.css') }}">
-
+    <link rel="stylesheet" href="{{ asset('plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
     <style>
-        /* General spacing improvement */
-        .card {
-            background: #fff;
-        }
-
-        /* LEFT DASHBOARD CARD */
-        .dashboard-card {
-            border-radius: 14px;
-            overflow: hidden;
-        }
-
-        .dashboard-header {
-            background: #dfe6ff;
-            padding: 22px 24px;
-        }
-
-        .dashboard-card .card-body {
-            padding: 24px;
-        }
-
-        /* Profile section breathing room */
-        .profile-img {
-            width: 72px;
-            height: 72px;
-            object-fit: cover;
-            margin-bottom: 10px;
-        }
-
-        /* Stats spacing */
-        .dashboard-card .col-md-8 .row>div {
-            padding-top: 10px;
-        }
-
-        /* METRIC CARDS */
         .metric-card {
-            padding: 22px;
+            padding: 20px;
             border-radius: 14px;
             border: none;
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, .07)
         }
 
-        .metric-card p {
-            font-size: 14px;
-        }
-
-        .metric-card h4 {
-            margin-top: 4px;
-        }
-
-        /* Metric icon */
         .metric-icon {
-            width: 50px;
-            height: 50px;
+            width: 48px;
+            height: 48px;
             background: #5a6ff0;
             color: #fff;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 18px
         }
 
-        /* TOTAL BIDS CARD */
-        .total-bid-card {
-            border-radius: 14px;
-            margin-top: 6px;
-        }
-
-        .total-bid-card .card-body {
-            padding: 24px;
-        }
-
-        .total-bid-card h6 {
-            margin-bottom: 18px;
-        }
-
-        /* Form spacing */
-        .total-bid-card .form-label {
-            font-weight: 500;
-            margin-bottom: 6px;
-        }
-
-        .total-bid-card .form-select {
-            height: 44px;
-        }
-
-        .total-bid-card .btn {
-            height: 44px;
-            margin-top: 2px;
-        }
-
-        /* MARKET CARD */
-        .market-card {
-            border-radius: 14px;
-        }
-
-        .market-card .card-body {
-            padding: 24px;
-        }
-
-        /* ANK CARDS */
         .ank-card {
             background: #fff;
             border-radius: 12px;
             text-align: center;
-            padding: 16px 10px 0;
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
-            height: 100%;
+            padding: 14px 8px 0;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, .07);
+            height: 100%
         }
 
         .ank-title {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             color: #4f5dff;
-            margin-bottom: 6px;
+            margin-bottom: 4px
         }
 
         .ank-value {
             font-weight: 700;
             margin: 0;
+            font-size: 1.5rem
         }
 
         .ank-sub {
-            font-size: 13px;
+            font-size: 12px;
             color: #6c757d;
-            margin-bottom: 10px;
+            margin-bottom: 8px
         }
 
         .ank-footer {
             color: #fff;
-            padding: 6px 0;
+            padding: 5px 0;
             border-radius: 0 0 12px 12px;
-            font-size: 14px;
-            font-weight: 600;
+            font-size: 13px;
+            font-weight: 600
         }
 
-        /* Footer colors (subtle, not loud) */
         .ank-0 .ank-footer {
-            background: #5a6ff0;
+            background: #5a6ff0
         }
 
         .ank-1 .ank-footer {
-            background: #2ec27e;
+            background: #2ec27e
         }
 
         .ank-2 .ank-footer {
-            background: #339af0;
+            background: #339af0
         }
 
         .ank-3 .ank-footer {
-            background: #fab005;
+            background: #fab005
         }
 
         .ank-4 .ank-footer {
-            background: #ae3ec9;
+            background: #ae3ec9
         }
 
         .ank-5 .ank-footer {
-            background: #f76707;
+            background: #f76707
         }
 
         .ank-6 .ank-footer {
-            background: #e64980;
+            background: #e64980
         }
 
         .ank-7 .ank-footer {
-            background: #4c6ef5;
+            background: #4c6ef5
         }
 
         .ank-8 .ank-footer {
-            background: #ff3b7f;
+            background: #ff3b7f
         }
 
         .ank-9 .ank-footer {
-            background: #20c997;
+            background: #20c997
         }
 
-        /* 5 cards per row system */
-.ank-row {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.ank-col {
-  width: 20%;
-  padding: 0.75rem;
-}
-
-/* Responsive fallback */
-@media (max-width: 992px) {
-  .ank-col { width: 33.333%; }
-}
-
-@media (max-width: 576px) {
-  .ank-col { width: 50%; }
-}
-
+        .dashboard-header {
+            background: #dfe6ff;
+            padding: 20px 24px;
+            border-radius: 14px 14px 0 0
+        }
     </style>
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed">
     <div class="wrapper">
-
-        <!-- Preloader -->
-        <div class="preloader flex-column justify-content-center align-items-center">
-            <img class="animation__shake" src="dist/img/AdminLTELogo.png" alt="AdminLTELogo" height="60"
-                width="60">
-        </div>
-
-        <!-- Navbar -->
         <x-admin-navbar />
-        <!-- /.navbar -->
-
-        <!-- Main Sidebar Container -->
         <x-admin-sidebar />
-
-        <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
-            <!-- Content Header (Page header) -->
             <div class="content-header">
                 <div class="container-fluid">
                     <div class="row mb-2">
                         <div class="col-sm-6">
                             <h1 class="m-0">Dashboard</h1>
-                        </div><!-- /.col -->
+                        </div>
                         <div class="col-sm-6">
                             <ol class="breadcrumb float-sm-right">
-                                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                                <li class="breadcrumb-item active">Dashboard v1</li>
+                                <li class="breadcrumb-item active">Dashboard</li>
                             </ol>
-                        </div><!-- /.col -->
-                    </div><!-- /.row -->
-                </div><!-- /.container-fluid -->
+                        </div>
+                    </div>
+                </div>
             </div>
-            <!-- /.content-header -->
 
-            <!-- Main content -->
             <section class="content">
                 <div class="container-fluid">
-                    <!-- Small boxes (Stat box) -->
-                    <div class="row g-3">
 
-                        <!-- LEFT DASHBOARD CARD -->
-                        <div class="col-lg-6 col-12">
-                            <div class="card shadow-sm border-0 dashboard-card h-100">
-
+                    <!-- Top Row: Welcome + Stats -->
+                    <div class="row mb-3">
+                        <!-- Welcome Card -->
+                        <div class="col-lg-5">
+                            <div class="card border-0 shadow-sm h-100" style="border-radius:14px;overflow:hidden">
                                 <div class="dashboard-header d-flex justify-content-between align-items-center">
                                     <div>
-                                        <h5 class="mb-1 fw-bold text-primary">Welcome Back !</h5>
-                                        <p class="mb-0 text-muted">Admin Dashboard</p>
+                                        <h5 class="mb-1 font-weight-bold text-primary">Welcome Back!</h5>
+                                        <p class="mb-0 text-muted">{{ $loggedInAdmin->username ?? 'Admin' }}</p>
                                     </div>
-                                    <img src="https://cdn-icons-png.flaticon.com/128/3648/3648264.png"
-                                        class="header-illustration" alt="">
+                                    <i class="fas fa-user-shield fa-3x text-primary opacity-50"></i>
                                 </div>
-
                                 <div class="card-body">
-                                    <div class="row align-items-center">
-
-                                        <div class="col-md-4 text-center text-md-start">
-                                            <img src="https://cdn-icons-png.flaticon.com/128/3135/3135715.png"
-                                                class="rounded-circle profile-img mb-2" alt="">
-                                            <h6 class="mb-0 fw-bold">{{ $loggedInAdmin->username }}</h6>
-                                            <small class="text-muted">Admin</small>
+                                    <div class="row text-center">
+                                        <div class="col-4 border-right">
+                                            <h3 class="font-weight-bold text-primary">{{ $totalUsers }}</h3>
+                                            <p class="text-muted small mb-0">Total Users</p>
                                         </div>
-
-                                        <div class="col-md-8">
-                                            <div class="row text-center">
-                                                <div class="col-6">
-                                                    <h4 class="fw-bold mb-1">{{ $totalUsers-$approvedUsers }}</h4>
-                                                    <p class="text-muted mb-0">Unapproved<br>Users</p>
-                                                </div>
-                                                <div class="col-6">
-                                                    <h4 class="fw-bold mb-1">{{ $approvedUsers }}</h4>
-                                                    <p class="text-muted mb-0">Approved<br>Users</p>
-                                                </div>
-                                            </div>
+                                        <div class="col-4 border-right">
+                                            <h3 class="font-weight-bold text-success">{{ $approvedUsers }}</h3>
+                                            <p class="text-muted small mb-0">Active</p>
                                         </div>
-
+                                        <div class="col-4">
+                                            <h3 class="font-weight-bold text-danger">{{ $totalUsers - $approvedUsers }}
+                                            </h3>
+                                            <p class="text-muted small mb-0">Inactive</p>
+                                        </div>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
 
-                        <!-- RIGHT METRIC CARDS -->
-                        <!-- RIGHT SIDE -->
-                        <div class="col-lg-6 col-12">
-                            <div class="row g-3">
-
-                                <!-- METRIC CARDS -->
-                                <div class="col-md-4 col-12">
+                        <!-- Metric Cards -->
+                        <div class="col-lg-7">
+                            <div class="row">
+                                <div class="col-md-4 col-6 mb-3">
                                     <div class="card metric-card h-100">
                                         <div class="d-flex justify-content-between align-items-center">
                                             <div>
-                                                <p class="mb-1 text-muted">Users</p>
-                                                <h4 class="fw-bold mb-0">{{ $totalUsers }}</h4>
-                                            </div>
-                                            <div class="metric-icon"><i class="fas fa-user"></i></div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-4 col-12">
-                                    <div class="card metric-card h-100">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <div>
-                                                <p class="mb-1 text-muted">Games</p>
-                                                <h4 class="fw-bold mb-0">{{ $totalGames }}</h4>
+                                                <p class="mb-1 text-muted small">Total Games</p>
+                                                <h4 class="font-weight-bold mb-0">{{ $totalGames }}</h4>
                                             </div>
                                             <div class="metric-icon"><i class="fas fa-gamepad"></i></div>
                                         </div>
                                     </div>
                                 </div>
-
-                                <div class="col-md-4 col-12">
+                                <div class="col-md-4 col-6 mb-3">
                                     <div class="card metric-card h-100">
                                         <div class="d-flex justify-content-between align-items-center">
                                             <div>
-                                                <p class="mb-1 text-muted">Bid Amount</p>
-                                                <h4 class="fw-bold mb-0">{{ $last24HourBidAmount }}</h4>
+                                                <p class="mb-1 text-muted small">24h Bids</p>
+                                                <h4 class="font-weight-bold mb-0">
+                                                    ₹{{ number_format($last24HourBidAmount, 0) }}</h4>
                                             </div>
-                                            <div class="metric-icon"><i class="fas fa-tag"></i></div>
+                                            <div class="metric-icon" style="background:#2ec27e"><i
+                                                    class="fas fa-rupee-sign"></i></div>
                                         </div>
                                     </div>
                                 </div>
-
-                                <!-- ✅ TOTAL BIDS BLOCK (MISSING ONE) -->
-                                <div class="col-12 ml-2">
-                                    <div class="card border-0 shadow-sm total-bid-card">
-                                        <div class="card-body">
-
-                                            <h6 class="fw-bold mb-3">
-                                                Total Bids On Single Ank Of Date 25 Dec 2025
+                                <div class="col-md-4 col-6 mb-3">
+                                    <div class="card metric-card h-100">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <p class="mb-1 text-muted small">Active Markets</p>
+                                                <h4 class="font-weight-bold mb-0">{{ $games->count() }}</h4>
+                                            </div>
+                                            <div class="metric-icon" style="background:#f76707"><i
+                                                    class="fas fa-store"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="card shadow-sm border-0" style="border-radius:12px">
+                                        <div class="card-body py-3">
+                                            <h6 class="font-weight-bold mb-2">Single Ank Bids — <span
+                                                    id="selectedGame">{{ optional($defaultMarket)->name ?? 'No Market' }}</span>
                                             </h6>
-
-                                            <div class="row align-items-end g-3">
-
-                                                <div class="col-md-5 col-12">
-                                                    <label class="form-label">Game Name</label>
-                                                    <select class="form-select">
-                                                        <option>
-                                                            MADHUR NIGHT (08:25 PM - 10:20 PM)
-                                                        </option>
+                                            <div class="row align-items-end">
+                                                <div class="col-md-5">
+                                                    <label class="small">Game</label>
+                                                    <select id="ankGameId" class="form-control form-control-sm">
+                                                        @foreach ($games as $g)
+                                                            <option value="{{ $g->id }}"
+                                                                {{ optional($defaultMarket)->id == $g->id ? 'selected' : '' }}>
+                                                                {{ $g->name }}
+                                                            </option>
+                                                        @endforeach
                                                     </select>
                                                 </div>
-
-                                                <div class="col-md-4 col-12">
-                                                    <label class="form-label">Market Time</label>
-                                                    <select class="form-select">
-                                                        <option>Close Market</option>
+                                                <div class="col-md-4">
+                                                    <label class="small">Session</label>
+                                                    <select id="ankSession" class="form-control form-control-sm">
+                                                        <option value="open">Open</option>
+                                                        <option value="close">Close</option>
                                                     </select>
                                                 </div>
-
-                                                <div class="col-md-3 col-12">
-                                                    <button class="btn btn-primary w-100">
-                                                        Get
-                                                    </button>
+                                                <div class="col-md-3">
+                                                    <button id="btnLoadAnk"
+                                                        class="btn btn-primary btn-sm btn-block">Get</button>
                                                 </div>
-
                                             </div>
-
                                         </div>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
-
-
                     </div>
 
-                    <!-- ================= MARKET BID DETAILS ROW ================= -->
-                    <div class="row g-4 mt-2">
-
-                        <!-- LEFT: MARKET BID DETAILS -->
-                        <div class="col-lg-4 col-12">
-                            <div class="card shadow-sm border-0 market-card h-100">
-                                <div class="card-body">
-
-                                    <h6 class="fw-bold mb-4">Market Bid Details</h6>
-
-                                    <div class="mb-3">
-                                        <label class="form-label">Game Name</label>
-                                        <select class="form-select">
-                                            <option selected disabled>- Select Game Name -</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="mt-4">
-                                        <h4 class="fw-bold mb-1">N/A</h4>
-                                        <p class="text-muted mb-0">Market Amount</p>
-                                    </div>
-
+                    <!-- Ank Cards Row -->
+                    <div class="row mb-4">
+                        @for ($i = 0; $i <= 9; $i++)
+                            @php $ankRow = $ankData->get($i); @endphp
+                            <div class="col-lg col-md-2 col-4 mb-3">
+                                <div class="ank-card ank-{{ $i }}" id="ank-card-{{ $i }}">
+                                    <p class="ank-title" id="ank-bids-{{ $i }}">
+                                        {{ $ankRow ? $ankRow->total_bids : 0 }} Bids</p>
+                                    <h3 class="ank-value" id="ank-amt-{{ $i }}">
+                                        ₹{{ $ankRow ? number_format($ankRow->total_amount, 0) : 0 }}</h3>
+                                    <p class="ank-sub">Amount</p>
+                                    <div class="ank-footer">Ank {{ $i }}</div>
                                 </div>
                             </div>
-                        </div>
-
-                        <!-- RIGHT: ANK CARDS -->
-                        <!-- RIGHT: ANK CARDS -->
-                        <div class="col-lg-8 col-12">
-                            <div class="row g-3 ank-row">
-
-                                <!-- Ank 0 -->
-                                <div class="ank-col">
-                                    <div class="ank-card ank-0">
-                                        <p class="ank-title">Total Bids 0</p>
-                                        <h3 class="ank-value">0</h3>
-                                        <p class="ank-sub">Total Bid Amount</p>
-                                        <div class="ank-footer">Ank 0</div>
-                                    </div>
-                                </div>
-
-                                <!-- Ank 1 -->
-                                <div class="ank-col">
-                                    <div class="ank-card ank-1">
-                                        <p class="ank-title">Total Bids 0</p>
-                                        <h3 class="ank-value">0</h3>
-                                        <p class="ank-sub">Total Bid Amount</p>
-                                        <div class="ank-footer">Ank 1</div>
-                                    </div>
-                                </div>
-
-                                <!-- Ank 2 -->
-                                <div class="ank-col">
-                                    <div class="ank-card ank-2">
-                                        <p class="ank-title">Total Bids 0</p>
-                                        <h3 class="ank-value">0</h3>
-                                        <p class="ank-sub">Total Bid Amount</p>
-                                        <div class="ank-footer">Ank 2</div>
-                                    </div>
-                                </div>
-
-                                <!-- Ank 3 -->
-                                <div class="ank-col">
-                                    <div class="ank-card ank-3">
-                                        <p class="ank-title">Total Bids 0</p>
-                                        <h3 class="ank-value">0</h3>
-                                        <p class="ank-sub">Total Bid Amount</p>
-                                        <div class="ank-footer">Ank 3</div>
-                                    </div>
-                                </div>
-
-                                <!-- Ank 4 -->
-                                <div class="ank-col">
-                                    <div class="ank-card ank-4">
-                                        <p class="ank-title">Total Bids 0</p>
-                                        <h3 class="ank-value">0</h3>
-                                        <p class="ank-sub">Total Bid Amount</p>
-                                        <div class="ank-footer">Ank 4</div>
-                                    </div>
-                                </div>
-
-                                <!-- Ank 5 -->
-                                <div class="ank-col">
-                                    <div class="ank-card ank-5">
-                                        <p class="ank-title">Total Bids 0</p>
-                                        <h3 class="ank-value">0</h3>
-                                        <p class="ank-sub">Total Bid Amount</p>
-                                        <div class="ank-footer">Ank 5</div>
-                                    </div>
-                                </div>
-
-                                <!-- Ank 6 -->
-                                <div class="ank-col">
-                                    <div class="ank-card ank-6">
-                                        <p class="ank-title">Total Bids 0</p>
-                                        <h3 class="ank-value">0</h3>
-                                        <p class="ank-sub">Total Bid Amount</p>
-                                        <div class="ank-footer">Ank 6</div>
-                                    </div>
-                                </div>
-
-                                <!-- Ank 7 -->
-                                <div class="ank-col">
-                                    <div class="ank-card ank-7">
-                                        <p class="ank-title">Total Bids 0</p>
-                                        <h3 class="ank-value">0</h3>
-                                        <p class="ank-sub">Total Bid Amount</p>
-                                        <div class="ank-footer">Ank 7</div>
-                                    </div>
-                                </div>
-
-                                <!-- Ank 8 -->
-                                <div class="ank-col">
-                                    <div class="ank-card ank-8">
-                                        <p class="ank-title">Total Bids 0</p>
-                                        <h3 class="ank-value">0</h3>
-                                        <p class="ank-sub">Total Bid Amount</p>
-                                        <div class="ank-footer">Ank 8</div>
-                                    </div>
-                                </div>
-
-                                <!-- Ank 9 -->
-                                <div class="ank-col">
-                                    <div class="ank-card ank-9">
-                                        <p class="ank-title">Total Bids 0</p>
-                                        <h3 class="ank-value">0</h3>
-                                        <p class="ank-sub">Total Bid Amount</p>
-                                        <div class="ank-footer">Ank 9</div>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-
-
+                        @endfor
                     </div>
 
-                     <div class="row">
+                    <!-- Today's Market Summary -->
+                    <div class="row mb-3">
                         <div class="col-12">
-
-
                             <div class="card">
-                                <div class="card-header d-flex justify-content-between">
-                                    <h3 class="card-title">Fund Request Auto Deposit History</h3>
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h3 class="card-title"><i class="fas fa-store mr-2"></i>Today's Active Markets
+                                    </h3>
+                                    <span class="badge badge-success">{{ $games->count() }} Markets</span>
                                 </div>
-
-                                <div class="card-body">
-                                    <table class="table table-bordered table-striped" id="fundTable">
-                                        <thead>
+                                <div class="card-body table-responsive p-0">
+                                    <table class="table table-sm table-hover mb-0">
+                                        <thead class="thead-dark">
                                             <tr>
-                                                <th>#</th>
-                                                <th>Username</th>
-                                                <th>Amount</th>
-                                                <th>Request No.</th>
-                                                <th>Txn Id</th>
-                                                <th>Reject Mark</th>
-                                                <th>Date</th>
+                                                <th>Market</th>
+                                                <th>Open Time</th>
+                                                <th>Close Time</th>
+                                                <th>Today Bid Amount</th>
                                                 <th>Status</th>
-                                                <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                           <tr>
-    <td colspan="9" class="text-center">No records found</td> 
-                                            </tr>
-
+                                            @forelse($games as $g)
+                                                <tr>
+                                                    <td><strong>{{ $g->name }}</strong></td>
+                                                    <td>{{ $g->today_open_time ?? 'N/A' }}</td>
+                                                    <td>{{ $g->today_close_time ?? 'N/A' }}</td>
+                                                    <td><strong
+                                                            class="text-success">₹{{ number_format($g->today_bid_amount ?? 0, 0) }}</strong>
+                                                    </td>
+                                                    <td><span class="badge badge-success">Active</span></td>
+                                                </tr>
+                                            @empty
+                                                <tr>
+                                                    <td colspan="5" class="text-center text-muted py-3">No active
+                                                        markets today</td>
+                                                </tr>
+                                            @endforelse
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
-
-                         
-                         
-
-
-
-                            <!-- /.card -->
                         </div>
-                        <!-- /.col -->
                     </div>
 
+                    <!-- Recent Deposit Requests -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h3 class="card-title"><i class="fas fa-clock mr-2"></i>Recent Pending Deposits
+                                    </h3>
+                                    <a href="{{ route('admin.wallet.fund_request') }}"
+                                        class="btn btn-sm btn-primary">View All</a>
+                                </div>
+                                <div class="card-body table-responsive p-0">
+                                    <table id="fundTable" class="table table-bordered table-striped table-sm mb-0">
+                                        <thead class="thead-dark">
+                                            <tr>
+                                                <th>#</th>
+                                                <th>User</th>
+                                                <th>Amount</th>
+                                                <th>Mode</th>
+                                                <th>Txn ID</th>
+                                                <th>Date</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="pendingDepositBody">
+                                            {{-- <tr><td colspan="7" class="text-center text-muted py-3">Loading...</td></tr> --}}
+                                            <tr>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td class="text-center text-muted">Loading...</td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                </div><!-- /.container-fluid -->
+                </div>
             </section>
-            <!-- /.content -->
         </div>
-        <!-- /.content-wrapper -->
-        <footer class="main-footer">
-            <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong>
-            All rights reserved.
-            <div class="float-right d-none d-sm-inline-block">
-                <b>Version</b> 3.2.0
-            </div>
-        </footer>
-
-        <!-- Control Sidebar -->
-        <aside class="control-sidebar control-sidebar-dark">
-            <!-- Control sidebar content goes here -->
-        </aside>
-        <!-- /.control-sidebar -->
+        <footer class="main-footer"><strong>Copyright &copy; Matka Admin.</strong></footer>
+        <aside class="control-sidebar control-sidebar-dark"></aside>
     </div>
-    <!-- ./wrapper -->
 
-    <!-- jQuery -->
     <script src="{{ asset('plugins/jquery/jquery.min.js') }}"></script>
-    <!-- jQuery UI 1.11.4 -->
-    <script src="{{ asset('plugins/jquery-ui/jquery-ui.min.js') }}"></script>
-    <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
-    <script>
-        $.widget.bridge('uibutton', $.ui.button)
-    </script>
-    <!-- Bootstrap 4 -->
     <script src="{{ asset('plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-    <!-- ChartJS -->
-    <script src="{{ asset('plugins/chart.js/Chart.min.js') }}"></script>
-    <!-- Sparkline -->
-    <script src="{{ asset('plugins/sparklines/sparkline.js') }}"></script>
-    <!-- JQVMap -->
-    <script src="{{ asset('plugins/jqvmap/jquery.vmap.min.js') }}"></script>
-    <script src="{{ asset('plugins/jqvmap/maps/jquery.vmap.usa.js') }}"></script>
-    <!-- jQuery Knob Chart -->
-    <script src="{{ asset('plugins/jquery-knob/jquery.knob.min.js') }}"></script>
-    <!-- daterangepicker -->
-    <script src="{{ asset('plugins/moment/moment.min.js') }}"></script>
-    <script src="{{ asset('plugins/daterangepicker/daterangepicker.js') }}"></script>
-    <!-- Tempusdominus Bootstrap 4 -->
-    <script src="{{ asset('plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js') }}"></script>
-    <!-- Summernote -->
-    <script src="{{ asset('plugins/summernote/summernote-bs4.min.js') }}"></script>
-    <!-- overlayScrollbars -->
-    <script src="{{ asset('plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js') }}"></script>
-    <!-- AdminLTE App -->
+    <script src="{{ asset('plugins/datatables/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
     <script src="{{ asset('dist/js/adminlte.js') }}"></script>
-    <!-- AdminLTE for demo purposes -->
-    <script src="{{ asset('dist/js/demo.js') }}"></script>
-    <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-    <script src="{{ asset('dist/js/pages/dashboard.js') }}"></script>
-
     <script>
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
         $(function() {
-            $("#fundTable").DataTable({
-                "responsive": true,
-                "lengthChange": false,
-                "autoWidth": false,
-                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-            $('#fundTable').DataTable({
-                "paging": true,
-                "lengthChange": false,
-                "searching": false,
-                "ordering": true,
-                "info": true,
-                "autoWidth": false,
-                "responsive": true,
+            // Init datatable for fund requests
+            var dt = $('#fundTable').DataTable({
+                paging: false,
+                searching: false,
+                info: false,
+                ordering: false
+            });
+
+            // Load pending deposits via AJAX
+            $.get('{{ route('admin.wallet.fund_request') }}', function() {}).always(function() {});
+
+            // Fetch pending deposits (load from deposits endpoint)
+            loadPendingDeposits();
+
+            function loadPendingDeposits() {
+                // We'll just show a message to visit the fund request page since we don't have a dedicated API
+                $('#pendingDepositBody').html(
+                    '<tr><td colspan="7" class="text-center"><a href="{{ route('admin.wallet.fund_request') }}" class="btn btn-sm btn-warning"><i class="fas fa-eye mr-1"></i>View Pending Deposit Requests</a></td></tr>'
+                    );
+            }
+
+            // Ank refresh
+            $('#btnLoadAnk').on('click', function() {
+                var gameId = $('#ankGameId').val();
+                var session = $('#ankSession').val();
+                var btn = $(this).prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i>');
+                console.log('Fetching ank data for game_id=' + gameId + ', session=' + session);
+
+                $.post('{{ route('admin.dashboard.ank') }}', {
+                        game_id: gameId,
+                        session: session
+                    })
+                    .done(function(r) {
+                        if (r.status) {
+                            $('#selectedGame').text(r.game_name);
+                            for (var i = 0; i <= 9; i++) {
+                                var d = r.ank_data[i] || {
+                                    total_bids: 0,
+                                    total_amount: 0
+                                };
+                                $('#ank-bids-' + i).text(d.total_bids + ' Bids');
+                                $('#ank-amt-' + i).text('₹' + parseFloat(d.total_amount).toFixed(0));
+                            }
+                        }
+                    })
+                    .fail(function(xhr) {
+                        console.log("Error:", xhr.responseText);
+                        alert("Request failed. Check console.");
+                    })
+                    .always(function() {
+                        btn.prop('disabled', false).html('Get');
+                    });
             });
         });
     </script>

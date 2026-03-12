@@ -335,18 +335,55 @@ class StarlineController extends Controller
 
     public function result_history()
     {
-        return view('admin.starline.result_history');
+        $results   = StarlineResult::with('starline')->orderBy('draw_date','desc')->get();
+        $declared  = $results->where('status','declared')->count();
+        $draft     = $results->where('status','draft')->count();
+        $thisMonth = $results->where('draw_date','>=', now()->startOfMonth())->count();
+        return view('admin.starline.result_history', compact('results','declared','draft','thisMonth'));
     }
-
 
     public function sell_report()
     {
-        return view('admin.starline.sell_report');
+        $games = StarlineName::where('game_status',1)->get();
+        return view('admin.starline.sell_report', compact('games'));
+    }
+
+    public function sell_report_filter(\Illuminate\Http\Request $request)
+    {
+        $request->validate(['date' => 'required|date']);
+        $query = StarlineBidHistory::with('gameType','starline')
+            ->whereDate('bid_date', $request->date);
+        if ($request->filled('game_id')) $query->where('starline_id', $request->game_id);
+        $bids = $query->get();
+        $grouped = $bids->groupBy(fn($b) => $b->game_type_id ?? 'Unknown')
+            ->map(fn($g) => [
+                'game_type'    => $g->first()->game_type_id ?? '—',
+                'total_bids'   => $g->count(),
+                'total_amount' => $g->sum('amount'),
+                'total_win'    => $g->where('status','won')->sum('winning_amount'),
+            ])->values();
+        return response()->json([
+            'status' => true, 'data' => $grouped,
+            'total_bids'   => $bids->count(),
+            'total_amount' => $bids->sum('amount'),
+            'total_win'    => $bids->where('status','won')->sum('winning_amount'),
+        ]);
     }
 
     public function winning_report()
     {
-        return view('admin.starline.winning_report');
+        $games = StarlineName::where('game_status',1)->get();
+        return view('admin.starline.winning_report', compact('games'));
+    }
+
+    public function winning_report_filter(\Illuminate\Http\Request $request)
+    {
+        $request->validate(['date' => 'required|date']);
+        $query = StarlineBidHistory::with('user','starline','gameType')
+            ->where('status','won')->whereDate('bid_date', $request->date);
+        if ($request->filled('game_id')) $query->where('starline_id', $request->game_id);
+        $bids = $query->orderBy('winning_amount','desc')->get();
+        return response()->json(['status' => true, 'data' => $bids, 'total_win' => $bids->sum('winning_amount')]);
     }
 
     public function winning_prediction()
@@ -502,7 +539,7 @@ public function winners(StarlineResult $result)
     $bids = StarlineBidHistory::with(['user', 'gameType'])
         ->where('starline_id', $result->starline_id)
         ->whereDate('draw_date', $result->draw_date)
-        ->where('status', 'pending')
+        // ->where('status', 'pending')
         ->get();
 
     $winners = [];
@@ -627,13 +664,17 @@ public function declareWinners(Request $request)
                 $winAmount = $bid->amount * $bid->gameType->payout_rate;
 
                 // ✅ update wallet FIRST
-                $wallet->increment('balance', $winAmount);
+                // $wallet->increment('balance', $winAmount);
 
                 $bid->update([
                     'status' => 'won',
                     'winning_amount' => $winAmount,
                     'result_id' => $result->id,
                 ]);
+
+                $wallet->increment('balance', $winAmount);
+$wallet->refresh(); // ← add this line
+
 
                 // ✅ correct balance_after
                 WalletTransactions::create([

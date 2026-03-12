@@ -19,7 +19,9 @@ class Wallet extends Model
     ];
 
     protected $casts = [
-        'balance' => 'decimal:2'
+        'balance'         => 'decimal:2',
+    'frozen_balance'  => 'decimal:2',
+    'bonus_balance'   => 'decimal:2',
     ];
 
     public function user()

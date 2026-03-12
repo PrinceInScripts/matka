@@ -1,133 +1,192 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AdminLTE 3 | DataTables</title>
-
-  <!-- Google Font: Source Sans Pro -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="../../plugins/fontawesome-free/css/all.min.css">
-  <!-- DataTables -->
-  <link rel="stylesheet" href="../../plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
-  <link rel="stylesheet" href="../../plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
-  <link rel="stylesheet" href="../../plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
-  <!-- Theme style -->
-  <link rel="stylesheet" href="../../dist/css/adminlte.min.css">
-  {{-- font awesome  --}}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/Z1srTF+W+o8+T2Vq+0+z7N0zJwQXG6nTpGO5c5XbYl5fX5Yx5D5V5y5d5D5D5D5D5D5A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Gali-Disawar Winning Report | Admin</title>
+    <link rel="stylesheet" href="{{ asset('plugins/fontawesome-free/css/all.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('dist/css/adminlte.min.css') }}">
 </head>
+
 <body class="hold-transition sidebar-mini">
-<div class="wrapper">
-  <!-- Navbar -->
-    <x-admin-navbar />
-  <!-- /.navbar -->
-
-  <x-admin-sidebar />
-
-  <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-      <div class="container-fluid">
-        <div class="row mb-2">
-          <div class="col-sm-6">
-            <h1>Winning Report </h1>
-          </div>
-          <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item active">Winning Report</li>
-            </ol>
-          </div>
+    <div class="wrapper">
+        <x-admin-navbar /><x-admin-sidebar />
+        <div class="content-wrapper">
+            <section class="content-header">
+                <div class="container-fluid">
+                    <div class="row mb-2">
+                        <div class="col-sm-6">
+                            <h1>Gali-Disawar Winning Report</h1>
+                        </div>
+                        <div class="col-sm-6">
+                            <ol class="breadcrumb float-sm-right">
+                                <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+                                <li class="breadcrumb-item active">Gali-Disawar › Winning Report</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="content">
+                <div class="container-fluid">
+                    <div class="card card-outline card-success mb-3">
+                        <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-filter mr-2"></i>Filter Winners</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4"><label class="small">Date</label>
+                                    <input type="date" id="fDate" class="form-control"
+                                        value="{{ date('Y-m-d') }}">
+                                </div>
+                                <div class="col-md-4"><label class="small">Starline Game</label>
+                                    <select id="fGame" class="form-control">
+                                        <option value="">All Games</option>
+                                        @foreach ($games as $g)
+                                            <option value="{{ $g->id }}">{{ $g->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-4 d-flex align-items-end">
+                                    <button id="btnFilter" class="btn btn-success btn-block"><i
+                                            class="fas fa-trophy mr-1"></i>Show Winners</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <div class="info-box bg-success">
+                                <span class="info-box-icon"><i class="fas fa-trophy"></i></span>
+                                <div class="info-box-content"><span class="info-box-text">Total Winners</span>
+                                    <span class="info-box-number"><span id="gdWinners">0</span></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="info-box bg-primary">
+                                <span class="info-box-icon"><i class="fas fa-rupee-sign"></i></span>
+                                <div class="info-box-content"><span class="info-box-text">Total Win Amount</span>
+                                    <span class="info-box-number"><span id="gdWinAmt">₹0</span></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="info-box bg-warning">
+                                <span class="info-box-icon"><i class="fas fa-percentage"></i></span>
+                                <div class="info-box-content"><span class="info-box-text">Avg Win</span>
+                                    <span class="info-box-number"><span id="gdAvg">₹0</span></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body table-responsive p-0">
+                            <table id="gdWinTable" class="table table-hover table-striped table-sm">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>User</th>
+                                        <th>Phone</th>
+                                        <th>Game</th>
+                                        <th>Game Type</th>
+                                        <th>Bet Value</th>
+                                        <th>Bet Amt</th>
+                                        <th>Win Amt</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
-      </div><!-- /.container-fluid -->
-    </section>
-
-    <!-- Main content -->
-    <section class="content">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-12">
-           
-
-            {{-- <div class="card">
-              <div class="card-header">
-                <h3 class="card-title"></h3>
-              </div>
-              <div class="card-body">
-               
-              </div>
-            </div> --}}
-            <!-- /.card -->
-          </div>
-          <!-- /.col -->
-        </div>
-        <!-- /.row -->
-      </div>
-      <!-- /.container-fluid -->
-    </section>
-    <!-- /.content -->
-  </div>
-  <!-- /.content-wrapper -->
-  <footer class="main-footer">
-    <div class="float-right d-none d-sm-block">
-      <b>Version</b> 3.2.0
+        <footer class="main-footer"><strong>Matka Admin &copy; {{ date('Y') }}</strong></footer>
+        <aside class="control-sidebar control-sidebar-dark"></aside>
     </div>
-    <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights reserved.
-  </footer>
-
-  <!-- Control Sidebar -->
-  <aside class="control-sidebar control-sidebar-dark">
-    <!-- Control sidebar content goes here -->
-  </aside>
-  <!-- /.control-sidebar -->
-</div>
-<!-- ./wrapper -->
-
-<!-- jQuery -->
-<script src="../../plugins/jquery/jquery.min.js"></script>
-<!-- Bootstrap 4 -->
-<script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-<!-- DataTables  & Plugins -->
-<script src="../../plugins/datatables/jquery.dataTables.min.js"></script>
-<script src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
-<script src="../../plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
-<script src="../../plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
-<script src="../../plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
-<script src="../../plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
-<script src="../../plugins/jszip/jszip.min.js"></script>
-<script src="../../plugins/pdfmake/pdfmake.min.js"></script>
-<script src="../../plugins/pdfmake/vfs_fonts.js"></script>
-<script src="../../plugins/datatables-buttons/js/buttons.html5.min.js"></script>
-<script src="../../plugins/datatables-buttons/js/buttons.print.min.js"></script>
-<script src="../../plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
-<!-- AdminLTE App -->
-<script src="../../dist/js/adminlte.min.js"></script>
-<!-- AdminLTE for demo purposes -->
-<script src="../../dist/js/demo.js"></script>
-<!-- Page specific script -->
-{{-- font awesome script--}}
-
-
-
-<script>
-  $(function () {
-    $("#example1").DataTable({
-      "responsive": true, "lengthChange": false, "autoWidth": false,
-      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-    $('#example2').DataTable({
-      "paging": true,
-      "lengthChange": false,
-      "searching": false,
-      "ordering": true,
-      "info": true,
-      "autoWidth": false,
-      "responsive": true,
-    });
-  });
-</script>
+    <script src="{{ asset('plugins/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('plugins/datatables/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
+    <script src="{{ asset('plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('plugins/datatables-buttons/js/dataTables.buttons.min.js') }}"></script>
+    <script src="{{ asset('plugins/datatables-buttons/js/buttons.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('plugins/jszip/jszip.min.js') }}"></script>
+    <script src="{{ asset('plugins/pdfmake/pdfmake.min.js') }}"></script>
+    <script src="{{ asset('plugins/pdfmake/vfs_fonts.js') }}"></script>
+    <script src="{{ asset('plugins/datatables-buttons/js/buttons.html5.min.js') }}"></script>
+    <script src="{{ asset('plugins/datatables-buttons/js/buttons.print.min.js') }}"></script>
+    <script src="{{ asset('dist/js/adminlte.min.js') }}"></script>
+    <script>
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $(function() {
+            var dt = $('#gdWinTable').DataTable({
+                responsive: true,
+                autoWidth: false,
+                order: [
+                    [8, 'desc']
+                ],
+                buttons: ['csv', 'excel', 'print']
+            });
+            dt.buttons().container().appendTo('#gdWinTable_wrapper .col-md-6:eq(0)');
+            $('#btnFilter').on('click', function() {
+                var btn = $(this).prop('disabled', true).html(
+                    '<i class="fas fa-spinner fa-spin mr-1"></i>Loading...');
+                $.post('{{ route('admin.gali_disawar.winning_report.filter') }}', {
+                        date: $('#fDate').val(),
+                        game_id: $('#fGame').val()
+                    })
+                    .done(function(r) {
+                        dt.clear();
+                        var tw = 0;
+                        if (r.data && r.data.length) {
+                            var i = 1;
+                            r.data.forEach(function(b) {
+                                tw += parseFloat(b.winning_amount || 0);
+                                dt.row.add([i++, b.user ? b.user.name : '—', b.user ? b.user
+                                    .phone : '—',
+                                    b.gali_disawar ? b.gali_disawar.name : '—',
+                                    b.game_type ? b.game_type.name : b.game_type_id ||
+                                    '—',
+                                    '<strong class="text-primary">' + b.bet_value +
+                                    '</strong>',
+                                    '₹' + parseFloat(b.amount).toFixed(2),
+                                    '<strong class="text-success">₹' + parseFloat(b
+                                        .winning_amount || 0).toFixed(2) + '</strong>',
+                                    b.bid_date
+                                ]);
+                            });
+                            dt.draw();
+                            $('#gdWinners').text(r.data.length);
+                            $('#gdWinAmt').text('₹' + tw.toFixed(2));
+                            $('#gdAvg').text('₹' + (tw / r.data.length).toFixed(2));
+                        } else {
+                            dt.row.add(['', 'No winners for selected date', '', '', '', '', '', '', ''])
+                                .draw();
+                        }
+                    })
+                    .fail(function() {
+                        alert('Request failed');
+                    })
+                    .always(function() {
+                        btn.prop('disabled', false).html(
+                            '<i class="fas fa-trophy mr-1"></i>Show Winners');
+                    });
+            });
+        });
+    </script>
 </body>
+
 </html>

@@ -301,14 +301,13 @@ padding:0;
                     }
                 })
                 .then(res => res.json())
-                .then(() => {
+                .then(data => {
+                    console.log(data);
 
                     let badge = document.getElementById("notification-count");
 
-                    // badge.style.display = "none";
-                    // badge.innerText = "";
-                     badge.style.display = "inline-block";
-                        badge.innerText = data.count;
+                    badge.style.display = "inline-block";
+                    badge.innerText = '0';
 
                 });
 
@@ -345,7 +344,7 @@ padding:0;
 
     })();
 
-    document.addEventListener("DOMContentLoaded", function(){
-loadNotificationCount();
-});
+//     document.addEventListener("DOMContentLoaded", function(){
+// loadNotificationCount();
+// });
 </script>

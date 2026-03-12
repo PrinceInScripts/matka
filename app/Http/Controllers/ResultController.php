@@ -165,6 +165,9 @@ public function declareWinners(Request $request)
                     'winning_amount' => $winningAmount,
                 ]);
 
+                $wallet->increment('balance', $winningAmount);
+                $wallet->refresh(); // ← ensure we have latest balance for transaction record
+
                 // 💰 Credit win
                 WalletTransactions::create([
                     'wallet_id'        => $wallet->id,
@@ -173,11 +176,11 @@ public function declareWinners(Request $request)
                     'source'           => 'win',
                     'reason'           => 'Winning amount credited',
                     'reference_id'     => $bid->id,
-                    'balance_after'    => $wallet->balance + $winningAmount,
+                    'balance_after'    => $wallet->balance,
                     'transaction_code' => 'WIN-' . strtoupper(uniqid()),
                 ]);
 
-                $wallet->increment('balance', $winningAmount);
+                
 
             } else {
 
