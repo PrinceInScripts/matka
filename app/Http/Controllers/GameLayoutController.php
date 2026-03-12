@@ -68,7 +68,7 @@ class GameLayoutController extends Controller
             ->where( 'status', 1 )
             ->get();
         } elseif ( $game_type === 'starline' ) {
-            $gameType=GameType::where('slug', $gameCode)->get();
+            $gameType=StarlineGameType::where('slug', $gameCode)->get();
         } else {
             $gameType=GameType::where('slug', $gameCode)->get();
         }
@@ -79,6 +79,7 @@ class GameLayoutController extends Controller
         //     'game_type' => $game_type,
         // ] );
         $gameType = $gameType->first();
+
 
         // Allowed number combinations for this game type
         $numbers = GameNumberService::getCombinations( $gameType->slug, $game_type );

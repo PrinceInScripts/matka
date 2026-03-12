@@ -386,7 +386,7 @@ class BidController extends Controller
             $walletTx = WalletTransactions::create([
                 'wallet_id' => $user->wallet->id,
                 'type'      => 'debit',
-                'source'    => 'gali_disawar_bid',
+                'source'    => 'galidisawar_bid',
                 'amount'    => $bid['points'],
                 'reason'    => 'Gali Disawar Bid',
                 'reference_id' => $newBid->id,

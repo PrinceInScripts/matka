@@ -343,13 +343,17 @@ public function updateSchedule(Request $request, $id)
         return view('admin.gali_disawar.declare_result', compact('games', 'pannas', 'results'));
     }
 
-     public function getContext( Request $request ) {
+    public function getContext(Request $request)
+    {
+        $galiId = $request->gali_id ?? $request->game_id;
+        $date   = $request->draw_date ?? $request->date ?? now()->toDateString();
 
-        return GaliDisawarResult::where( [
-            'gali_id' => $request->game_id,
-            // 'session' => $request->session,
-            'draw_date' => $request->draw_date,
-        ] )->first();
+        $result = GaliDisawarResult::where([
+            'gali_id'   => $galiId,
+            'draw_date' => $date,
+        ])->first();
+
+        return response()->json($result); // returns null-safe JSON
     }
 
     public function saveDraft(Request $request)
@@ -480,11 +484,18 @@ public function declareWinners(Request $request)
                     'result_id' => $result->id,
                 ]);
 
+                sendNotification(
+                    $bid->user_id,
+                    '🎉 You Won!',
+                    "You won ₹{$winAmount} in {$bid->gameType->name} (Jodi {$jodi}).",
+                    'bet'
+                );
+
                 WalletTransactions::create([
                     'wallet_id' => $wallet->id,
                     'amount' => $winAmount,
                     'type' => 'credit',
-                    'source' => 'gali_win', // ⚠️ keep short (DB limit issue)
+                    'source' => 'galidisawar_win', // ⚠️ keep short (DB limit issue)
                     'reason' => "Win for bid {$bid->id}",
                     'reference_id' => $bid->id,
                     'balance_after' => $wallet->balance,
@@ -498,14 +509,22 @@ public function declareWinners(Request $request)
                     'winning_amount' => 0,
                     'result_id' => $result->id,
                 ]);
+
+                sendNotification(
+                    $bid->user_id,
+                    '❌ You Lost',
+                    "You lost ₹{$bid->amount} in {$bid->gameType->name} (Jodi {$jodi}).",
+                    'bet'
+                );
             }
         }
 
+
+
         // 🏁 mark declared
-        $result->update([
-            'declared_at' => now(),
-            'status' => 'declared',
-        ]);
+       $result->declared_at = now();
+$result->status = 'declared';
+$result->save();
     });
 
     return response()->json([
@@ -533,7 +552,7 @@ public function declareWinners(Request $request)
     $bids = GaliDisawarBid::with(['user', 'gameType'])
         ->where('gali_id', $result->gali_id)
         ->whereDate('draw_date', $result->draw_date)
-        // ->where('status', 'pending')
+        ->where('status', 'pending')
         ->get();
         
 
@@ -683,9 +702,11 @@ public function declareWinners(Request $request)
             'jodi'    => 'nullable|string|size:2',
         ]);
 
-        $query = GaliDisawarBid::with(['user', 'gali'])
+        $query = GaliDisawarBid::with(['user', 'gali','gameType'])
             ->forDate($request->date)
             ->where('gali_id', $request->gali_id);
+
+        
 
         /* -----------------------------
            DIGIT FILTER

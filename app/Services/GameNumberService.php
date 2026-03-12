@@ -10,11 +10,11 @@ class GameNumberService
     public static function getCombinations(string $gameCode): array
     {
         return match ($gameCode) {
-            'single_digit'  => collect(range(0, 9))
+            'single_digit','left_digit','right_digit'  => collect(range(0, 9))
                                 ->map(fn($i) => (string)$i)
                                 ->toArray(),
 
-            'jodi'          => collect(range(0, 99))
+            'jodi','jodi_digit'          => collect(range(0, 99))
                                 ->map(fn($i) => str_pad($i, 2, '0', STR_PAD_LEFT))
                                 ->toArray(),
 

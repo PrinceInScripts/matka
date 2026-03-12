@@ -53,6 +53,8 @@ class GaliDisawarBid extends Model
         return $this->belongsTo(GaliDisawarResult::class, 'result_id');
     }
 
+   
+
     /* ---------- Scopes (USE THESE) ---------- */
 
     public function scopePending($query)

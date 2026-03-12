@@ -391,66 +391,67 @@
             padding: 0 6px;
         }
 
-        .bid-form select#digit{
-height:48px;
-border-radius:10px;
-border:1px solid #e5e7eb;
-padding:0 10px;
-font-size:14px;
-background:#fafafa;
-}
+        .bid-form select#digit {
+            height: 48px;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            padding: 0 10px;
+            font-size: 14px;
+            background: #fafafa;
+        }
 
-.ts-wrapper{
-width:100%;
-}
+        .ts-wrapper {
+            width: 100%;
+        }
 
-/* Tom Select Fix */
+        /* Tom Select Fix */
 
-.ts-wrapper.single .ts-control{
-height:48px;
-min-height:48px;
-border-radius:10px;
-border:1px solid #e5e7eb;
-background:#fafafa;
+        .ts-wrapper.single .ts-control {
+            height: 48px;
+            min-height: 48px;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            background: #fafafa;
 
-display:flex;
-align-items:center;
+            display: flex;
+            align-items: center;
 
-padding:0 12px;
-font-size:14px;
-box-shadow:none;
-}
+            padding: 0 12px;
+            font-size: 14px;
+            box-shadow: none;
+        }
 
-.ts-wrapper.single .ts-control .item{
-line-height:1;
-}
+        .ts-wrapper.single .ts-control .item {
+            line-height: 1;
+        }
 
-/* Search input alignment */
+        /* Search input alignment */
 
-.ts-wrapper.single .ts-control input{
-height:100%;
-line-height:48px;
-padding:0;
-margin:0;
-}
+        .ts-wrapper.single .ts-control input {
+            height: 100%;
+            line-height: 48px;
+            padding: 0;
+            margin: 0;
+        }
 
-/* Focus state */
+        /* Focus state */
 
-.ts-wrapper.single .ts-control.focus{
-border-color:#2563eb;
-box-shadow:0 0 0 2px rgba(37,99,235,0.1);
-background:#fff;
-}
-.ts-dropdown{
-border-radius:10px;
-border:1px solid #e5e7eb;
-}
+        .ts-wrapper.single .ts-control.focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+            background: #fff;
+        }
 
-input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button{
--webkit-appearance:none;
-margin:0;
-}
+        .ts-dropdown {
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+        }
+
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
     </style>
 
 </head>
@@ -573,20 +574,20 @@ margin:0;
 
                         <div class="form-row">
 
-                          <div class="form-group">
-<label>{{ $gameType->name }}</label>
+                            <div class="form-group">
+                                <label>{{ $gameType->name }}</label>
 
-<select id="digit" name="digit">
+                                <select id="digit" name="digit">
 
-<option value="" disabled selected>Select {{ $gameType->name }}</option>
+                                    <option value="" disabled selected>Select {{ $gameType->name }}</option>
 
-@foreach($numbers as $number)
-<option value="{{ $number }}">{{ $number }}</option>
-@endforeach
+                                    @foreach ($numbers as $number)
+                                        <option value="{{ $number }}">{{ $number }}</option>
+                                    @endforeach
 
-</select>
+                                </select>
 
-</div>
+                            </div>
 
                             <div class="form-group">
                                 <label>Points</label>
@@ -676,14 +677,15 @@ margin:0;
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
-    
+
 
     <script>
-        new TomSelect("#digit",{
-create:false,
-sortField:"text",
-maxOptions:500
-});
+        new TomSelect("#digit", {
+            create: false,
+            sortField: "text",
+            maxOptions: 500
+        });
+
         function goBack() {
             window.history.back();
         }
@@ -696,6 +698,7 @@ maxOptions:500
             const addBidBtn = document.querySelector(".add-bid-btn");
             const submitBidBtn = document.querySelector(".submit-bid-btn");
             const bidContainer = document.querySelector(".bid-items");
+            const pointsInput = document.getElementById("points");
 
             let totalPoints = 0;
             let totalBids = 0;
@@ -770,11 +773,11 @@ maxOptions:500
 
                 bidItem.className = "bid-item";
 
-               bidItem.innerHTML = `
+                bidItem.innerHTML = `
 <div class="bid-number">${digit}</div>
 <div class="bid-points">${points}</div>
 
-@if(!$isStarline)
+@if (!$isStarline)
 <div class="bid-session">${session}</div>
 @endif
 
@@ -792,10 +795,9 @@ maxOptions:500
 
 
                 // RESET INPUTS
-                inputs.digit.value = "";
+                document.querySelector("#digit").tomselect.clear();
                 inputs.points.value = "";
                 inputs.digit.style.borderColor = "";
-
 
                 // DELETE BID
                 bidItem.querySelector(".delete-bid").addEventListener("click", () => {
@@ -856,6 +858,11 @@ maxOptions:500
                     game_type: "{{ $game_type ?? 'main' }}"
                 };
 
+                // UI: disable button & show spinner text
+                const originalBtnText = submitBidBtn.innerHTML;
+                submitBidBtn.disabled = true;
+                submitBidBtn.innerHTML = "Submitting...";
+
 
                 $.ajax({
 
@@ -886,6 +893,11 @@ maxOptions:500
                         totalBids = 0;
 
                         updateTotals();
+
+                        pointsInput.value = "";
+
+                        submitBidBtn.disabled = false;
+                        submitBidBtn.innerHTML = originalBtnText;
 
                     },
 
