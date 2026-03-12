@@ -285,8 +285,8 @@
     </div>
 
     <div class="right-side">
-        <button class="calendar-btn">
-            <i class="fa-solid fa-calendar-days"></i>
+        <a href="{{ route('chart', ['market_type' => 'starline', 'slug' => $game->slug]) }}" class="calendar-btn" style="display:flex;align-items:center;justify-content:center;text-decoration:none">
+            <i class="fa-solid fa-calendar-days"></i></a>
         </button>
 
         <button class="play-btn"

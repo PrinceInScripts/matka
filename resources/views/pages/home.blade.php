@@ -489,8 +489,8 @@
 
                         </div>
                         <div class="right-side">
-                            <button class="calendar-btn" data-game="{{ $game->name }}">
-                                <i class="fa-solid fa-calendar-days"></i></button>
+                            <a href="{{ route('chart', ['market_type' => 'main', 'slug' => $game->slug]) }}" class="calendar-btn" style="display:flex;align-items:center;justify-content:center;text-decoration:none">
+                                <i class="fa-solid fa-calendar-days"></i></a>
                             <button class="play-btn" data-live="{{ $game->is_live ? 1 : 0 }}"
                                 data-message="{{ $game->user_message }}" data-slug="{{ $game->slug }}">
                                 <i class="fa-solid fa-circle-play"></i>

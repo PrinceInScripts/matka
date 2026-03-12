@@ -1,302 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Matka Play | Home</title>
-
-    <!-- Bootstrap & Font Awesome -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-
-    {{-- <link href="https://pro.fontawesome.com/releases/v6.5.2/css/all.css" rel="stylesheet"> --}}
-
-    <!-- Custom CSS -->
-    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/style.css') }}" />
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-
-
-    <style>
-        .home-content {
-            flex: 1;
-            overflow-y: auto;
-            background: #f5f6fa;
-            padding: 20px 15px 90px 15px;
-            height: calc(100dvh - 140px);
-            -webkit-overflow-scrolling: touch;
-            box-sizing: border-box;
-        }
-
-        .fund-card{
-background:white;
-border-radius:16px;
-padding:16px;
-box-shadow:0 6px 14px rgba(0,0,0,0.06);
-}
-
-.fund-header{
-display:flex;
-align-items:center;
-gap:8px;
-font-weight:700;
-font-size:16px;
-margin-bottom:12px;
-color:#2563eb;
-}
-
-.wallet-info{
-background:#f8fafc;
-padding:10px;
-border-radius:10px;
-margin-bottom:14px;
-font-size:13px;
-display:flex;
-justify-content:space-between;
-}
-
-.wallet-info strong{
-color:#22c55e;
-font-size:16px;
-}
-
-.input-group-box{
-display:flex;
-flex-direction:column;
-gap:4px;
-margin-bottom:12px;
-}
-
-.input-group-box input{
-height:44px;
-border-radius:10px;
-border:1px solid #e2e8f0;
-padding:0 12px;
-}
-
-.quick-amounts{
-display:flex;
-gap:8px;
-margin-bottom:12px;
-flex-wrap:wrap;
-}
-
-.amount-chip{
-background:#f1f5f9;
-border:none;
-border-radius:20px;
-padding:6px 12px;
-font-size:12px;
-}
-
-.amount-chip:hover{
-background:#2563eb;
-color:white;
-}
-
-.payment-method select{
-width:100%;
-height:44px;
-border-radius:10px;
-border:1px solid #e2e8f0;
-margin-bottom:14px;
-padding:0 10px;
-}
-
-.fund-btn{
-width:100%;
-height:46px;
-border:none;
-border-radius:12px;
-background:#22c55e;
-color:white;
-font-weight:700;
-}
-    
-    </style>
-
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <title>Add Money | Matka Play</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+  <style>
+    .home-content{flex:1;overflow-y:auto;background:#f5f6fa;padding:80px 15px 100px;height:calc(100dvh - 56px);box-sizing:border-box;}
+    .top-bar{position:fixed;top:0;width:100%;max-width:500px;display:flex;align-items:center;justify-content:space-between;padding:15px 20px;border-bottom:1px solid #eee;background:#fff;z-index:10;}
+    .top-bar .back-btn{width:36px;height:36px;border-radius:50%;background:#2563eb;color:#fff;border:none;display:flex;align-items:center;justify-content:center;}
+    .mode-card{background:#fff;border-radius:16px;padding:20px;box-shadow:0 4px 16px rgba(0,0,0,.07);margin-bottom:16px;cursor:pointer;border:2px solid transparent;transition:.2s;}
+    .mode-card:hover,.mode-card.active{border-color:#2563eb;background:#eff6ff;}
+    .mode-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:12px;}
+    .mode-title{font-weight:700;font-size:15px;margin-bottom:4px;}
+    .mode-desc{font-size:12px;color:#64748b;line-height:1.4;}
+    .mode-badge{font-size:10px;padding:2px 8px;border-radius:20px;margin-left:6px;}
+    .balance-chip{background:#f0fdf4;border-radius:12px;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+    .proceed-btn{width:100%;background:#2563eb;color:#fff;border:none;border-radius:14px;padding:14px;font-weight:700;font-size:15px;box-shadow:0 4px 12px rgba(37,99,235,.3);}
+  </style>
 </head>
-
 <body>
-
-    {{-- <div class="overlay" id="overlay"></div> --}}
-
-    <div class="app-layout">
-        <!-- LEFT AREA -->
-        <div class="left-area">
-            @include('components.topbar')
-           <div class="home-content">
-
-<div class="fund-card">
-
-<div class="fund-header">
-<i class="fa-solid fa-wallet"></i>
-<span>Add Funds</span>
-</div>
-
-<div class="wallet-info">
-Current Balance
-<strong>₹{{ auth()->user()->wallet->balance }}</strong>
-</div>
-
-<form id="depositForm">
-
-<div class="input-group-box">
-<label>Enter Amount</label>
-<input type="number" id="depositAmount" placeholder="Minimum ₹100">
-</div>
-
-<div class="quick-amounts">
-
-<button type="button" class="amount-chip" data-amount="500">₹500</button>
-<button type="button" class="amount-chip" data-amount="1000">₹1000</button>
-<button type="button" class="amount-chip" data-amount="2000">₹2000</button>
-<button type="button" class="amount-chip" data-amount="5000">₹5000</button>
-
-</div>
-
-<div class="payment-method">
-
-<label>Select Payment</label>
-
-<select id="paymentMethod">
-<option value="upi">UPI</option>
-<option value="qr">QR Code</option>
-<option value="bank">Bank Transfer</option>
-</select>
-
-</div>
-
-<button class="fund-btn" type="submit">
-<i class="fa fa-arrow-down"></i>
-Deposit
-</button>
-
-</form>
-
-</div>
-
-</div>
-
-
-
-            @include('components.bottombar')
-
-            <!-- SIDEBAR -->
-            @include('components.sidebar')
-
-        </div>
-
-        <!-- RIGHT AREA (Main Content) -->
-        @include('components.rightside')
-
-
+<div class="app-layout">
+  <div class="left-area">
+    <div class="top-bar">
+      <button class="back-btn" onclick="history.back()"><i class="fa fa-angle-left"></i></button>
+      <h6 class="m-0 fw-bold">Add Money</h6>
+      @include('components.walletinfo')
     </div>
+    <div class="home-content">
+      <div class="balance-chip">
+        <span class="text-muted" style="font-size:13px">Available Balance</span>
+        <strong class="text-success" style="font-size:16px">₹{{ auth()->user()->wallet->balance ?? 0 }}</strong>
+      </div>
 
+      <p class="text-muted fw-600 mb-3" style="font-size:13px">Choose deposit method</p>
 
+      <!-- Manual -->
+      <div class="mode-card" onclick="window.location='{{ route('deposit.funds.manual') }}'">
+        <div class="d-flex align-items-center gap-3">
+          <div class="mode-icon bg-primary bg-opacity-10 text-primary"><i class="fa fa-qrcode"></i></div>
+          <div>
+            <div class="mode-title">Manual UPI / Bank Transfer <span class="badge bg-warning text-dark mode-badge">Always Active</span></div>
+            <div class="mode-desc">Pay via UPI QR code or bank transfer. Upload screenshot proof. Admin approves within minutes.</div>
+          </div>
+        </div>
+      </div>
 
+      <!-- Auto -->
+      <div class="mode-card" onclick="window.location='{{ route('deposit.funds.auto') }}'">
+        <div class="d-flex align-items-center gap-3">
+          <div class="mode-icon bg-success bg-opacity-10 text-success"><i class="fa fa-bolt"></i></div>
+          <div>
+            <div class="mode-title">Auto Payment Gateway <span class="badge bg-success mode-badge">Instant</span></div>
+            <div class="mode-desc">Pay instantly via Razorpay / Cashfree / PhonePe. Amount credited automatically after payment.</div>
+          </div>
+        </div>
+      </div>
 
-    <!-- Bootstrap JS Bundle (Required for Modals, Toasts, Dropdowns, etc.) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ asset('assets/js/script.js') }}"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    {{-- jquery --}}
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <script>
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-    </script>
-
-<script>
-
-$(function(){
-
-/* quick amount */
-$(".amount-chip").click(function(){
-
-let amt = $(this).data("amount");
-
-$("#depositAmount").val(amt);
-
-});
-
-
-/* submit deposit */
-
-$("#depositForm").submit(function(e){
-
-e.preventDefault();
-
-let amount = $("#depositAmount").val();
-let method = $("#paymentMethod").val();
-
-if(!amount || amount < 100){
-
-Toastify({
-text:"Minimum deposit ₹100",
-backgroundColor:"#ef4444",
-duration:2500
-}).showToast();
-
-return;
-}
-
-$.ajax({
-
-url:"{{ route('deposit.funds.store') }}",
-method:"POST",
-
-data:{
-amount:amount,
-method:method,
-_token:"{{ csrf_token() }}"
-},
-
-beforeSend:function(){
-
-$(".fund-btn").text("Processing...");
-
-},
-
-success:function(res){
-
-Toastify({
-text:"Deposit request submitted",
-backgroundColor:"#22c55e",
-duration:2500
-}).showToast();
-
-location.reload();
-
-},
-
-error:function(){
-
-Toastify({
-text:"Deposit failed",
-backgroundColor:"#ef4444",
-duration:2500
-}).showToast();
-
-$(".fund-btn").text("Deposit");
-
-}
-
-});
-
-});
-
-});
-
-</script>
-
-
+      <!-- History link -->
+      <a href="{{ route('deposit.history') }}" class="d-flex align-items-center gap-2 text-decoration-none mt-3 p-3" style="background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.06)">
+        <i class="fa fa-history text-primary"></i>
+        <span style="font-size:13px;font-weight:600;color:#334155">View Deposit History</span>
+        <i class="fa fa-angle-right ms-auto text-muted"></i>
+      </a>
+    </div>
+    @include('components.bottombar')
+  </div>
+  @include('components.rightside')
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{{ asset('assets/js/script.js') }}"></script>
 </body>
-
 </html>

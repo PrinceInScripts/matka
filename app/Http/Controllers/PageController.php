@@ -481,4 +481,40 @@ $galiRates = DB::table('gali_disawar_types')
         return view('pages.howtoplay');
     }
    
+
+    public function chart($market_type, $slug)
+    {
+        $game = null;
+        $results = collect();
+        $marketName = '';
+
+        if ($market_type === 'main') {
+            $game = \App\Models\GameList::where('slug', $slug)->firstOrFail();
+            $marketName = $game->name;
+            $results = \App\Models\Result::where('market_id', $game->id)
+                ->where('status', 'declared')
+                ->orderBy('result_date', 'desc')
+                ->limit(200)
+                ->get();
+        } elseif ($market_type === 'starline') {
+            $game = \App\Models\StarlineName::where('slug', $slug)->firstOrFail();
+            $marketName = $game->name;
+            $results = \App\Models\StarlineResult::where('starline_id', $game->id)
+                ->where('status', 'declared')
+                ->orderBy('draw_date', 'desc')
+                ->limit(200)
+                ->get();
+        } elseif ($market_type === 'gali_disawar') {
+            $game = \App\Models\GaliDisawarGame::where('slug', $slug)->firstOrFail();
+            $marketName = $game->name;
+            $results = \App\Models\GaliDisawarResult::where('gali_id', $game->id)
+                ->where('status', 'declared')
+                ->orderBy('draw_date', 'desc')
+                ->limit(200)
+                ->get();
+        }
+
+        return view('pages.chart', compact('game', 'results', 'marketName', 'market_type', 'slug'));
+    }
+
 }

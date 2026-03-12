@@ -282,8 +282,8 @@
                             </div>
                         </div>
                         <div class="right-side">
-                            <button class="calendar-btn" data-game="{{ $game->name }}">
-                                <i class="fa-solid fa-calendar-days"></i></button>
+                            <a href="{{ route('chart', ['market_type' => 'gali_disawar', 'slug' => $game->slug]) }}" class="calendar-btn" style="display:flex;align-items:center;justify-content:center;text-decoration:none">
+                                <i class="fa-solid fa-calendar-days"></i></a>
                             <button class="play-btn" data-status="{{ $game->market_status }}"
                                 data-slug="{{ $game->slug }}" data-type="{{ $game->game_type }}">
                                 <i class="fa-solid fa-circle-play"></i>

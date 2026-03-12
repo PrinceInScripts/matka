@@ -618,4 +618,32 @@ public function placeBid(Request $request)
         'gali_disawar' => $this->placeGaliDisawarBid($request),
     };
 }
+
+    public function starlineBidHistory(Request $request)
+    {
+        $user = auth()->user();
+        $bids = \App\Models\StarlineBidHistory::with(['starline','gameType'])
+            ->where('user_id', $user->id)
+            ->orderBy('created_at','desc')
+            ->paginate(15);
+        if ($request->ajax()) {
+            return response()->json(['html' => view('pages.bids.partials.starline-bid-list', compact('bids'))->render()]);
+        }
+        return view('pages.bids.starline-bid-history', compact('bids'));
+    }
+
+    public function starlineWinHistory(Request $request)
+    {
+        $user = auth()->user();
+        $bids = \App\Models\StarlineBidHistory::with(['starline','gameType'])
+            ->where('user_id', $user->id)
+            ->where('status','won')
+            ->orderBy('created_at','desc')
+            ->paginate(15);
+        if ($request->ajax()) {
+            return response()->json(['html' => view('pages.bids.partials.starline-bid-list', compact('bids'))->render()]);
+        }
+        return view('pages.bids.starline-win-history', compact('bids'));
+    }
+
 }
