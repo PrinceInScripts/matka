@@ -23,7 +23,7 @@
 </style>
 <div class="topbar">
   <div><i class="fa fa-bars menu-toggle" id="menuBtn"></i></div>
-  <div style="font-size:22px;" class="fw-bold text-primary">Matka Play</div>
+  <div style="font-size:22px;" class="fw-bold text-primary">MPL Matka</div>
   <div class="topbar-right">
     <div class="notification-wrapper">
       <div class="notification-icon" id="notificationBtn">

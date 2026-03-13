@@ -48,6 +48,12 @@
                   <p class="text-muted mb-1">Available Balance</p>
                   @if($user->wallet && $user->wallet->frozen_balance > 0)
                   <small class="text-warning">Frozen: ₹{{ number_format($user->wallet->frozen_balance, 2) }}</small>
+                  
+                  @endif
+                </br>
+                  @if($user->wallet && $user->wallet->bonus_balance > 0)
+                  <small class="text-primary">Frozen: ₹{{ number_format($user->wallet->bonus_balance, 2) }}</small>
+                  
                   @endif
                 </div>
 
@@ -123,6 +129,7 @@
                   <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tab-deposits">Deposits</a></li>
                   <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tab-withdraws">Withdrawals</a></li>
                   <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tab-txns">Wallet Transactions</a></li>
+                  <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tab-bonus">Bonus Transactions</a></li>
                 </ul>
               </div>
               <div class="card-body tab-content">
@@ -210,6 +217,28 @@
                     </thead>
                     <tbody>
                       @forelse($transactions as $t)
+                      <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td><span class="badge badge-{{ $t->type === 'credit' ? 'success' : 'danger' }}">{{ strtoupper($t->type) }}</span></td>
+                        <td><small>{{ $t->source ?? '—' }}</small></td>
+                        <td><strong>₹{{ number_format($t->amount, 2) }}</strong></td>
+                        <td>₹{{ number_format($t->balance_after ?? 0, 2) }}</td>
+                        <td><small>{{ $t->reason ?? '—' }}</small></td>
+                        <td><small>{{ $t->created_at->format('d M Y H:i') }}</small></td>
+                      </tr>
+                      @empty
+                      <tr><td colspan="7" class="text-center text-muted">No transactions</td></tr>
+                      @endforelse
+                    </tbody>
+                  </table>
+                </div>
+                <div id="tab-bonus" class="tab-pane">
+                  <table class="table table-sm table-striped table-bordered">
+                    <thead class="thead-dark">
+                      <tr><th>#</th><th>Type</th><th>Source</th><th>Amount</th><th>Balance After</th><th>Reason</th><th>Date</th></tr>
+                    </thead>
+                    <tbody>
+                      @forelse($bonusTransaction as $t)
                       <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td><span class="badge badge-{{ $t->type === 'credit' ? 'success' : 'danger' }}">{{ strtoupper($t->type) }}</span></td>

@@ -78,7 +78,7 @@
                 <div class="form-group">
                   <label>Site Name</label>
                   <input type="text" name="site_name" class="form-control setting-field"
-                    value="{{ $settings['site_name'] ?? 'Matka Play' }}" maxlength="100">
+                    value="{{ $settings['site_name'] ?? 'MPL Matka' }}" maxlength="100">
                 </div>
               </div>
             </div>

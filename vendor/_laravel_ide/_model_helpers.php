@@ -966,6 +966,8 @@ namespace App\Models {
      * @property \Illuminate\Support\Carbon $draw_date
      * @property mixed $status
      * @property mixed $session
+     * @property float $balance_used
+     * @property float $bonus_used
      * @property float $amount
      * @property mixed $ank
      * @property string $number
@@ -990,6 +992,8 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<Bid>|Bid whereNumber($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Bid>|Bid whereAnk($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Bid>|Bid whereAmount($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Bid>|Bid whereBonusUsed($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Bid>|Bid whereBalanceUsed($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Bid>|Bid whereSession($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Bid>|Bid whereStatus($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Bid>|Bid whereDrawDate($value)
@@ -1637,6 +1641,8 @@ namespace App\Models {
      * @property \Illuminate\Support\Carbon $draw_date
      * @property mixed $status
      * @property mixed $session
+     * @property float $balance_used
+     * @property float $bonus_used
      * @property float $amount
      * @property string $bet_value
      * @property mixed $wallet_transaction_id
@@ -1659,6 +1665,8 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<GaliDisawarBid>|GaliDisawarBid whereWalletTransactionId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<GaliDisawarBid>|GaliDisawarBid whereBetValue($value)
      * @method static \Illuminate\Database\Eloquent\Builder<GaliDisawarBid>|GaliDisawarBid whereAmount($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<GaliDisawarBid>|GaliDisawarBid whereBonusUsed($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<GaliDisawarBid>|GaliDisawarBid whereBalanceUsed($value)
      * @method static \Illuminate\Database\Eloquent\Builder<GaliDisawarBid>|GaliDisawarBid whereSession($value)
      * @method static \Illuminate\Database\Eloquent\Builder<GaliDisawarBid>|GaliDisawarBid whereStatus($value)
      * @method static \Illuminate\Database\Eloquent\Builder<GaliDisawarBid>|GaliDisawarBid whereDrawDate($value)
@@ -8132,6 +8140,8 @@ namespace App\Models {
      * @property \Illuminate\Support\Carbon $draw_date
      * @property mixed $status
      * @property string $session
+     * @property float $balance_used
+     * @property float $bonus_used
      * @property float $amount
      * @property string $bet_value
      * @property mixed $wallet_transaction_id
@@ -8154,6 +8164,8 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<StarlineBidHistory>|StarlineBidHistory whereWalletTransactionId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<StarlineBidHistory>|StarlineBidHistory whereBetValue($value)
      * @method static \Illuminate\Database\Eloquent\Builder<StarlineBidHistory>|StarlineBidHistory whereAmount($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<StarlineBidHistory>|StarlineBidHistory whereBonusUsed($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<StarlineBidHistory>|StarlineBidHistory whereBalanceUsed($value)
      * @method static \Illuminate\Database\Eloquent\Builder<StarlineBidHistory>|StarlineBidHistory whereSession($value)
      * @method static \Illuminate\Database\Eloquent\Builder<StarlineBidHistory>|StarlineBidHistory whereStatus($value)
      * @method static \Illuminate\Database\Eloquent\Builder<StarlineBidHistory>|StarlineBidHistory whereDrawDate($value)

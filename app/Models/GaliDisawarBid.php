@@ -22,7 +22,9 @@ class GaliDisawarBid extends Model
         'bid_date',
         'winning_amount',
         'result_id',
-        'session'
+        'session',
+        'bonus_used',
+        'balance_used'
     ];
 
     protected $casts = [
@@ -31,6 +33,8 @@ class GaliDisawarBid extends Model
         'bid_date'       => 'date',
         'amount'         => 'decimal:2',
         'winning_amount' => 'decimal:2',
+        'bonus_used' => 'decimal:2',
+        'balance_used' => 'decimal:2',
     ];
 
     public function user()

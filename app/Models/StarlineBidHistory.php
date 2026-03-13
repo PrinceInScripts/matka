@@ -23,6 +23,8 @@ class StarlineBidHistory extends Model
         'bid_date',
         'winning_amount',
         'result_id',
+        'bonus_used',
+        'balance_used'
 
     ];
 
@@ -31,6 +33,8 @@ class StarlineBidHistory extends Model
         'winning_amount' => 'decimal:2',
         'draw_date' => 'date',
         'bid_date' => 'date',
+        'bonus_used' => 'decimal:2',
+        'balance_used' => 'decimal:2',
     ];
 
     // Relations

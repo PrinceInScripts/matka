@@ -43,6 +43,13 @@ class WalletController extends Controller
                 'reference_id' => $deposit->id,
                 'balance_after'=> $wallet->fresh()->balance,
             ]);
+
+            sendNotification(
+                $deposit->user_id,
+                'Deposit Approved',
+                'Your deposit request of amount '.$deposit->amount.' has been approved by admin.',
+                'wallet'
+            );  
         });
         return response()->json(['status' => true, 'message' => 'Deposit approved successfully']);
     }
@@ -55,6 +62,13 @@ class WalletController extends Controller
             'admin_id'   => auth('admin')->id(),
             'admin_note' => $request->note ?? 'Rejected by admin',
         ]);
+
+            sendNotification(
+                $deposit->user_id,
+                'Deposit Rejected',
+                'Your deposit request of amount '.$deposit->amount.' has been rejected by admin.',
+                'wallet'
+            );
         return response()->json(['status' => true, 'message' => 'Deposit rejected']);
     }
 
@@ -91,6 +105,12 @@ class WalletController extends Controller
                 'reference_id' => $withdraw->id,
                 'balance_after'=> $wallet->fresh()->balance,
             ]);
+             sendNotification(
+            $withdraw->user_id,
+             'Withdrawal approved',
+             'Your withdrawal approved of amount '.$withdraw->amount.' has been approved by admin.',
+            'wallet'
+        );
         });
         return response()->json(['status' => true, 'message' => 'Withdrawal approved']);
     }
@@ -111,7 +131,17 @@ class WalletController extends Controller
                 'admin_id'   => auth('admin')->id(),
                 'admin_note' => $request->note ?? 'Rejected by admin',
             ]);
+             sendNotification(
+            $withdraw->user_id,
+             'Withdrawal Rejected',
+             'Your withdrawal request of amount '.$withdraw->amount.' has been rejected by admin. The amount has been restored to your balance.',
+            'wallet'
+        );
         });
+
+       
+
+        
         return response()->json(['status' => true, 'message' => 'Withdrawal rejected, balance restored']);
     }
 
@@ -128,20 +158,38 @@ class WalletController extends Controller
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'amount'  => 'required|numeric|min:1|max:500000',
+            'fund_type' => 'required|in:deposit,bonus,correction,refund',
             'note'    => 'nullable|string|max:255',
         ]);
         DB::transaction(function () use ($request) {
             $wallet = Wallet::where('user_id', $request->user_id)->lockForUpdate()->firstOrFail();
+            if ($request->fund_type === 'bonus') {
+
+            $wallet->increment('bonus_balance', $request->amount);
+
+        } else {
+
             $wallet->increment('balance', $request->amount);
+
+        }
+
+            $wallet->refresh();
             WalletTransactions::create([
                 'wallet_id'    => $wallet->id,
                 'type'         => 'credit',
-                'source'       => 'admin_add',
+                'source'       => 'admin_credit',
                 'amount'       => $request->amount,
                 'reason'       => $request->note ?? 'Fund added by admin',
-                'balance_after'=> $wallet->fresh()->balance,
+                'balance_after'=> $wallet->balance,
             ]);
         });
+
+         sendNotification(
+            $request->user_id,
+            'Fund Added',
+             'An amount of '.$request->amount.' has been added to your balance by admin.',
+            'wallet'
+        );
         return response()->json(['status' => true, 'message' => 'Fund added successfully']);
     }
 

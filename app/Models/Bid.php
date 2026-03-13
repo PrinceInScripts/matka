@@ -27,11 +27,15 @@ class Bid extends Model
         'draw_date',
         'winning_amount',
         'result_id',
+        'bonus_used',
+        'balance_used'
     ];
 
     protected $casts = [
         'amount' => 'decimal:2',
         'winning_amount' => 'decimal:2',
+        'bonus_used' => 'decimal:2',
+        'balance_used' => 'decimal:2',
         'draw_date' => 'date',
     ];
 

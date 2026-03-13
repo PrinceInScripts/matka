@@ -56,9 +56,19 @@
                   <input type="number" id="amount" class="form-control" placeholder="Enter amount" min="1" max="500000">
                 </div>
                 <div class="form-group">
-                  <label>Note / Reason</label>
-                  <input type="text" id="note" class="form-control" placeholder="e.g. Admin bonus, Correction, etc.">
-                </div>
+<label>Fund Type</label>
+<select id="fund_type" class="form-control">
+<option value="deposit">Deposit (Real Money)</option>
+<option value="bonus">Bonus</option>
+<option value="correction">Balance Correction</option>
+<option value="refund">Bet Refund</option>
+</select>
+</div>
+
+<div class="form-group">
+<label>Note / Reason</label>
+<input type="text" id="note" class="form-control" placeholder="Optional note">
+</div>
                 <div id="alertMsg" class="alert d-none"></div>
               </div>
               <div class="card-footer">
@@ -124,13 +134,14 @@ $(function () {
   $('#btnAdd').on('click', function () {
     var uid    = $('#userId').val();
     var amount = $('#amount').val();
-    var note   = $('#note').val();
+    var note = $('#note').val();
+var fundType = $('#fund_type').val();
     if (!uid)           { showMsg('Please select a user.', 'danger'); return; }
     if (!amount || +amount < 1) { showMsg('Enter a valid amount (minimum ₹1).', 'danger'); return; }
     if (!confirm('Add ₹' + parseFloat(amount).toFixed(2) + ' to this user\'s wallet?')) return;
 
     $(this).prop('disabled', true).html('<i class="fas fa-spinner fa-spin mr-2"></i>Processing...');
-    $.post('{{ route("admin.wallet.add_fund.store") }}', { user_id: uid, amount: amount, note: note })
+    $.post('{{ route("admin.wallet.add_fund.store") }}', { user_id: uid, amount: amount, note: note,fund_type: fundType })
       .done(function (r) {
         if (r.status) {
           showMsg(r.message, 'success');

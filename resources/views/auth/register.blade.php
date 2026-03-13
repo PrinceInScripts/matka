@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>{{ $title ?? 'Matka Play' }}</title>
+    <title>{{ $title ?? 'MPL Matka' }}</title>
 
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -342,7 +342,7 @@
         <div class="right-area">
             <div class="brand-card">
                 <img src="{{ asset('https://cdn-icons-png.flaticon.com/128/5977/5977575.png') }}" alt="Logo">
-                <h3>Welcome to Matka Play</h3>
+                <h3>Welcome to MPL Matka</h3>
                 <p>Play smart, win big! Enjoy the best Matka gaming experience built for you.</p>
             </div>
         </div>

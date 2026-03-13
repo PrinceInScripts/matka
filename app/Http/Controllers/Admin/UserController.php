@@ -34,12 +34,19 @@ class UserController extends Controller
         $withdraws    = WithdrawRequest::where('user_id', $id)->orderBy('created_at', 'desc')->limit(20)->get();
         $transactions = WalletTransactions::where('wallet_id', optional($user->wallet)->id)
             ->orderBy('created_at', 'desc')->limit(50)->get();
+        $bonusTransaction = WalletTransactions::where('wallet_id', optional($user->wallet)->id)
+    ->whereIn('source', ['admin_credit','admin_debit'])
+    ->orderBy('created_at', 'desc')
+    ->limit(50)
+    ->get();
 
         $totalBid = Bid::where('user_id', $id)->sum('amount');
         $totalWin = Bid::where('user_id', $id)->where('status', 'won')->sum('winning_amount');
 
+       
+
         return view('admin.user_view',
-            compact('user','recentBids','deposits','withdraws','transactions','totalBid','totalWin'));
+            compact('user','recentBids','deposits','withdraws','transactions','totalBid','totalWin','bonusTransaction'));
     }
 
     public function toggleBetting($id)
@@ -68,16 +75,23 @@ class UserController extends Controller
         $request->validate(['amount' => 'required|numeric|min:1', 'note' => 'nullable|string|max:255']);
         DB::transaction(function () use ($request, $id) {
             $wallet = Wallet::where('user_id', $id)->lockForUpdate()->firstOrFail();
-            $wallet->increment('balance', $request->amount);
+            $wallet->increment('bonus_balance', $request->amount);
             WalletTransactions::create([
                 'wallet_id'    => $wallet->id,
                 'type'         => 'credit',
                 'source'       => 'admin_credit',
                 'amount'       => $request->amount,
-                'reason'       => $request->note ?? 'Balance added by admin',
-                'balance_after'=> $wallet->fresh()->balance,
+                'reason'       => $request->note ?? 'Bonus added by admin',
+                'balance_after'=> $wallet->fresh()->balance+$request->amount,
             ]);
         });
+
+         sendNotification(
+            $id,
+            'Bonus Added',
+             'An amount of '.$request->amount.' has been added to your bonus balance by admin.',
+            'bonus'
+        );
         return response()->json(['status' => true, 'message' => 'Balance added successfully']);
     }
 

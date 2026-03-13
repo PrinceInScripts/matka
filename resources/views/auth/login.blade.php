@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Matka Play | Login</title>
+    <title>MPL Matka | Login</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
@@ -276,7 +276,7 @@
         <!-- Left side: Login form (always visible) -->
         <div class="login-left">
             <div class="login-box">
-                {{-- <h2>Matka Play</h2> --}}
+                {{-- <h2>MPL Matka</h2> --}}
 
 
 
@@ -334,8 +334,8 @@
 
         <!-- Right side: Logo/banner (hidden on small screens) -->
         <div class="login-right">
-            <img src="{{ asset('https://cdn-icons-png.flaticon.com/128/5977/5977575.png') }}" alt="Matka Play Logo">
-            <h3>Welcome to Matka Play</h3>
+            <img src="{{ asset('https://cdn-icons-png.flaticon.com/128/5977/5977575.png') }}" alt="MPL Matka Logo">
+            <h3>Welcome to MPL Matka</h3>
             <p>Play smart, win big! Enjoy the best Matka gaming experience built for you.</p>
         </div>
 

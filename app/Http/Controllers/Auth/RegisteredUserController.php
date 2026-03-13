@@ -69,7 +69,7 @@ class RegisteredUserController extends Controller
 
 sendNotification(
     $user->id,
-    "Welcome to Matka Play",
+    "Welcome to MPL Matka",
     "Your account has been created successfully",
     "account"
 );
