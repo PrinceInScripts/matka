@@ -391,7 +391,7 @@
 
                            
 
-                             <button class="type-chip" data-source="main_market_bid">Main Market</button>
+                             {{-- <button class="type-chip" data-source="main_market_bid">Main Market</button> --}}
 
                             <button type="button" class="filter-open-btn">
                                 <i class="fa fa-sliders"></i> Filter
@@ -417,6 +417,7 @@
                             <button class="type-chip" data-type="debit">
                                 Debit
                             </button>
+                            
 
                                 <button class="type-chip" data-source="deposit">Deposit</button>
 
@@ -426,6 +427,7 @@
                                 Bets
                             </button>
 
+                            <button class="type-chip" data-source="main_market_bid">Main Market</button>
                                 <button class="type-chip" data-source="starline_bid">Starline</button>
 
                                 <button class="type-chip" data-source="gali_disawar_bid">Gali Disawar</button>

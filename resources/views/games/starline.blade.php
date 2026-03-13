@@ -11,16 +11,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 
-<link href="https://pro.fontawesome.com/releases/v6.5.2/css/all.css" rel="stylesheet">
+    <link href="https://pro.fontawesome.com/releases/v6.5.2/css/all.css" rel="stylesheet">
 
     <!-- Custom CSS -->
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/style.css') }}" />
 
 
     <style>
-       
-
-
         /* ✅ SCROLLABLE CONTENT ONLY */
         .home-content {
             flex: 1;
@@ -159,7 +156,7 @@
         }
 
         .market-card .closed {
-            color: #007BFF;
+            /* color: #007BFF; */
             font-weight: 600;
             margin-top: 5px;
         }
@@ -209,7 +206,7 @@
             box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .top-bar i{
+        .top-bar i {
             cursor: pointer;
             padding: 10px 15px;
             border-radius: 20px;
@@ -217,9 +214,28 @@
             color: #fff;
         }
 
+        .market-status {
+            font-weight: 600;
+            margin-top: 5px;
+        }
 
+        .running {
+            color: #28a745;
+        }
 
+        .waiting {
+            color: #ff9800;
+        }
 
+        .closed {
+            color: #dc3545;
+        }
+
+        
+ .play-btn[data-live="0"] {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
     </style>
 
 </head>
@@ -231,7 +247,7 @@
     <div class="app-layout">
         <!-- LEFT AREA -->
         <div class="left-area">
-             <div class="top-bar">
+            <div class="top-bar">
                 <!-- Back Button -->
                 <i class="fa-solid fa-angle-left" id="backBtn" onclick="goBack()"></i>
 
@@ -240,64 +256,74 @@
                 @include('components.walletinfo')
             </div>
             <div class="home-content" style="padding-top: 80px">
-               @foreach($gameTypes as $type)
-<div class="notice-box">
-    <span>{{ $type->name }} :</span>
-    10-{{ 10 * $type->payout_rate }}
-</div>
-@endforeach
+                @foreach ($gameTypes as $type)
+                    <div class="notice-box">
+                        <span>{{ $type->name }} :</span>
+                        10-{{ 10 * $type->payout_rate }}
+                    </div>
+                @endforeach
 
                 <div class="history-buttons ">
-                   <button><i class="fa-solid fa-history"></i>
-                        <span>Bid History</span></button>
-                    <button><i class="fa-solid fa-trophy"></i>
-                        <span>Win History</span></button>
+                    <button onclick="window.location.href='{{ route('starline.bid.history') }}'">
+    <i class="fa-solid fa-history"></i>
+    <span>Bid History</span>
+</button>
+
+<button onclick="window.location.href='{{ route('starline.win.history') }}'">
+    <i class="fa-solid fa-trophy"></i>
+    <span>Win History</span>
+</button>
                 </div>
 
-               
-              
 
-                
+
+
+
 
                 @foreach ($games as $game)
-<div class="market-card">
-    <div class="left-side">
-        <h5>{{ $game->name }}</h5>
+                    <div class="market-card">
+                        <div class="left-side">
+                            <h5>{{ $game->name }}</h5>
 
-        <div class="show">
-            {{ $game->open_pana ?: '***' }} -
-            {{ $game->open_digit ?? '**' }}{{ $game->close_digit ?? '**' }} -
-            {{ $game->close_pana ?: '***' }}
-        </div>
+                            @if ($game->result_pana)
+                                <div class="show">
+                                    {{ $game->result_pana ?? '***' }} -
+                                    {{ $game->result_digit ?? '*' }}
 
-        <div class="{{ $game->is_live ? 'running' : 'closed' }}">
-            {{ $game->user_message }}
-        </div>
 
-        <div class="times">
-            <div>Last Bids Open:
-                <span class="info">{{ $game->open_time_format }}</span>
-            </div>
-            <div>Last Bids Close:
-                <span class="info">{{ $game->close_time_format }}</span>
-            </div>
-        </div>
-    </div>
+                                </div>
+                            @else
+                                <div class="show">***-*</div>
+                            @endif
 
-    <div class="right-side">
-        <a href="{{ route('chart', ['market_type' => 'starline', 'slug' => $game->slug]) }}" class="calendar-btn" style="display:flex;align-items:center;justify-content:center;text-decoration:none">
-            <i class="fa-solid fa-calendar-days"></i></a>
-        </button>
+                            <div class="market-status {{ $game->status_class }}">
+                                {{ $game->user_message }}
+                            </div>
 
-        <button class="play-btn"
-            data-live="{{ $game->is_live }}"
-            data-message="{{ $game->user_message }}"
-            data-slug="{{ $game->slug }}">
-            <i class="fa-solid fa-circle-play"></i>
-        </button>
-    </div>
-</div>
-@endforeach
+                            <div class="times">
+
+                                <div>
+                                    Last Bids Time:
+                                    <span class="info">{{ $game->close_time_format }}</span>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="right-side">
+                            <a href="{{ route('chart', ['market_type' => 'starline', 'slug' => $game->slug]) }}"
+                                class="calendar-btn"
+                                style="display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:32px">
+                                <i class="fa-solid fa-calendar-days"></i></a>
+                            </button>
+
+                            <button class="play-btn" data-live="{{ $game->is_live ? 1 : 0 }}"
+                                data-message="{{ $game->user_message }}" data-slug="{{ $game->slug }}">
+                                <i class="fa-solid fa-circle-play"></i>
+                            </button>
+                        </div>
+                    </div>
+                @endforeach
 
             </div>
 
@@ -311,84 +337,82 @@
         <!-- RIGHT AREA (Main Content) -->
         @include('components.rightside')
 
-      
-      </div>
+
+    </div>
 
 
-        <!-- Chart Modal -->
-        <div class="modal fade" id="chartModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                <div class="modal-content border-0 rounded-4 shadow-sm">
-                    <div class="modal-header border-0">
-                        <h5 class="modal-title fw-bold">CHART INFO</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <!-- Chart Modal -->
+    <div class="modal fade" id="chartModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content border-0 rounded-4 shadow-sm">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fw-bold">CHART INFO</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body pb-4">
+                    <!-- Chart Buttons -->
+                    <div
+                        class="chart-option d-flex justify-content-between align-items-center p-3 mb-3 rounded-3 shadow-sm">
+                        <span class="fw-semibold">Jodi Chart</span>
+                        <i class="fa fa-angle-right text-secondary"></i>
                     </div>
 
-                    <div class="modal-body pb-4">
-                        <!-- Chart Buttons -->
-                        <div
-                            class="chart-option d-flex justify-content-between align-items-center p-3 mb-3 rounded-3 shadow-sm">
-                            <span class="fw-semibold">Jodi Chart</span>
-                            <i class="fa fa-angle-right text-secondary"></i>
-                        </div>
-
-                        <div
-                            class="chart-option d-flex justify-content-between align-items-center p-3 rounded-3 shadow-sm">
-                            <span class="fw-semibold">Pana Chart</span>
-                            <i class="fa fa-angle-right text-secondary"></i>
-                        </div>
+                    <div class="chart-option d-flex justify-content-between align-items-center p-3 rounded-3 shadow-sm">
+                        <span class="fw-semibold">Pana Chart</span>
+                        <i class="fa fa-angle-right text-secondary"></i>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
 
-        <!-- Bootstrap JS Bundle (Required for Modals, Toasts, Dropdowns, etc.) -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="{{ asset('assets/js/script.js') }}"></script>
-        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        {{-- jquery --}}
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Bootstrap JS Bundle (Required for Modals, Toasts, Dropdowns, etc.) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('assets/js/script.js') }}"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    {{-- jquery --}}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-        <script>
-            const chartModal = new bootstrap.Modal(document.getElementById('chartModal'));
+    <script>
+        // const chartModal = new bootstrap.Modal(document.getElementById('chartModal'));
 
-            // When user clicks Calendar
-            document.querySelectorAll('.calendar-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
+        // When user clicks Calendar
+        // document.querySelectorAll('.calendar-btn').forEach(btn => {
+        //     btn.addEventListener('click', () => {
 
-                    chartModal.show();
+        //         chartModal.show();
+        //     });
+        // });
+
+
+        // When user clicks Play
+        $(document).on('click', '.play-btn', function() {
+
+            const isLive = $(this).data('live');
+            const message = $(this).data('message');
+            const slug = $(this).data('slug');
+
+            if (!isLive) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Betting Closed',
+                    text: message
                 });
-            });
+                return;
+            }
 
-
-            // When user clicks Play
-           $(document).on('click', '.play-btn', function () {
-
-    const isLive  = $(this).data('live');
-    const message = $(this).data('message');
-    const slug    = $(this).data('slug');
-
-    if (!isLive) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Betting Closed',
-            text: message
+            // Allowed → redirect
+            window.location.href = '/starline/' + slug;
         });
-        return;
-    }
-
-    // Allowed → redirect
-    window.location.href = '/starline/' + slug;
-});
 
 
-              function goBack() {
+        function goBack() {
             window.history.back();
         }
-
-        </script>
+    </script>
 
 
 </body>

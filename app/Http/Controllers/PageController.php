@@ -2,100 +2,118 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\Announcement;
-use App\Models\Bid;
 use App\Models\GaliDisawarGame;
 use App\Models\GameList;
 use App\Models\GameType;
-use App\Models\MarketGameType;
+use App\Models\Result;
 use App\Models\Setting;
 use App\Models\StarlineGamesType;
 use App\Models\StarlineGameType;
 use App\Models\StarlineName;
+use App\Models\StarlineResult;
 use App\Models\StarlineSchedule;
 use App\Models\WalletTransactions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-class PageController extends Controller
-{
-    public function home()
-    {
-        $today = strtolower(now()->format('D'));
-    $now   = now();
+class PageController extends Controller {
+    public function home() {
+        $today = strtolower( now()->format( 'D' ) );
+        $now = now();
 
-    $games = GameList::where('game_status', 1)
-        ->where('market_type', 'main')
+        $games = GameList::where( 'game_status', 1 )
+        ->where( 'market_type', 'main' )
         ->get()
-        ->map(function ($game) use ($today, $now) {
+        ->map( function ( $game ) use ( $today, $now ) {
 
-            $schedule = DB::table('market_schedules')
-                ->where('market_id', $game->id)
-                ->where('weekday', $today)
-                ->first();
+            $schedule = DB::table( 'market_schedules' )
+            ->where( 'market_id', $game->id )
+            ->where( 'weekday', $today )
+            ->first();
 
-            $game->today_open_time  = $schedule->open_time ?? null;
+            $game->today_open_time = $schedule->open_time ?? null;
             $game->today_close_time = $schedule->close_time ?? null;
-            $game->today_is_open    = $schedule->is_open ?? 0;
+            $game->today_is_open = $schedule->is_open ?? 0;
 
-            // FINAL LIVE CHECK
-            if (
-                $game->game_status == 1 &&
-                $game->market_status == 1 &&
-                $game->today_is_open == 1 &&
-                $game->today_open_time &&
-                $game->today_close_time
-            ) {
-                $open  = now()->setTimeFromTimeString($game->today_open_time);
-                $close = now()->setTimeFromTimeString($game->today_close_time);
+            // fetch today's result
 
-                if ($now->between($open, $close)) {
-                    $game->is_live = true;
-                    $game->user_message = 'Betting is running now';
-                } elseif ($now->lt($open)) {
-                    $game->is_live = false;
-                    $game->user_message = 'Betting not opened yet';
+                $result = Result::where('market_id', $game->id)
+                    ->whereDate('result_date', now()->toDateString())
+                    ->first();
+
+                if ($result) {
+                    $game->open_pana = $result->open_panna;
+                    $game->open_digit = $result->open_digit;
+                    $game->close_pana = $result->close_panna;
+                    $game->close_digit = $result->close_digit;
+                } else {
+                    $game->open_pana = null;
+                    $game->open_digit = null;
+                    $game->close_pana = null;
+                    $game->close_digit = null;
+                }
+
+                // FINAL LIVE CHECK
+                if (
+                    $game->game_status == 1 &&
+                    $game->market_status == 1 &&
+                    $game->today_is_open == 1 &&
+                    $game->today_open_time &&
+                    $game->today_close_time
+                ) {
+                    $open = now()->setTimeFromTimeString($game->today_open_time);
+                    $close = now()->setTimeFromTimeString($game->today_close_time);
+
+                    if ($now->between($open, $close)) {
+                        $game->is_live = true;
+                        $game->status_class = 'running';
+                        $game->user_message = 'Betting Is Running Now';
+
+                    } elseif ($now->lt($open)) {
+                        $game->is_live = false;
+                        $game->status_class = 'waiting';
+                        $game->user_message = 'Betting Will Start Soon';
+
+                    } else {
+                        $game->is_live = false;
+                        $game->status_class = 'closed';
+                        $game->user_message = 'Betting Closed For Today';
+                    }
                 } else {
                     $game->is_live = false;
-                    $game->user_message = 'Betting closed for today';
+                    $game->status_class = 'closed';
+
+                    if ($game->market_status == 0) {
+                        $game->user_message = 'Market Closed By Admin';
+                    } elseif ($game->today_is_open == 0) {
+                        $game->user_message = 'Market Closed Today';
+                    } else {
+                        $game->user_message = 'Betting Unavailable';
+                    }
                 }
-            } else {
-                $game->is_live = false;
 
-                if ($game->market_status == 0) {
-                    $game->user_message = 'Market is closed by admin';
-                } elseif ($game->today_is_open == 0) {
-                    $game->user_message = 'Market is closed today';
-                } else {
-                    $game->user_message = 'Betting unavailable';
-                }
-            }
-
-            return $game;
-        });
-
+                return $game;
+            });
 
         // return $games;
 
-        $announcement = Announcement::where('is_active',1)
-->where(function($q){
+        $announcement = Announcement::where('is_active', 1)
+            ->where(function ($q) {
 
-$q->whereNull('start_time')
-->orWhere('start_time','<=',now());
+                $q->whereNull('start_time')
+                    ->orWhere('start_time', ' <= ', now());
+            })
+            ->where(function ($q) {
 
-})
-->where(function($q){
+                $q->whereNull('end_time')
+                    ->orWhere('end_time', ' >= ', now());
+            })
+            ->latest()
+            ->first();
 
-$q->whereNull('end_time')
-->orWhere('end_time','>=',now());
-
-})
-->latest()
-->first();
-
-// return $announcement;
+        // return $announcement;
 
         return view('pages.home', compact('games', 'announcement'));
     }
@@ -103,27 +121,41 @@ $q->whereNull('end_time')
     public function starline()
     {
         $today = strtolower(now()->format('D')); // mon, tue...
+        $now = now();
 
-    $games = StarlineName::where('game_status', 1)
-        ->get()
-        ->map(function ($game) use ($today) {
+        $games = StarlineName::where('game_status', 1)
+            ->get()
+            ->map(function ($game) use ($today) {
 
-            $schedule = DB::table('starline_schedule')
-                ->where('starline_id', $game->id)
-                ->where('weekday', $today)
-                ->first();
+                $schedule = DB::table('starline_schedule')
+                    ->where('starline_id', $game->id)
+                    ->where('weekday', $today)
+                    ->first();
 
-            $game->today_open_time  = $schedule->open_time ?? null;
-            $game->today_close_time = $schedule->close_time ?? null;
-            $game->is_open_today    = $schedule->is_open ?? 0;
+    
 
-            $now = now();
+                $game->today_open_time = $schedule->open_time ?? null;
+                $game->today_close_time = $schedule->close_time ?? null;
+                $game->is_open_today = $schedule->is_open ?? 0;
 
-            // Default flags
+                
+
+                $result = StarlineResult::where('starline_id', $game->id)
+                    ->whereDate('draw_date', now()->toDateString())
+                    ->first();
+
+                if ($result) {
+                    $game->result_pana = $result->result_panna;
+                    $game->result_digit = $result->result_digit;
+                } else {
+                    $game->result_pana = null;
+                    $game->result_digit = null;
+                }
+                // Default state
             $game->is_live = false;
+            $game->status_class = 'closed';
             $game->user_message = 'Betting Closed';
-
-            // ADMIN FORCE CLOSED
+                // ADMIN CLOSED
             if ($game->market_status == 0) {
                 $game->user_message = 'Market Closed by Admin';
                 return $game;
@@ -135,34 +167,48 @@ $q->whereNull('end_time')
                 return $game;
             }
 
-            // TIME CHECK
-            if ($game->today_open_time && $game->today_close_time) {
-                $open  = now()->setTimeFromTimeString($game->today_open_time);
-                $close = now()->setTimeFromTimeString($game->today_close_time);
+                // TIME CHECK
+                if ($game->today_open_time && $game->today_close_time) {
+                    $open = now()->setTimeFromTimeString($game->today_open_time);
+                    $close = now()->setTimeFromTimeString($game->today_close_time);
+                    $now = now();
 
-                if ($now->lt($open)) {
+                    if ($now->lt($open)) {
+
                     $game->user_message = 'Betting Not Opened Yet';
-                } elseif ($now->gt($close)) {
-                    $game->user_message = 'Betting Closed';
-                } else {
-                    $game->is_live = true;
-                    $game->user_message = 'Betting Running';
-                }
-            }
+                    $game->status_class = 'waiting';
 
-            $game->open_time_format  = $game->today_open_time
-                ? date('h:i A', strtotime($game->today_open_time)) : '--';
+                } elseif ($now->gt($close)) {
+
+                    $game->user_message = 'Betting Closed';
+                    $game->status_class = 'closed';
+
+                } else {
+
+                    $game->is_live = true;
+                    $game->status_class = 'running';
+                    $game->user_message = 'Betting Running';
+
+                }
+                }
+
+                // Time format for UI
+            $game->open_time_format = $game->today_open_time
+                ? date('h:i A', strtotime($game->today_open_time))
+                : '--';
 
             $game->close_time_format = $game->today_close_time
-                ? date('h:i A', strtotime($game->today_close_time)) : '--';
+                ? date('h:i A', strtotime($game->today_close_time))
+                : '--';
 
-            return $game;
-        });
+                return $game;
+            });
 
-        $gameTypes=StarlineGamesType::all();
+            // return $games;
 
+        $gameTypes = StarlineGamesType::all();
 
-        return view('games.starline', compact('games','gameTypes'));
+        return view('games.starline', compact('games', 'gameTypes'));
     }
 
     public function galidisawar()
@@ -173,30 +219,35 @@ $q->whereNull('end_time')
     }
 
     public function play($slug)
-{
-    $game = GameList::where('slug', $slug)->firstOrFail();
-    $gameTypes = $game->gameTypes()->wherePivot('is_active', 1)->get();
-    $game_type='main_market';
-    return view('pages.play', compact('game', 'gameTypes','game_type'));
-}
+    {
+        $game = GameList::where('slug', $slug)->firstOrFail();
+        $gameTypes = $game->gameTypes()->wherePivot('is_active', 1)->get();
+        $game_type = 'main_market';
+
+        return view('pages.play', compact('game', 'gameTypes', 'game_type'));
+    }
+
     public function starlineGame($slug)
-{
-    $game = StarlineName::where('slug', $slug)->firstOrFail();
-    $gameTypes = $game->gameTypes()->wherePivot('is_active', 1)->get();
-    $game_type='starline';
-    return view('pages.play', compact('game', 'gameTypes','game_type'));
-}
+    {
+        $game = StarlineName::where('slug', $slug)->firstOrFail();
+        $gameTypes = $game->gameTypes()->wherePivot('is_active', 1)->get();
+        $game_type = 'starline';
+
+        return view('pages.play', compact('game', 'gameTypes', 'game_type'));
+    }
+
     public function galiDisawarGame($slug)
-{
-    $game = GaliDisawarGame::where('slug', $slug)->firstOrFail();
-    $gameTypes = $game->gameTypes()
-    ->wherePivot('status', 1)
-    ->where('gali_disawar_types.status', 1)
-    ->orderBy('sort_order')
-    ->get();
-    $game_type='gali_disawar';
-    return view('pages.play', compact('game', 'gameTypes','game_type'));
-}
+    {
+        $game = GaliDisawarGame::where('slug', $slug)->firstOrFail();
+        $gameTypes = $game->gameTypes()
+            ->wherePivot('status', 1)
+            ->where('gali_disawar_types.status', 1)
+            ->orderBy('sort_order')
+            ->get();
+        $game_type = 'gali_disawar';
+
+        return view('pages.play', compact('game', 'gameTypes', 'game_type'));
+    }
 
     public function single()
     {
@@ -208,24 +259,25 @@ $q->whereNull('end_time')
         return view('games.bulk');
     }
 
-    public function test(){
-    //      $gameId = 1;
+    public function test()
+    {
+        //      $gameId = 1;
 
-    // while ($gameId <= 14) {
-    //     foreach (['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as $i) {
-    //         StarlineSchedule::create([
-    //             'starline_id' => $gameId,
-    //             'weekday' => $i,
-    //             'is_open' => 1,
-    //             'open_time' => '00:00:00',
-    //             'close_time' => '23:59:59',
-    //         ]);
-    //     }
-    //     $gameId++;
-    // }
+        // while ($gameId <= 14) {
+        //     foreach (['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as $i) {
+        //         StarlineSchedule::create([
+        //             'starline_id' => $gameId,
+        //             'weekday' => $i,
+        //             'is_open' => 1,
+        //             'open_time' => '00:00:00',
+        //             'close_time' => '23:59:59',
+        //         ]);
+        //     }
+        //     $gameId++;
+        // }
         // return view('pages.test');
 
-         $weekdays = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+        $weekdays = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
 
         /**
          * Starline slot timings
@@ -233,15 +285,15 @@ $q->whereNull('end_time')
          * value = [open_time, close_time]
          */
         $starlineSlots = [
-            1  => ['10:00:00', '10:05:00'],
-            2  => ['11:00:00', '11:05:00'],
-            3  => ['12:00:00', '12:05:00'],
-            4  => ['13:00:00', '13:05:00'],
-            5  => ['14:00:00', '14:05:00'],
-            6  => ['15:00:00', '15:05:00'],
-            7  => ['16:00:00', '16:05:00'],
-            8  => ['17:00:00', '17:05:00'],
-            9  => ['18:00:00', '18:05:00'],
+            1 => ['10:00:00', '10:05:00'],
+            2 => ['11:00:00', '11:05:00'],
+            3 => ['12:00:00', '12:05:00'],
+            4 => ['13:00:00', '13:05:00'],
+            5 => ['14:00:00', '14:05:00'],
+            6 => ['15:00:00', '15:05:00'],
+            7 => ['16:00:00', '16:05:00'],
+            8 => ['17:00:00', '17:05:00'],
+            9 => ['18:00:00', '18:05:00'],
             10 => ['19:00:00', '19:05:00'],
             11 => ['20:00:00', '20:05:00'],
             12 => ['21:00:00', '21:05:00'],
@@ -252,7 +304,7 @@ $q->whereNull('end_time')
         foreach ($starlineSlots as $starlineId => [$openTime, $closeTime]) {
 
             // Safety check: skip if starline name does not exist
-            if (!StarlineName::where('id', $starlineId)->exists()) {
+            if (! StarlineName::where('id', $starlineId)->exists()) {
                 continue;
             }
 
@@ -260,11 +312,11 @@ $q->whereNull('end_time')
                 StarlineSchedule::updateOrCreate(
                     [
                         'starline_id' => $starlineId,
-                        'weekday'     => $day,
+                        'weekday' => $day,
                     ],
                     [
-                        'is_open'    => 1,
-                        'open_time'  => $openTime,
+                        'is_open' => 1,
+                        'open_time' => $openTime,
                         'close_time' => $closeTime,
                     ]
                 );
@@ -272,17 +324,17 @@ $q->whereNull('end_time')
         }
 
         return response()->json([
-            'status'  => true,
+            'status' => true,
             'message' => 'Starline schedules seeded successfully',
         ]);
-
     }
 
-    public function test1() {
+    public function test1()
+    {
 
-        $gameTypeIds=[1,5,7,9];
-        for($i=1; $i<=12; $i++){
-            foreach($gameTypeIds as $gtid){
+        $gameTypeIds = [1, 5, 7, 9];
+        for ($i = 1; $i <= 12; $i++) {
+            foreach ($gameTypeIds as $gtid) {
                 StarlineGameType::updateOrCreate(
                     [
                         'market_id' => $i,
@@ -297,155 +349,143 @@ $q->whereNull('end_time')
     }
 
     public function accountStatement(Request $request)
-{
-   $user = Auth::user();
+    {
+        $user = Auth::user();
 
-    $query = WalletTransactions::whereHas('wallet', function ($q) use ($user) {
-        $q->where('user_id', $user->id);
-    });
+        $query = WalletTransactions::whereHas('wallet', function ($q) use ($user) {
+            $q->where('user_id', $user->id);
+        });
 
-    /* -------------------------
+        /* -------------------------
        TYPE FILTER
     -------------------------*/
 
-    if ($request->filled('type')) {
-        $query->where('type', $request->type);
-    }
+        if ($request->filled('type')) {
+            $query->where('type', $request->type);
+        }
 
-
-    /* -------------------------
+        /* -------------------------
        SOURCE FILTER
     -------------------------*/
 
-    if ($request->filled('source')) {
-        $query->where('source', $request->source);
-    }
+        if ($request->filled('source')) {
+            $query->where('source', $request->source);
+        }
 
-
-    /* -------------------------
+        /* -------------------------
        WIN FILTER
     -------------------------*/
 
-    if ($request->source === 'win') {
-        $query->whereIn('source', [
-            'main_market_win',
-            'starline_win',
-            'gali_disawar_win'
-        ]);
-    }
+        if ($request->source === 'win') {
+            $query->whereIn('source', [
+                'main_market_win',
+                'starline_win',
+                'gali_disawar_win',
+            ]);
+        }
 
-
-    /* -------------------------
+        /* -------------------------
        LOSS FILTER
     -------------------------*/
 
-    if ($request->source === 'loss') {
-        $query->whereIn('source', [
-            'main_market_bid',
-            'starline_bid',
-            'gali_disawar_bid'
-        ]);
-    }
+        if ($request->source === 'loss') {
+            $query->whereIn('source', [
+                'main_market_bid',
+                'starline_bid',
+                'gali_disawar_bid',
+            ]);
+        }
 
-
-    /* -------------------------
+        /* -------------------------
        REASON SEARCH
     -------------------------*/
 
-    if ($request->filled('reason')) {
-        $query->where(function ($q) use ($request) {
+        if ($request->filled('reason')) {
+            $query->where(function ($q) use ($request) {
 
-            $q->where('reason','like','%'.$request->reason.'%')
-              ->orWhere('source','like','%'.$request->reason.'%');
+                $q->where('reason', 'like', '%'.$request->reason.'%')
+                    ->orWhere('source', 'like', '%'.$request->reason.'%');
+            });
+        }
 
-        });
-    }
-
-
-    /* -------------------------
+        /* -------------------------
        DATE RANGE
     -------------------------*/
 
-    if ($request->filled('date_from')) {
-        $query->whereDate('created_at','>=',$request->date_from);
-    }
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', ' >= ', $request->date_from);
+        }
 
-    if ($request->filled('date_to')) {
-        $query->whereDate('created_at','<=',$request->date_to);
-    }
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', ' <= ', $request->date_to);
+        }
 
-
-    /* -------------------------
+        /* -------------------------
        FETCH DATA
     -------------------------*/
 
-    $transactions = $query
-        ->orderBy('id','desc')
-        ->paginate(10);
+        $transactions = $query
+            ->orderBy('id', 'desc')
+            ->paginate(10);
 
+        // if ($request->ajax()) {
 
-    // if ($request->ajax()) {
+        //     return response()->json([
+        //         'html' => view(
+        //             'pages.account-statement-partials-list',
+        //             compact('transactions')
+        //         )->render()
+        //     ]);
 
-    //     return response()->json([
-    //         'html' => view(
-    //             'pages.account-statement-partials-list',
-    //             compact('transactions')
-    //         )->render()
-    //     ]);
+        // }
 
-    // }
+        if ($request->ajax()) {
+            return response()->json([
+                'html' => view('pages.account-statement-partials-list', compact('transactions'))->render(),
+            ]);
+        }
 
-    if ($request->ajax()) {
-        return response()->json([
-            'html' => view('pages.account-statement-partials-list', compact('transactions'))->render(),
-        ]);
+        return view('pages.account-statement', compact('transactions'));
     }
 
-    return view('pages.account-statement', compact('transactions'));
-}
+    // public function accountStatement(Request $request)
+    // {
+    //     $user = Auth::user();
 
-// public function accountStatement(Request $request)
-// {
-//     $user = Auth::user();
+    //     $query = WalletTransactions::whereHas('wallet', function ($q) use ($user) {
+    //         $q->where('user_id', $user->id);
+    //     });
 
-//     $query = WalletTransactions::whereHas('wallet', function ($q) use ($user) {
-//         $q->where('user_id', $user->id);
-//     });
+    //     // Filters
+    //     if ($request->filled('type')) {
+    //         $query->where('type', $request->type);
+    //     }
 
-//     // Filters
-//     if ($request->filled('type')) {
-//         $query->where('type', $request->type);
-//     }
+    //     if ($request->filled('remark')) {
+    //         $query->where('remark', 'like', "%{$request->remark}%");
+    //     }
 
-//     if ($request->filled('remark')) {
-//         $query->where('remark', 'like', "%{$request->remark}%");
-//     }
+    //     $transactions = $query->orderBy('id', 'desc')->paginate(10);
 
-//     $transactions = $query->orderBy('id', 'desc')->paginate(10);
+    //     // AJAX response
+    //     if ($request->ajax()) {
+    //         return response()->json([
+    //             'html' => view('pages.account-statement-partials-list', compact('transactions'))->render(),
+    //         ]);
+    //     }
 
-//     // AJAX response
-//     if ($request->ajax()) {
-//         return response()->json([
-//             'html' => view('pages.account-statement-partials-list', compact('transactions'))->render(),
-//         ]);
-//     }
-
-//     return view('pages.account-statement', compact('transactions'));
-// }
-
-
+    //     return view('pages.account-statement', compact('transactions'));
+    // }
 
     public function gameRates()
     {
-       $mainRates = GameType::all();
+        $mainRates = GameType::all();
 
+        $starlineRates = DB::table('starline_gamestype')
+            ->get();
 
-$starlineRates = DB::table('starline_gamestype')
-->get();
-
-$galiRates = DB::table('gali_disawar_types')
-->get();
-
+        $galiRates = DB::table('gali_disawar_types')
+            ->get();
 
         return view('pages.game-rates', compact('mainRates', 'starlineRates', 'galiRates'));
     }
@@ -460,27 +500,28 @@ $galiRates = DB::table('gali_disawar_types')
         return view('games.fullsangam');
     }
 
+    public function support()
+    {
+        $settings = Setting::pluck('setting_value', 'setting_key');
 
-    public function support(){
-       $settings = Setting::pluck('setting_value','setting_key');
-
-    return view('pages.support',[
-        'whatsapp1' => $settings['support_whatsapp_1'] ?? '',
-        'whatsapp2' => $settings['support_whatsapp_2'] ?? '',
-        'phone'     => $settings['support_call'] ?? '',
-        'telegram'  => $settings['support_telegram'] ?? ''
-    ]);
+        return view('pages.support', [
+            'whatsapp1' => $settings['support_whatsapp_1'] ?? '',
+            'whatsapp2' => $settings['support_whatsapp_2'] ?? '',
+            'phone' => $settings['support_call'] ?? '',
+            'telegram' => $settings['support_telegram'] ?? '',
+        ]);
     }
 
-    public function termsconditions(){
+    public function termsconditions()
+    {
 
-    return view('pages.termsconditions');
+        return view('pages.termsconditions');
     }
 
-    public function howtoplay(){
+    public function howtoplay()
+    {
         return view('pages.howtoplay');
     }
-   
 
     public function chart($market_type, $slug)
     {
@@ -514,7 +555,6 @@ $galiRates = DB::table('gali_disawar_types')
                 ->get();
         }
 
-        return view('pages.chart', compact('game', 'results', 'marketName', 'market_type', 'slug'));
+        return view('pages.chart', compact('game', 'results', 'marketName', 'market_type', 'slug' ) );
+        }
     }
-
-}

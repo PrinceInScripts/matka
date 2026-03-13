@@ -2,78 +2,101 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\GaliDisawarGame;
 use App\Models\GaliDisawarGameRate;
+use App\Models\GaliDisawarResult;
 use App\Models\GaliDisawarType;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class GaliDisaController extends Controller
 {
     public function galiDisawar()
     {
-         $today = strtolower(now()->format('D')); // mon, tue...
-          $rates = GaliDisawarGameRate::all()->keyBy('game_type');
+        $today = strtolower(now()->format('D')); // mon, tue...
+        $rates = GaliDisawarGameRate::all()->keyBy('game_type');
 
         //   return $rates;
 
-    $games = GaliDisawarGame::where('game_status', 1)
-        ->get()
-        ->map(function ($game) use ($today) {
+        $games = GaliDisawarGame::where('game_status', 1)
+            ->get()
+            ->map(function ($game) use ($today) {
 
-            $schedule = DB::table('gali_disawar_schedule')
-                ->where('gali_id', $game->id)
-                ->where('weekday', $today)
-                ->first();
+                $schedule = DB::table('gali_disawar_schedule')
+                    ->where('gali_id', $game->id)
+                    ->where('weekday', $today)
+                    ->first();
 
-            $game->today_open_time  = $schedule->open_time ?? null;
-            $game->today_close_time = $schedule->close_time ?? null;
-            $game->is_open_today    = $schedule->is_open ?? 0;
+                $game->today_open_time = $schedule->open_time ?? null;
+                $game->today_close_time = $schedule->close_time ?? null;
+                $game->is_open_today = $schedule->is_open ?? 0;
 
-            $now = now();
+                $now = now();
 
-            // Default flags
-            $game->is_live = false;
+                $result = GaliDisawarResult::where('gali_id', $game->id)
+                    ->whereDate('draw_date', now()->toDateString())
+                    ->first();
+
+                if ($result) {
+                    $game->result_jodi = $result->result_jodi;
+                    $game->result_digit = $result->result_digit;
+                   
+                } else {
+                    $game->result_jodi = null;
+                    $game->result_digit = null;
+                }
+
+                $game->is_live = false;
+            $game->status_class = 'closed';
             $game->user_message = 'Betting Closed';
 
-            // ADMIN FORCE CLOSED
-            if ($game->market_status == 0) {
-                $game->user_message = 'Market Closed by Admin';
-                return $game;
-            }
+                // ADMIN FORCE CLOSED
+                if ($game->market_status == 0) {
+                    $game->user_message = 'Market Closed by Admin';
 
-            // CLOSED TODAY
-            if (!$game->is_open_today) {
-                $game->user_message = 'Market Closed Today';
-                return $game;
-            }
-
-            // TIME CHECK
-            if ($game->today_open_time && $game->today_close_time) {
-                $open  = now()->setTimeFromTimeString($game->today_open_time);
-                $close = now()->setTimeFromTimeString($game->today_close_time);
-
-                if ($now->lt($open)) {
-                    $game->user_message = 'Betting Not Opened Yet';
-                } elseif ($now->gt($close)) {
-                    $game->user_message = 'Betting Closed';
-                } else {
-                    $game->is_live = true;
-                    $game->user_message = 'Betting Running';
+                    return $game;
                 }
-            }
 
-            $game->open_time_format  = $game->today_open_time
-                ? date('h:i A', strtotime($game->today_open_time)) : '--';
+                // CLOSED TODAY
+                if (! $game->is_open_today) {
+                    $game->user_message = 'Market Closed Today';
 
-            $game->close_time_format = $game->today_close_time
-                ? date('h:i A', strtotime($game->today_close_time)) : '--';
+                    return $game;
+                }
 
-            return $game;
-        });
+                // TIME CHECK
+                if ($game->today_open_time && $game->today_close_time) {
+                    $open = now()->setTimeFromTimeString($game->today_open_time);
+                    $close = now()->setTimeFromTimeString($game->today_close_time);
 
-        $gameTypes=GaliDisawarType::all();
+                    if ($now->lt($open)) {
+
+                    $game->status_class = 'waiting';
+                    $game->user_message = 'Betting Not Opened Yet';
+
+                } elseif ($now->gt($close)) {
+
+                    $game->status_class = 'closed';
+                    $game->user_message = 'Betting Closed';
+
+                } else {
+
+                    $game->is_live = true;
+                    $game->status_class = 'running';
+                    $game->user_message = 'Betting Running';
+
+                }
+                }
+
+                $game->open_time_format = $game->today_open_time
+                    ? date('h:i A', strtotime($game->today_open_time)) : '--';
+
+                $game->close_time_format = $game->today_close_time
+                    ? date('h:i A', strtotime($game->today_close_time)) : '--';
+
+                return $game;
+            });
+
+        $gameTypes = GaliDisawarType::all();
 
         return view('games.galidisawar', compact('games', 'gameTypes'));
     }

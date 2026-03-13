@@ -172,7 +172,7 @@
 
                 {{-- Game Management --}}
                 @php
-                $gameManageRoutes = ['admin.game_names','admin.game_management.index','admin.game_management.store','admin.game_management.update'];
+                $gameManageRoutes = [ 'admin.games.names','admin.games.rates'];
                 @endphp
                 <li class="nav-item {{ request()->routeIs($gameManageRoutes) ? 'menu-is-opening menu-open' : '' }}">
                     <a href="#" class="nav-link {{ request()->routeIs($gameManageRoutes) ? 'active' : '' }}">
@@ -181,12 +181,12 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('admin.game_names') }}" class="nav-link {{ request()->routeIs('admin.game_names') ? 'active' : '' }}">
+                            <a href="{{ route('admin.games.names') }}" class="nav-link {{ request()->routeIs('admin.games.names') ? 'active' : '' }}">
                                 <i class="fas fa-list nav-icon"></i><p>Game Names</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('admin.game_management.index') }}" class="nav-link {{ request()->routeIs('admin.game_management.index') ? 'active' : '' }}">
+                            <a href="{{ route('admin.games.rates') }}" class="nav-link {{ request()->routeIs('admin.games.rates') ? 'active' : '' }}">
                                 <i class="fas fa-cogs nav-icon"></i><p>Game Settings</p>
                             </a>
                         </li>

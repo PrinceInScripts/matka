@@ -645,5 +645,31 @@ public function placeBid(Request $request)
         }
         return view('pages.bids.starline-win-history', compact('bids'));
     }
+    public function galidisawarBidHistory(Request $request)
+    {
+        $user = Auth::user();
+        $bids = \App\Models\GalidisawarBid::with(['gali','gameType'])
+            ->where('user_id', $user->id)
+            ->orderBy('created_at','desc')
+            ->paginate(15);
+        if ($request->ajax()) {
+            return response()->json(['html' => view('pages.bids.partials.galidisawar-bid-list', compact('bids'))->render()]);
+        }
+        return view('pages.bids.galidisawar-bid-history', compact('bids'));
+    }
+
+    public function galidisawarWinHistory(Request $request)
+    {
+        $user = Auth::user();
+        $bids = \App\Models\GalidisawarBid::with(['gali','gameType'])
+            ->where('user_id', $user->id)
+            ->where('status','won')
+            ->orderBy('created_at','desc')
+            ->paginate(15);
+        if ($request->ajax()) {
+            return response()->json(['html' => view('pages.bids.partials.galidisawar-win-list', compact('bids'))->render()]);
+        }
+        return view('pages.bids.galidisawar-win-history', compact('bids'));
+    }
 
 }

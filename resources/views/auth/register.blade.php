@@ -65,6 +65,13 @@
             margin-bottom: 6px;
         }
 
+          .logo {
+            width: 110px;
+            display: block;
+            margin: 0 auto 25px auto;
+            margin-bottom:60px;
+        }
+
         .page-sub {
             color: #6b7280;
             margin-bottom: 25px;
@@ -93,10 +100,10 @@
 
         /* MPIN Card */
         .mpin-card {
-            background: #fff;
-            padding: 36px;
+            /* background: #fff; */
+            /* padding: 36px; */
             border-radius: 18px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
+            /* box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06); */
             width: 100%;
             max-width: 420px;
         }
@@ -196,6 +203,37 @@
             transition: .2s;
         }
 
+         .title-box{
+            display:flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+
+        }
+
+         .title-content{
+            display:flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 6px;
+            margin-bottom: 0 !important;
+        }
+
+        .title-content .title{
+            color: #2563eb;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 0 !important;
+        }
+
+        .title-content .help-text{
+            color: #64748b;
+            font-size: 12px;
+            margin-bottom: 0 !important ;
+            margin-top: 0 !important ;
+        }
+
         .login-btn:hover {
             transform: translateY(-1px);
             box-shadow: 0 6px 14px rgba(37, 99, 235, .3);
@@ -240,11 +278,26 @@
 
         <!-- LEFT: MPIN Section -->
         <div class="left-area">
-            <h1 class="page-title">Create Account</h1>
-            <p class="page-sub">Join Matka Play and start playing</p>
+            
             <div class="mpin-card">
-                <h3>Sign Up</h3>
-                <p>Create your new account</p>
+
+                <img src="{{ asset('https://cdn-icons-png.flaticon.com/128/5977/5977575.png') }}" class="logo"
+                        alt="logo">
+                
+                   
+
+                     <div class="title-box">
+                        <div class="title-content">
+                             <h3 class="title">ENTER NUMBER</h3>
+                        <p class="help-text">Enter your valid mobile number</p>   
+                        </div>
+                        {{-- mobile icon --}}
+                        <div class="m-logo">
+                          {{-- i tag mobile logo --}}
+                            <i class="fa-solid fa-mobile-screen-button" style="font-size:40px;color:#2563eb;"></i>
+                        </div>
+                                    
+                     </div>
 
 
 
@@ -371,6 +424,47 @@
                 let password = $('#password').val();
                 let confirmPassword = $('#password_confirmation').val();
 
+                // first check email is valid or not 
+                let email = $('#email').val();
+                let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+
+                    $('#registerBtn')
+                        .prop('disabled', false)
+                        .text('Create Account');
+
+                    Toastify({
+                        text: "Please enter a valid email address",
+                        duration: 3000,
+                        gravity: "top",
+                        position: "center",
+                        backgroundColor: "red"
+                    }).showToast();
+
+                    return;
+                }
+
+                // now check password and confirm password is greather than 8
+                    if (password.length < 8) {
+    
+                        $('#registerBtn')
+                            .prop('disabled', false)
+                            .text('Create Account');
+    
+                        Toastify({
+                            text: "Password must be at least 8 characters",
+                            duration: 3000,
+                            gravity: "top",
+                            position: "center",
+                            backgroundColor: "red"
+                        }).showToast();
+    
+                        return;
+                    }
+
+                
+
+
                 if (password !== confirmPassword) {
 
                     $('#registerBtn')
@@ -401,6 +495,7 @@
 
                     success: function(response) {
 
+
                         Toastify({
                             text: response.message,
                             duration: 2500,
@@ -422,18 +517,20 @@
                                 .prop('disabled', false)
                                 .text('Create Account');
 
+
                         }
 
                     },
 
-                    error: function() {
+                    error: function(error) {
+                        // console.error(error);
 
                         $('#registerBtn')
                             .prop('disabled', false)
                             .text('Create Account');
 
                         Toastify({
-                            text: "Server error. Try again.",
+                            text: error.responseJSON.message,
                             duration: 3000,
                             gravity: "top",
                             position: "center",

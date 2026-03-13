@@ -222,7 +222,7 @@
         }
 
         .market-card .closed {
-            color: #007BFF;
+            /* color: #007BFF; */
             font-weight: 600;
             margin-top: 5px;
         }
@@ -357,6 +357,23 @@
             opacity: 0.5;
             cursor: not-allowed;
         }
+
+        .market-status{
+font-weight:600;
+margin-top:4px;
+}
+
+.running{
+color:#28a745;
+}
+
+.waiting{
+color:#ff9800;
+}
+
+.closed{
+color:#dc3545;
+}
     </style>
 
 </head>
@@ -376,15 +393,15 @@
                     ALL MARKET HAVE BEEN DECLARED AS HOLIDAY...
                 </div> --}}
 
-                @if($announcement)
-<div class="announcement">
+                @if ($announcement)
+                    <div class="announcement">
 
-<span class="brand">{{ $announcement->title }}</span>
+                        <span class="brand">{{ $announcement->title }}</span>
 
-{{ $announcement->message }}
+                        {{ $announcement->message }}
 
-</div>
-@endif
+                    </div>
+                @endif
 
                 <div class="support-box">
 
@@ -453,24 +470,26 @@
 
                 </div>
 
-              
+
 
                 @foreach ($games as $game)
                     <div class="market-card">
                         <div class="left-side">
                             <h5>{{ $game->name }}</h5>
                             @if ($game->open_pana || $game->close_pana)
-                                <div class="show">{{ $game->open_pana }} -
-                                    {{ $game->open_digit }}{{ $game->close_digit }} - {{ $game->close_pana }}</div>
+                                <div class="show">
+                                    {{ $game->open_pana ?? '***' }}-
+                                    {{ $game->open_digit ?? '*' }}
+                                    {{ $game->close_digit ?? '*' }}-
+                                    {{ $game->close_pana ?? '***' }}
+                                </div>
                             @else
-                                <div class="show">***_**_***</div>
+                                <div class="show">***-*-*-***</div>
                             @endif
 
-                            @if ($game->is_live)
-                                <div class="running">Betting Is Running Now</div>
-                            @else
-                                <div class="closed">{{ $game->user_message }}</div>
-                            @endif
+                            <div class="market-status {{ $game->status_class }}">
+                                {{ $game->user_message }}
+                            </div>
 
                             <div class="times">
                                 <div>
@@ -489,7 +508,9 @@
 
                         </div>
                         <div class="right-side">
-                            <a href="{{ route('chart', ['market_type' => 'main', 'slug' => $game->slug]) }}" class="calendar-btn" style="display:flex;align-items:center;justify-content:center;text-decoration:none">
+                            <a href="{{ route('chart', ['market_type' => 'main', 'slug' => $game->slug]) }}"
+                                class="calendar-btn"
+                                style="display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:32px">
                                 <i class="fa-solid fa-calendar-days"></i></a>
                             <button class="play-btn" data-live="{{ $game->is_live ? 1 : 0 }}"
                                 data-message="{{ $game->user_message }}" data-slug="{{ $game->slug }}">
@@ -532,8 +553,7 @@
                         <i class="fa fa-angle-right text-secondary"></i>
                     </div>
 
-                    <div
-                        class="chart-option d-flex justify-content-between align-items-center p-3 rounded-3 shadow-sm">
+                    <div class="chart-option d-flex justify-content-between align-items-center p-3 rounded-3 shadow-sm">
                         <span class="fw-semibold">Pana Chart</span>
                         <i class="fa fa-angle-right text-secondary"></i>
                     </div>
@@ -552,15 +572,15 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
-        const chartModal = new bootstrap.Modal(document.getElementById('chartModal'));
+        // const chartModal = new bootstrap.Modal(document.getElementById('chartModal'));
 
         // When user clicks Calendar
-        document.querySelectorAll('.calendar-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
+        // document.querySelectorAll('.calendar-btn').forEach(btn => {
+        //     btn.addEventListener('click', () => {
 
-                chartModal.show();
-            });
-        });
+        //         chartModal.show();
+        //     });
+        // });
 
 
 

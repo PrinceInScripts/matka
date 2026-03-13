@@ -8,6 +8,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
+    {{-- fontawsoe --}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
         body,
@@ -38,10 +40,10 @@
         .login-box {
             width: 100%;
             max-width: 480px;
-            background: #ffffff;
+            {{-- background: #ffffff; --}}
             border-radius: 18px;
-            padding: 40px 30px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+            {{-- padding: 40px 30px; --}}
+            {{-- box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08); --}}
         }
 
         /* Logo */
@@ -50,6 +52,7 @@
             width: 110px;
             display: block;
             margin: 0 auto 25px auto;
+            margin-bottom:60px;
         }
 
         /* Title */
@@ -63,25 +66,25 @@
 
         /* Phone Input Layout */
 
-        .phone-group{
-display:flex;
-align-items:center;
-gap:10px;
-width:100%;
-}
+        .phone-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+        }
 
-.ts-wrapper{
-width:120px !important;
-}
+        .ts-wrapper {
+            width: 80px !important;
+        }
 
-.ts-control{
-height:52px;
-border-radius:12px;
-border:1px solid #e5e7eb;
-padding:10px;
-display:flex;
-align-items:center;
-}
+        .ts-control {
+            height: 52px;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+        }
 
         /* Country code */
 
@@ -96,14 +99,14 @@ align-items:center;
             -moz-appearance: none;
             background: #fff;
         } */
-         .country{
+        .country {
             width: 100px;
-height:52px;
-border-radius:12px;
-border:1px solid #e5e7eb;
-font-size:14px;
+            height: 52px;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            font-size: 14px;
 
-}
+        }
 
         /* Phone input */
 
@@ -116,20 +119,28 @@ font-size:14px;
             padding: 0 14px;
         } */
 
-        .phone-input{
-flex:1;
-height:52px;
-border-radius:12px;
-border:1px solid #e5e7eb;
-font-size:16px;
-padding:0 14px;
-width:100%;
-}
+        .phone-input {
+            flex: 1;
+            height: 52px;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            font-size: 16px;
+            padding: 0 14px;
+            width: 100%;
+        }
+
         .phone-input:focus {
             outline: none;
             border-color: #2563eb;
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
         }
+        .ts-wrapper.single .ts-control{
+    background-image:none !important;
+}
+
+.ts-wrapper.single {
+    --ts-pr-caret: 0;
+}
 
         /* Button */
 
@@ -208,6 +219,37 @@ width:100%;
             opacity: .8;
         }
 
+        .title-box{
+            display:flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+
+        }
+
+        .title-content{
+            display:flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 6px;
+            margin-bottom: 0 !important;
+        }
+
+        .title-content .title{
+            color: #2563eb;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 0 !important;
+        }
+
+        .title-content .help-text{
+            color: #64748b;
+            font-size: 12px;
+            margin-bottom: 0 !important ;
+            margin-top: 0 !important ;
+        }
+
         /* Mobile */
 
         @media (max-width:991px) {
@@ -236,26 +278,37 @@ width:100%;
             <div class="login-box">
                 {{-- <h2>Matka Play</h2> --}}
 
-                
+
 
                 <div class="login-container">
 
                     <img src="{{ asset('https://cdn-icons-png.flaticon.com/128/5977/5977575.png') }}" class="logo"
                         alt="logo">
 
-                    <h2 class="title">Login with Mobile</h2>
+                     <div class="title-box">
+                        <div class="title-content">
+                             <h3 class="title">ENTER NUMBER</h3>
+                        <p class="help-text">Enter your valid mobile number</p>   
+                        </div>
+                        {{-- mobile icon --}}
+                        <div class="m-logo">
+                          {{-- i tag mobile logo --}}
+                            <i class="fa-solid fa-mobile-screen-button" style="font-size:40px;color:#2563eb;"></i>
+                        </div>
+                                    
+                     </div>
 
                     <form id="loginForm">
                         @csrf
 
                         <div class="phone-group">
                             <select id="country_code" name="country_code" class="country">
-    <option value="+91" selected>🇮🇳 (+91)</option>
-    <option value="+1">🇺🇸 (+1)</option>
-    <option value="+44">🇬🇧 (+44)</option>
-    <option value="+971">🇦🇪 (+971)</option>
-    <option value="+61">🇦🇺 (+61)</option>
-</select>
+                                <option value="+91" selected>🇮🇳 (+91)</option>
+                                <option value="+1">🇺🇸 (+1)</option>
+                                <option value="+44">🇬🇧 (+44)</option>
+                                <option value="+971">🇦🇪 (+971)</option>
+                                <option value="+61">🇦🇺 (+61)</option>
+                            </select>
 
                             <input type="tel" id="phone" name="mobile" maxlength="10"
                                 placeholder="Enter mobile number" class="phone-input">
@@ -266,7 +319,7 @@ width:100%;
                         </button>
 
                         <div class="terms-box">
-                            <input type="checkbox" id="terms">
+                            <input type="checkbox" id="terms" checked>
                             <label for="terms">
                                 I agree to the <a href="#">Terms & Conditions</a>
                             </label>
@@ -297,124 +350,124 @@ width:100%;
 
     <script>
         $(document).ready(function() {
-            new TomSelect("#country_code",{
-    create:false,
-    sortField:{
-        field:"text",
-        direction:"asc"
-    }
-});
-                    $('#phone').focus();
-
-                  
-
-                    $('#loginForm').on('submit', function(e) {
-
-                            if (!$('#terms').is(':checked')) {
-                                Toastify({
-                                    text: "Please accept Terms & Conditions",
-                                    duration: 3000,
-                                    gravity: "top",
-                                    position: "center",
-                                    backgroundColor: "red"
-                                }).showToast();
-                                return;
-                            }
-                            e.preventDefault();
-
-                            const phoneInput = $('#phone').val().trim();
-                            const phoneRegex = /^[0-9]\d{9}$/;
-
-                            if (phoneInput === '') {
-                                Toastify({
-                                    text: "Mobile number is required.",
-                                    duration: 3000,
-                                    gravity: "top",
-                                    position: "center",
-                                    backgroundColor: "red",
-                                }).showToast();
-                                return;
-                            }
+            new TomSelect("#country_code", {
+                create: false,
+                sortField: {
+                    field: "text",
+                    direction: "asc"
+                }
+            });
+            $('#phone').focus();
 
 
-                            if (!phoneRegex.test(phoneInput)) {
-                                Toastify({
-                                    text: "Enter valid mobile number",
-                                    duration: 3000,
-                                    gravity: "top",
-                                    position: "center",
-                                    backgroundColor: "red"
-                                }).showToast();
-                                return;
-                            }
 
-                            $('.btn-login').prop('disabled', true).text('Checking...');
+            $('#loginForm').on('submit', function(e) {
 
-                            let formData = $(this).serialize();
+                if (!$('#terms').is(':checked')) {
+                    Toastify({
+                        text: "Please accept Terms & Conditions",
+                        duration: 3000,
+                        gravity: "top",
+                        position: "center",
+                        backgroundColor: "red"
+                    }).showToast();
+                    return;
+                }
+                e.preventDefault();
 
-                            console.log(formData);
+                const phoneInput = $('#phone').val().trim();
+                const phoneRegex = /^[0-9]\d{9}$/;
 
-                            $.ajax({
-                                    url: "{{ route('login') }}", // Your Laravel route
-                                    type: "POST",
-                                    data: formData,
-                                    success: function(response) {
-                                        console.log(response);
-
-                                        Toastify({
-                                            text: response.message,
-                                            duration: 2000,
-                                            gravity: "top",
-                                            position: "center",
-                                            backgroundColor: response.status === "success" ? "green" :
-                                                "red"
-                                        }).showToast();
-
-                                        // Optional: redirect or clear form
-                                        // window.location.href = '/dashboard';
-
-                                        // if (response.status === 'success') {
-                                        // setTimeout(() => {
-                                        //     window.location.href = response.redirect;
-                                        // }, 1200);
-                                        // } else {
-                                        // setTimeout(() => {
-                                        //     window.location.href = response.redirect;
-                                        // }, 2000);
-                                        // }
-
-                                        if (response.status === "success") {
-                                            setTimeout(() => {
-                                                window.location.href = response.redirect;
-                                            }, 1200);
-                                        } else {
-                                            setTimeout(() => {
-                                                window.location.href = response.redirect;
-                                            }, 1200);
-                                            $('.btn-login').prop('disabled', false).text('Continue');
-                                        }
-                                    },
+                if (phoneInput === '') {
+                    Toastify({
+                        text: "Mobile number is required.",
+                        duration: 3000,
+                        gravity: "top",
+                        position: "center",
+                        backgroundColor: "red",
+                    }).showToast();
+                    return;
+                }
 
 
-                                    error: function(xhr) {
+                if (!phoneRegex.test(phoneInput)) {
+                    Toastify({
+                        text: "Enter valid mobile number",
+                        duration: 3000,
+                        gravity: "top",
+                        position: "center",
+                        backgroundColor: "red"
+                    }).showToast();
+                    return;
+                }
 
-                                        $('.btn-login').prop('disabled', false).text('Continue');
-                                        Toastify({
-                                            text: "Server error",
-                                            duration: 3000,
-                                            gravity: "top",
-                                            position: "center",
-                                            backgroundColor: "red"
-                                        }).showToast();
+                $('.btn-login').prop('disabled', true).text('Checking...');
 
-                                         
+                let formData = $(this).serialize();
 
-                                            console.error(xhr);
-                                    }
+                console.log(formData);
 
-                                    });
-                            });
-                    })
+                $.ajax({
+                    url: "{{ route('login') }}", // Your Laravel route
+                    type: "POST",
+                    data: formData,
+                    success: function(response) {
+                        console.log(response);
+
+                        Toastify({
+                            text: response.message,
+                            duration: 2000,
+                            gravity: "top",
+                            position: "center",
+                            backgroundColor: response.status === "success" ? "green" :
+                                "red"
+                        }).showToast();
+
+                        // Optional: redirect or clear form
+                        // window.location.href = '/dashboard';
+
+                        // if (response.status === 'success') {
+                        // setTimeout(() => {
+                        //     window.location.href = response.redirect;
+                        // }, 1200);
+                        // } else {
+                        // setTimeout(() => {
+                        //     window.location.href = response.redirect;
+                        // }, 2000);
+                        // }
+
+                        if (response.status === "success") {
+                            setTimeout(() => {
+                                window.location.href = response.redirect;
+                            }, 1200);
+                        } else {
+                            setTimeout(() => {
+                                window.location.href = response.redirect;
+                            }, 1200);
+                            $('.btn-login').prop('disabled', false).text('Continue');
+                        }
+                    },
+
+
+                    error: function(xhr) {
+
+                        $('.btn-login').prop('disabled', false).text('Continue');
+                        Toastify({
+                            text: "Server error",
+                            duration: 3000,
+                            gravity: "top",
+                            position: "center",
+                            backgroundColor: "red"
+                        }).showToast();
+
+
+
+                        console.error(xhr);
+                    }
+
+                });
+            });
+        })
     </script>
 </body>
 

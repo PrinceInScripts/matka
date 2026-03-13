@@ -35,17 +35,18 @@
 <body>
 <div class="app-layout">
   <div class="left-area">
-    <div class="top-bar">
+    {{-- <div class="top-bar">
       <button class="back-btn" onclick="history.back()"><i class="fa fa-angle-left"></i></button>
-      <h6 class="m-0 fw-bold">Starline History</h6>
+      <h6 class="m-0 fw-bold">Galidisawar History</h6>
       @include('components.walletinfo')
-    </div>
+    </div> --}}
+     @include('components.topbar')
     <!-- Tab Switch -->
-    <div class="tab-row" style="top:56px">
+    {{-- <div class="tab-row" style="top:56px">
       <a href="{{ route('starline.bid.history') }}" class="tab-btn active"><i class="fa fa-list me-1"></i>Bid History</a>
       <a href="{{ route('starline.win.history') }}" class="tab-btn"><i class="fa fa-trophy me-1"></i>Win History</a>
-    </div>
-    <div class="home-content" style="padding-top:110px">
+    </div> --}}
+    <div class="home-content" style="padding-top:20px">
       @php
         $won = $bids->getCollection()->where('status','won');
         $totalBid = $bids->getCollection()->sum('amount');

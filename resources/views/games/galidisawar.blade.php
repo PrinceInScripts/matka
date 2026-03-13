@@ -218,6 +218,27 @@
         }
 
 
+        .market-status{
+font-weight:600;
+margin-top:5px;
+}
+
+.running{
+color:#28a745;
+}
+
+.waiting{
+color:#ff9800;
+}
+
+.closed{
+color:#dc3545;
+}
+
+ .play-btn[data-live="0"] {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
 
 
     </style>
@@ -248,9 +269,9 @@
 @endforeach
 
                 <div class="history-buttons ">
-                   <button><i class="fa-solid fa-history"></i>
+                   <button onclick="window.location.href='{{ route('galidisawar.bid.history') }}'"><i class="fa-solid fa-history"></i>
                         <span>Bid History</span></button>
-                    <button><i class="fa-solid fa-trophy"></i>
+                    <button onclick="window.location.href='{{ route('galidisawar.win.history') }}'"><i class="fa-solid fa-trophy"></i>
                         <span>Win History</span></button>
                 </div>
 
@@ -263,18 +284,20 @@
                     <div class="market-card">
                         <div class="left-side">
                             <h5>{{ $game->name }}</h5>
-                            @if ($game->open_pana || $game->close_pana)
-                                <div class="show">{{ $game->open_pana }} -
-                                    {{ $game->open_digit }}{{ $game->close_digit }} - {{ $game->close_pana }}</div>
+                           @if ($game->result_jodi)
+                                <div class="show">
+                                     {{ $game->result_jodi ?? '**' }} -
+                                    {{ $game->result_digit ?? '*' }} 
+                                   
+                                    
+                                </div>
                             @else
-                                <div class="show">***_**_***</div>
+                                <div class="show">**-*</div>
                             @endif
 
-                            @if ($game->market_status == 0)
-                                <div class="closed">Betting Is Closed For Today</div>
-                            @else
-                                <div class="running">Betting Is Running Now</div>
-                            @endif
+                           <div class="market-status {{ $game->status_class }}">
+    {{ $game->user_message }}
+</div>
 
                             <div class="times">
                                 <div>Last Bids Time Open: <span class="info">09:40 am</span></div>
@@ -282,9 +305,9 @@
                             </div>
                         </div>
                         <div class="right-side">
-                            <a href="{{ route('chart', ['market_type' => 'gali_disawar', 'slug' => $game->slug]) }}" class="calendar-btn" style="display:flex;align-items:center;justify-content:center;text-decoration:none">
+                            <a href="{{ route('chart', ['market_type' => 'gali_disawar', 'slug' => $game->slug]) }}" class="calendar-btn" style="display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:32px">
                                 <i class="fa-solid fa-calendar-days"></i></a>
-                            <button class="play-btn" data-status="{{ $game->market_status }}"
+                            <button class="play-btn" data-status="{{ $game->market_status }}" data-live="{{ $game->is_live ? 1 : 0 }}"
                                 data-slug="{{ $game->slug }}" data-type="{{ $game->game_type }}">
                                 <i class="fa-solid fa-circle-play"></i>
                             </button>
@@ -341,15 +364,15 @@
         <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
         <script>
-            const chartModal = new bootstrap.Modal(document.getElementById('chartModal'));
+            // const chartModal = new bootstrap.Modal(document.getElementById('chartModal'));
 
             // When user clicks Calendar
-            document.querySelectorAll('.calendar-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
+            // document.querySelectorAll('.calendar-btn').forEach(btn => {
+            //     btn.addEventListener('click', () => {
 
-                    chartModal.show();
-                });
-            });
+            //         chartModal.show();
+            //     });
+            // });
 
 
             // When user clicks Play

@@ -63,6 +63,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/starline-bid-history', [BidController::class, 'starlineBidHistory'])->name('starline.bid.history');
     Route::get('/starline-win-history', [BidController::class, 'starlineWinHistory'])->name('starline.win.history');
 
+    Route::get('/galidisawar-bid-history', [BidController::class, 'galidisawarBidHistory'])->name('galidisawar.bid.history');
+    Route::get('/galidisawar-win-history', [BidController::class, 'galidisawarWinHistory'])->name('galidisawar.win.history');
+
     // Wallet & Funds
     Route::get('/wallet', [FundController::class, 'wallet'])->name('wallet');
     Route::get('deposit-funds', [FundController::class, 'depositFunds'])->name('deposit.funds');
@@ -115,15 +118,31 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('user/{id}/deduct-balance', [UserController::class, 'deductBalance'])->name('user.deduct_balance');
 
         // Game Management
-        Route::get('game-names', [GameManagementController::class, 'gameNames'])->name('game_names');
-        Route::get('game-management', [GameManagementController::class, 'index'])->name('game_management.index');
-        Route::post('game-management/store', [GameManagementController::class, 'store'])->name('game_management.store');
-        Route::post('game-management/{id}/update', [GameManagementController::class, 'update'])->name('game_management.update');
-        Route::get('game-management/{id}/schedule', [GameManagementController::class, 'getSchedule'])->name('game_management.schedule');
-        Route::post('game-management/{id}/schedule', [GameManagementController::class, 'updateSchedule'])->name('game_management.schedule.update');
-        Route::post('game-management/{id}/game-types', [GameManagementController::class, 'updateGameTypes'])->name('game_management.game_types');
-        Route::post('game-management/{id}/rates', [GameManagementController::class, 'updateRates'])->name('game_management.rates');
+        // Route::get('game-names', [GameManagementController::class, 'gameNames'])->name('game_names');
+        // Route::get('game-management', [GameManagementController::class, 'index'])->name('game_management.index');
+        // Route::post('game-management/store', [GameManagementController::class, 'store'])->name('game.store');
+        // Route::post('game-management/{id}/update', [GameManagementController::class, 'update'])->name('game_management.update');
+        // Route::get('game-management/{id}/schedule', [GameManagementController::class, 'getSchedule'])->name('game_management.schedule');
+        // Route::post('game-management/{id}/schedule', [GameManagementController::class, 'updateSchedule'])->name('game_management.schedule.update');
+        // Route::post('game-management/{id}/game-types', [GameManagementController::class, 'updateGameTypes'])->name('game_management.game_types');
+        // Route::post('game-management/{id}/rates', [GameManagementController::class, 'updateRates'])->name('game_management.rates');
 
+        Route::prefix('games')->name('games.')->group(function () {
+            Route::get('names', [GameController::class, 'names'])->name('names');
+            Route::get('rates', [GameController::class, 'rates'])->name('rates');
+                        Route::post('{id}/update-names', [GameController::class, 'updateNames'])->name('update-names');
+
+            Route::post('rates/update', [GameController::class, 'updateRates'])->name('rates.update');
+            Route::post('store', [GameController::class, 'store'])->name('store');
+            Route::post('schedule/{id}', [GameController::class, 'update_schedule'])->name('update_schedule');
+            Route::get('/get-schedule/{id}', [GameController::class, 'getSchedule'])->name('get_schedule');
+
+            Route::get('/game-types/{id}', [GameController::class, 'getGameTypes'])->name('game-types');
+
+            Route::post('/game-types/{id}', [GameController::class, 'updateGameTypes'])->name('game-types.update');
+
+
+        });
         // Game Numbers
         Route::prefix('game-numbers')->name('game_numbers.')->group(function () {
             Route::get('single-digit', [GameNumberController::class, 'singleDigit'])->name('single_digit');
