@@ -56,7 +56,7 @@
         .home-content {
             flex: 1;
             overflow-y: auto;
-            padding: 70px 15px 90px;
+            padding: 30px 15px 90px;
             background: #f5f6fa;
         }
 
@@ -367,11 +367,7 @@
     <div class="app-layout">
         <div class="left-area">
             <!-- ✅ Top Bar -->
-            <div class="top-bar">
-                <i class="fa-solid fa-angle-left text-primary fs-5" onclick="window.history.back()"></i>
-                <h6 class="m-0 fw-semibold text-primary">Account Statement</h6>
-                @include('components.walletinfo')
-            </div>
+            @include('components.topbar')
 
             <!-- ✅ Content -->
             <div class="home-content">
@@ -498,6 +494,7 @@
             </div>
 
             @include('components.bottombar')
+                @include('components.sidebar')
         </div>
 
         @include('components.rightside')
@@ -506,6 +503,7 @@
     <!-- ✅ Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('assets/js/script.js') }}"></script>
 
    <script>
 

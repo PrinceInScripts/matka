@@ -86,7 +86,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/notifications/all', [NotificationController::class, 'page'])->name('notifications.page');
 
     // Chart
-    Route::get('/chart/{market_type}/{slug}', [PageController::class, 'chart'])->name('chart');
+// Chart
+    Route::get('/chart/{market_type}/{slug?}', [PageController::class, 'chart'])->name('chart');
+    Route::get('/chart/starline', [PageController::class, 'chart'])->defaults('market_type','starline')->defaults('slug','all')->name('chart.starline');
+
 
     // Profile extras
     Route::post('/change-password', [ProfileController::class, 'changePassword'])->name('change.password');

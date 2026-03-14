@@ -37,7 +37,7 @@
 </head>
 <body>
 @php
-  use App\Models\Setting;
+  // use App\Models\Setting;
   $upiId   = Setting::get('admin_upi_id') ?? ($upiId ?? '9999999999@upi');
   $upiName = Setting::get('admin_upi_name') ?? 'Matka Play';
   $qrPath  = Setting::get('admin_qr_image');
@@ -56,7 +56,7 @@
       {{-- Steps Info --}}
       <div class="card-box" style="background:#fffbeb;border:1px solid #fde68a;">
         <div style="font-size:12px;color:#92400e;font-weight:700;margin-bottom:8px"><i class="fa fa-info-circle me-1"></i>How it works</div>
-        <div style="font-size:12px;color:#78350f;line-height:1.7">
+        <div style="font-size:12px;color:#78350f;line-height:2.7">
           <div><span class="step-badge">1</span>Copy UPI ID or scan QR below</div>
           <div><span class="step-badge">2</span>Pay the exact amount via any UPI app</div>
           <div><span class="step-badge">3</span>Enter amount + UTR number + upload screenshot</div>

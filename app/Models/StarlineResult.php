@@ -10,6 +10,10 @@ class StarlineResult extends Model
         'starline_id','result_digit','result_pana','draw_date','status'
     ];
 
+     protected $casts = [
+        'draw_date'      => 'date',
+    ];
+
     public function starline()
     {
         return $this->belongsTo(StarlineName::class, 'starline_id');

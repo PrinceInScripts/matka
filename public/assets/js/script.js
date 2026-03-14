@@ -1,10 +1,15 @@
+const menuBtn = document.getElementById("menuBtn");
+const closeBtn = document.getElementById("closebtn");
+const sidebar = document.getElementById("sidebar");
 
-
-
-document.getElementById("menuBtn").onclick = function(){
-document.getElementById("sidebar").classList.add("active");
+if (menuBtn) {
+  menuBtn.addEventListener("click", () => {
+    if (sidebar) sidebar.classList.add("active");
+  });
 }
 
-document.getElementById("closebtn").onclick = function(){
-document.getElementById("sidebar").classList.remove("active");
+if (closeBtn) {
+  closeBtn.addEventListener("click", () => {
+    if (sidebar) sidebar.classList.remove("active");
+  });
 }

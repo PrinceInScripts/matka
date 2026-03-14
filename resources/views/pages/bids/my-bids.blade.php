@@ -14,7 +14,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
   <style>
-    .home-content{flex:1;overflow-y:auto;background:#f5f6fa;padding:64px 12px 100px;height:calc(100dvh - 56px);box-sizing:border-box;}
+    .home-content{flex:1;overflow-y:auto;background:#f5f6fa;padding:30px 12px 100px;height:calc(100dvh - 56px);box-sizing:border-box;}
     .top-bar{position:fixed;top:0;width:100%;max-width:500px;display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #eee;background:#fff;z-index:10;}
     .top-bar .back-btn{width:36px;height:36px;border-radius:50%;background:#2563eb;color:#fff;border:none;display:flex;align-items:center;justify-content:center;}
     /* Filter section */
@@ -56,11 +56,7 @@
 <body>
 <div class="app-layout">
   <div class="left-area">
-    <div class="top-bar">
-      <button class="back-btn" onclick="history.back()"><i class="fa fa-angle-left"></i></button>
-      <h6 class="m-0 fw-bold">My Bids</h6>
-      @include('components.walletinfo')
-    </div>
+   @include('components.topbar')
     <div class="home-content">
 
       <!-- FILTER CARD -->
@@ -122,7 +118,8 @@
         @include('pages.bids.partials.bid-list', ['bids' => $bids])
       </div>
     </div>
-    @include('components.bottombar')
+     @include('components.bottombar')
+            @include('components.sidebar')
   </div>
   @include('components.rightside')
 </div>

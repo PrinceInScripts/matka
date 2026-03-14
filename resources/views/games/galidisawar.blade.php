@@ -311,7 +311,7 @@ color:#dc3545;
                             </div>
                         </div>
                         <div class="right-side">
-                            <a href="{{ route('chart', ['market_type' => 'gali_disawar', 'slug' => $game->slug]) }}" class="calendar-btn" style="display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:32px">
+                            <a href="{{ route('chart', ['market_type' => 'gali_disawar', 'slug' => $game->slug]) }}" class="calendar-btn" style="display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:28px">
                                 <i class="fa-solid fa-calendar-days"></i></a>
                             <button class="play-btn" data-status="{{ $game->market_status }}" data-live="{{ $game->is_live ? 1 : 0 }}"
                                 data-slug="{{ $game->slug }}" data-type="{{ $game->game_type }}">

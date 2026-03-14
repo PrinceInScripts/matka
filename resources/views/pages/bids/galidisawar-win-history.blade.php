@@ -85,6 +85,7 @@
       <div class="d-flex justify-content-center mt-3">{{ $bids->links('pagination::bootstrap-5') }}</div>
     </div>
     @include('components.bottombar')
+    @include('components.sidebar')
   </div>
   @include('components.rightside')
 </div>

@@ -14,7 +14,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
   <style>
-    .home-content{flex:1;overflow-y:auto;background:#f5f6fa;padding:80px 15px 100px;height:calc(100dvh - 56px);box-sizing:border-box;}
+    .home-content{flex:1;overflow-y:auto;background:#f5f6fa;padding:34px 15px 100px;height:calc(100dvh - 56px);box-sizing:border-box;}
     .top-bar{position:fixed;top:0;width:100%;max-width:500px;display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid #eee;background:#fff;z-index:10;height:56px;}
     .back-btn{width:36px;height:36px;border-radius:50%;background:#2563eb;color:#fff;border:none;display:flex;align-items:center;justify-content:center;}
     .balance-chip{background:#f0fdf4;border-radius:12px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;border:1px solid #bbf7d0;}
@@ -30,7 +30,6 @@
 </head>
 <body>
 @php
-  use App\Models\Setting;
   $depositMode = Setting::get('deposit_mode') ?? 'both';
   $minRecharge = Setting::get('min_recharge') ?? 100;
   $maxRecharge = Setting::get('max_recharge') ?? 50000;
@@ -38,11 +37,12 @@
 @endphp
 <div class="app-layout">
   <div class="left-area">
-    <div class="top-bar">
+    {{-- <div class="top-bar">
       <button class="back-btn" onclick="history.back()"><i class="fa fa-angle-left"></i></button>
       <h6 class="m-0 fw-bold">Add Money</h6>
       @include('components.walletinfo')
-    </div>
+    </div> --}}
+    @include('components.topbar')
     <div class="home-content">
 
       {{-- Balance chip --}}
@@ -113,6 +113,7 @@
 
     </div>
     @include('components.bottombar')
+    @include('components.sidebar')
   </div>
   @include('components.rightside')
 </div>

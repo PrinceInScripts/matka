@@ -9777,7 +9777,7 @@ namespace App\Models {
      * @property string|null $declared_at
      * @property \Illuminate\Support\Carbon $updated_at
      * @property \Illuminate\Support\Carbon $created_at
-     * @property string $draw_date
+     * @property \Illuminate\Support\Carbon $draw_date
      * @property mixed $status
      * @property string|null $result_pana
      * @property string $result_digit

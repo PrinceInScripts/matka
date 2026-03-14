@@ -1,18 +1,10 @@
-@php
-  use App\Models\Setting;
-  $siteName = Setting::get('site_name') ?? 'Matka Play';
-  $siteLogo = Setting::get('site_logo');
-  $appUrl = Setting::get('app_download_url');
-  $appEnabled = Setting::get('app_download_enabled');
-@endphp
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{{ $siteName }} | Home</title>
+    <title>Matka Play | Home</title>
 
     <!-- Bootstrap & Font Awesome -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -31,7 +23,7 @@
             flex: 1;
             overflow-y: auto;
             background: #f5f6fa;
-            padding: 80px 15px 90px 15px;
+            padding: 20px 15px 90px 15px;
             /* extra padding for fixed bars */
             height: calc(100dvh - 140px);
             -webkit-overflow-scrolling: touch;
@@ -497,7 +489,7 @@
 
                         </div>
                         <div class="right-side">
-                            <a href="{{ route('chart', ['market_type' => 'main', 'slug' => $game->slug]) }}" class="calendar-btn" style="display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:32px">
+                            <a href="{{ route('chart', ['market_type' => 'main', 'slug' => $game->slug]) }}" class="calendar-btn" style="display:flex;align-items:center;justify-content:center;text-decoration:none;font-size: 28px;color: #007bff;">
                                 <i class="fa-solid fa-calendar-days"></i></a>
                             <button class="play-btn" data-live="{{ $game->is_live ? 1 : 0 }}"
                                 data-message="{{ $game->user_message }}" data-slug="{{ $game->slug }}">
@@ -509,16 +501,20 @@
                 @endforeach
             </div>
 
- 
+            @php
+  use App\Models\Setting;
+  $appUrl = Setting::get('app_download_url');
+  $appEnabled = Setting::get('app_download_enabled');
+@endphp
 
 {{-- App Download Banner --}}
 @if($appEnabled && $appUrl)
-<div id="appDownloadBanner" style="position:fixed;bottom:82px;left:86px;right:0;max-width:500px;margin:auto;z-index:999;padding:0 10px;">
-  <div style="width:250px;background:linear-gradient(135deg,#1e40af,#2563eb);border-radius:14px;padding:10px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 4px 20px rgba(37,99,235,.4);">
-    <div onclick="window.location.href='{{ $appUrl }}'" style="width:36px;cursor:pointer;height:36px;background:rgba(255,255,255,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+<div id="appDownloadBanner" style="position:fixed;bottom:76px;left:120px;width:100%;max-width:500px;z-index:999;padding:0 12px;">
+  <div style="background:linear-gradient(135deg,#1e40af,#2563eb);border-radius:14px;padding:10px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 4px 20px rgba(37,99,235,.4);width:240px;">
+    <div window.location.href="{{ $appUrl }}" style="width:36px;height:36px;background:rgba(255,255,255,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
       <i class="fa fa-download" style="color:#fff;font-size:16px"></i>
     </div>
-    <div onclick="window.location.href='{{ $appUrl }}'" style="flex:1;cursor:pointer;color:#fff;font-weight:700;font-size:14px">
+    <div window.location.href="{{ $appUrl }}" style="flex:1">
       <div style="font-weight:700;color:#fff;font-size:13px">Download Our App</div>
       <div style="font-size:11px;color:rgba(255,255,255,.8)">Get the best experience on Android</div>
     </div>
@@ -579,9 +575,9 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
-        const chartModal = new bootstrap.Modal(document.getElementById('chartModal'));
+        // const chartModal = new bootstrap.Modal(document.getElementById('chartModal'));
 
-        // When user clicks Calendar
+        // // When user clicks Calendar
         // document.querySelectorAll('.calendar-btn').forEach(btn => {
         //     btn.addEventListener('click', () => {
 
