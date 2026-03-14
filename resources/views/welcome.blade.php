@@ -1,3 +1,9 @@
+@php
+  use App\Models\Setting;
+  $siteName = Setting::get('site_name') ?? 'Matka Play';
+  $siteLogo = Setting::get('site_logo');
+@endphp
+
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>

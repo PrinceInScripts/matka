@@ -1,3 +1,9 @@
+@php
+  use App\Models\Setting;
+  $siteName = Setting::get('site_name') ?? 'Matka Play';
+  $siteLogo = Setting::get('site_logo');
+@endphp
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -284,7 +290,7 @@
         <div class="right-area">
             <div class="brand-card">
                 <img src="{{ asset('https://cdn-icons-png.flaticon.com/128/5977/5977575.png') }}" alt="Logo">
-                <h3>Welcome to MPL Matka</h3>
+                <h3>Welcome to {{ $siteName }} </h3>
                 <p>Play smart, win big! Enjoy the best Matka gaming experience built for you.</p>
             </div>
         </div>

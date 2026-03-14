@@ -1,4 +1,4 @@
  <div class="right-area">
-            <h2>Welcome to MPL Matka</h2>
+            <h2>Welcome to {{ $siteName }} </h2>
             <p>Play smart, win big! Enjoy the best Matka gaming experience built for you.</p>
         </div>

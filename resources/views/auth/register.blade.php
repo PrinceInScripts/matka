@@ -1,3 +1,9 @@
+@php
+  use App\Models\Setting;
+  $siteName = Setting::get('site_name') ?? 'Matka Play';
+  $siteLogo = Setting::get('site_logo');
+@endphp
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -66,10 +72,11 @@
         }
 
           .logo {
-            width: 110px;
+            width: 120px;
             display: block;
             margin: 0 auto 25px auto;
-            margin-bottom:60px;
+            margin-bottom:25px;
+            border-radius: 50%;
         }
 
         .page-sub {
@@ -281,20 +288,20 @@
             
             <div class="mpin-card">
 
-                <img src="{{ asset('https://cdn-icons-png.flaticon.com/128/5977/5977575.png') }}" class="logo"
+                <img src="{{ asset('storage/'.$siteLogo) }}" class="logo"
                         alt="logo">
                 
                    
 
                      <div class="title-box">
                         <div class="title-content">
-                             <h3 class="title">ENTER NUMBER</h3>
-                        <p class="help-text">Enter your valid mobile number</p>   
+                             <h3 class="title">CREATE ACCOUNT</h3>
+                        <p class="help-text">Enter your details to create an account</p>   
                         </div>
                         {{-- mobile icon --}}
                         <div class="m-logo">
-                          {{-- i tag mobile logo --}}
-                            <i class="fa-solid fa-mobile-screen-button" style="font-size:40px;color:#2563eb;"></i>
+                          {{-- i tag user logo --}}
+                            <i class="fa-solid fa-user" style="font-size:40px;color:#2563eb;"></i>
                         </div>
                                     
                      </div>
@@ -342,7 +349,7 @@
         <div class="right-area">
             <div class="brand-card">
                 <img src="{{ asset('https://cdn-icons-png.flaticon.com/128/5977/5977575.png') }}" alt="Logo">
-                <h3>Welcome to MPL Matka</h3>
+                <h3>Welcome to {{ $siteName }} </h3>
                 <p>Play smart, win big! Enjoy the best Matka gaming experience built for you.</p>
             </div>
         </div>

@@ -1,10 +1,18 @@
+@php
+  use App\Models\Setting;
+  $siteName = Setting::get('site_name') ?? 'Matka Play';
+  $siteLogo = Setting::get('site_logo');
+  $appUrl = Setting::get('app_download_url');
+  $appEnabled = Setting::get('app_download_enabled');
+@endphp
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>MPL Matka | Home</title>
+    <title>{{ $siteName }} | Home</title>
 
     <!-- Bootstrap & Font Awesome -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -23,7 +31,7 @@
             flex: 1;
             overflow-y: auto;
             background: #f5f6fa;
-            padding: 20px 15px 90px 15px;
+            padding: 80px 15px 90px 15px;
             /* extra padding for fixed bars */
             height: calc(100dvh - 140px);
             -webkit-overflow-scrolling: touch;
@@ -222,7 +230,7 @@
         }
 
         .market-card .closed {
-            /* color: #007BFF; */
+            color: #007BFF;
             font-weight: 600;
             margin-top: 5px;
         }
@@ -357,23 +365,6 @@
             opacity: 0.5;
             cursor: not-allowed;
         }
-
-        .market-status{
-font-weight:600;
-margin-top:4px;
-}
-
-.running{
-color:#28a745;
-}
-
-.waiting{
-color:#ff9800;
-}
-
-.closed{
-color:#dc3545;
-}
     </style>
 
 </head>
@@ -389,19 +380,19 @@ color:#dc3545;
 
             <div class="home-content">
                 {{-- <div class="announcement">
-                    <span class="brand">MPL Matka</span>
+                    <span class="brand">Matka Play</span>
                     ALL MARKET HAVE BEEN DECLARED AS HOLIDAY...
                 </div> --}}
 
-                @if ($announcement)
-                    <div class="announcement">
+                @if($announcement)
+<div class="announcement">
 
-                        <span class="brand">{{ $announcement->title }}</span>
+<span class="brand">{{ $announcement->title }}</span>
 
-                        {{ $announcement->message }}
+{{ $announcement->message }}
 
-                    </div>
-                @endif
+</div>
+@endif
 
                 <div class="support-box">
 
@@ -470,26 +461,24 @@ color:#dc3545;
 
                 </div>
 
-
+              
 
                 @foreach ($games as $game)
                     <div class="market-card">
                         <div class="left-side">
                             <h5>{{ $game->name }}</h5>
                             @if ($game->open_pana || $game->close_pana)
-                                <div class="show">
-                                    {{ $game->open_pana ?? '***' }}-
-                                    {{ $game->open_digit ?? '*' }}
-                                    {{ $game->close_digit ?? '*' }}-
-                                    {{ $game->close_pana ?? '***' }}
-                                </div>
+                                <div class="show">{{ $game->open_pana }} -
+                                    {{ $game->open_digit }}{{ $game->close_digit }} - {{ $game->close_pana }}</div>
                             @else
-                                <div class="show">***-*-*-***</div>
+                                <div class="show">***_**_***</div>
                             @endif
 
-                            <div class="market-status {{ $game->status_class }}">
-                                {{ $game->user_message }}
-                            </div>
+                            @if ($game->is_live)
+                                <div class="running">Betting Is Running Now</div>
+                            @else
+                                <div class="closed">{{ $game->user_message }}</div>
+                            @endif
 
                             <div class="times">
                                 <div>
@@ -508,9 +497,7 @@ color:#dc3545;
 
                         </div>
                         <div class="right-side">
-                            <a href="{{ route('chart', ['market_type' => 'main', 'slug' => $game->slug]) }}"
-                                class="calendar-btn"
-                                style="display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:32px">
+                            <a href="{{ route('chart', ['market_type' => 'main', 'slug' => $game->slug]) }}" class="calendar-btn" style="display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:32px">
                                 <i class="fa-solid fa-calendar-days"></i></a>
                             <button class="play-btn" data-live="{{ $game->is_live ? 1 : 0 }}"
                                 data-message="{{ $game->user_message }}" data-slug="{{ $game->slug }}">
@@ -522,7 +509,26 @@ color:#dc3545;
                 @endforeach
             </div>
 
-            @include('components.bottombar')
+ 
+
+{{-- App Download Banner --}}
+@if($appEnabled && $appUrl)
+<div id="appDownloadBanner" style="position:fixed;bottom:82px;left:86px;right:0;max-width:500px;margin:auto;z-index:999;padding:0 10px;">
+  <div style="width:250px;background:linear-gradient(135deg,#1e40af,#2563eb);border-radius:14px;padding:10px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 4px 20px rgba(37,99,235,.4);">
+    <div onclick="window.location.href='{{ $appUrl }}'" style="width:36px;cursor:pointer;height:36px;background:rgba(255,255,255,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+      <i class="fa fa-download" style="color:#fff;font-size:16px"></i>
+    </div>
+    <div onclick="window.location.href='{{ $appUrl }}'" style="flex:1;cursor:pointer;color:#fff;font-weight:700;font-size:14px">
+      <div style="font-weight:700;color:#fff;font-size:13px">Download Our App</div>
+      <div style="font-size:11px;color:rgba(255,255,255,.8)">Get the best experience on Android</div>
+    </div>
+    {{-- <a href="{{ $appUrl }}" style="background:#22c55e;color:#fff;border-radius:10px;padding:7px 14px;font-size:12px;font-weight:700;text-decoration:none;flex-shrink:0">Download</a> --}}
+    <button onclick="document.getElementById('appDownloadBanner').style.display='none'" style="background:rgba(255,255,255,.15);border:none;color:#fff;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;font-size:13px">&times;</button>
+  </div>
+</div>
+@endif
+
+@include('components.bottombar')
 
             <!-- SIDEBAR -->
             @include('components.sidebar')
@@ -553,7 +559,8 @@ color:#dc3545;
                         <i class="fa fa-angle-right text-secondary"></i>
                     </div>
 
-                    <div class="chart-option d-flex justify-content-between align-items-center p-3 rounded-3 shadow-sm">
+                    <div
+                        class="chart-option d-flex justify-content-between align-items-center p-3 rounded-3 shadow-sm">
                         <span class="fw-semibold">Pana Chart</span>
                         <i class="fa fa-angle-right text-secondary"></i>
                     </div>
@@ -572,7 +579,7 @@ color:#dc3545;
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
-        // const chartModal = new bootstrap.Modal(document.getElementById('chartModal'));
+        const chartModal = new bootstrap.Modal(document.getElementById('chartModal'));
 
         // When user clicks Calendar
         // document.querySelectorAll('.calendar-btn').forEach(btn => {
@@ -599,7 +606,11 @@ color:#dc3545;
                 return;
             }
 
-            // allowed
+            var userBettingEnabled = {{ auth()->user()->betting ?? 1 }};
+            if (!userBettingEnabled) {
+                Swal.fire({ icon: 'warning', title: 'Betting Disabled', text: 'Your betting access has been restricted. Contact support.' });
+                return;
+            }
             window.location.href = '/market/' + slug;
         });
     </script>

@@ -1,10 +1,16 @@
+@php
+  use App\Models\Setting;
+  $siteName = Setting::get('site_name') ?? 'Matka Play';
+  $siteLogo = Setting::get('site_logo');
+@endphp
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MPL Matka | Login</title>
+    <title>{{ $siteName }} | Login</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
@@ -24,6 +30,7 @@
         .login-wrapper {
             display: flex;
             min-height: 100vh;
+            /* background: #fff; */
         }
 
         /* LEFT SIDE (Login Area) */
@@ -31,10 +38,10 @@
         .login-left {
             flex: 1;
             display: flex;
-            align-items: center;
+            /* align-items: center; */
             justify-content: center;
-            background: #f5f7fb;
-            padding: 40px 20px;
+            background: #fff;
+            padding: 100px 20px;
         }
 
         .login-box {
@@ -43,16 +50,19 @@
             {{-- background: #ffffff; --}}
             border-radius: 18px;
             {{-- padding: 40px 30px; --}}
-            {{-- box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08); --}}
+            {{-- box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08); --}};
+      
+            
         }
 
         /* Logo */
 
         .logo {
-            width: 110px;
+            width: 120px;
             display: block;
             margin: 0 auto 25px auto;
             margin-bottom:60px;
+            border-radius: 50%;
         }
 
         /* Title */
@@ -263,7 +273,7 @@
             }
 
             .login-left {
-                padding: 30px;
+                padding: 100px 30px;
             }
 
         }
@@ -276,13 +286,13 @@
         <!-- Left side: Login form (always visible) -->
         <div class="login-left">
             <div class="login-box">
-                {{-- <h2>MPL Matka</h2> --}}
+                {{-- <h2>{{ $siteName }} </h2> --}}
 
 
 
                 <div class="login-container">
 
-                    <img src="{{ asset('https://cdn-icons-png.flaticon.com/128/5977/5977575.png') }}" class="logo"
+                    <img src="{{ asset('storage/'.$siteLogo) }}" class="logo"
                         alt="logo">
 
                      <div class="title-box">
@@ -334,8 +344,8 @@
 
         <!-- Right side: Logo/banner (hidden on small screens) -->
         <div class="login-right">
-            <img src="{{ asset('https://cdn-icons-png.flaticon.com/128/5977/5977575.png') }}" alt="MPL Matka Logo">
-            <h3>Welcome to MPL Matka</h3>
+            <img src="{{ asset('storage/'.$siteLogo) }}" alt="{{ $siteName }} Logo" class="logo">
+            <h3>Welcome to {{ $siteName }} </h3>
             <p>Play smart, win big! Enjoy the best Matka gaming experience built for you.</p>
         </div>
 

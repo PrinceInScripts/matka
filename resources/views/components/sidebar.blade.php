@@ -36,8 +36,8 @@
   <div class="sidebar-section">
     <h6 class="section-title">Bids</h6>
     <a href="{{ route('my.bids') }}" class="menu-item"><i class="fa fa-receipt"></i> My Bids</a>
-    <a href="{{ route('starline.bid.history') }}" class="menu-item"><i class="fa fa-star"></i> Starline Bid History</a>
-    <a href="{{ route('starline.win.history') }}" class="menu-item"><i class="fa fa-trophy"></i> Starline Win History</a>
+    {{-- <a href="{{ route('starline.bid.history') }}" class="menu-item"><i class="fa fa-star"></i> Starline Bid History</a>
+    <a href="{{ route('starline.win.history') }}" class="menu-item"><i class="fa fa-trophy"></i> Starline Win History</a> --}}
   </div>
 
   <!-- GAMES -->
